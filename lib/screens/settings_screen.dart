@@ -110,12 +110,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       context,
                       MaterialPageRoute(builder: (context) => const LoginScreen()),
                     ));
-                   
                  },
                 
               ),
             ),
-            const SizedBox(height: 20),
+             const SizedBox(height: 20),
             Card(
               elevation: 4,
               shape: RoundedRectangleBorder(
@@ -135,7 +134,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const Center(
               child: Text(
                 'FinScan',
-                style: TextStyle(
+                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
@@ -145,5 +144,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
     );
-  }
+  }}
+}
 }
