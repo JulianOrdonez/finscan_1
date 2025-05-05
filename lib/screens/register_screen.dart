@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/main.dart';
 import 'package:flutter_application_2/screens/login_screen.dart';
-import '../services/auth_service.dart';
+import 'package:flutter_application_2/services/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -30,7 +30,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
-    );
+    );  
   }
 
   void _showSnackBar(String message) {
@@ -39,6 +39,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         content: Text(message),
       ),
     );    
+    
   }
   @override
   Widget build(BuildContext context) {
@@ -52,6 +53,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
         child: Center(
+          
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(20.0),
             child: Form(
@@ -162,12 +164,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       if (_formKey.currentState!.validate()) {
                         _authService
                             .registerUser( 
-                                _emailController.text, 
-                                _passwordController.text,
-                                _nameController.text,)
+                                _emailController.text, _passwordController.text, _nameController.text
+                                )
                             .then((user) { 
                           if (user != null) {
-                            Navigator.pushReplacement(
+                            Navigator.pushReplacement( 
+
                                 context,
                                 MaterialPageRoute(builder: (context) => const HomePage()));
                           } else {
