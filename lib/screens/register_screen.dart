@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/main.dart';
-import 'package:flutter_application_2/services/auth_service.dart';
 import 'package:flutter_application_2/screens/login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -11,28 +10,32 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>(); // Added missing final
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final AuthService _authService = AuthService();
   bool _obscureText = true;
 
-  @override
-  void dispose() { // Changed the dispose method
+  @override  
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    
   }
 
   void _navigateToLogin() {
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+        context, MaterialPageRoute(builder: (context) => const LoginScreen()),);
   }
-    void _showSnackBar(String message) {
+  void _showSnackBar(String message) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
+         SnackBar(
+          content: Text(message),
+        ),
       );
     }
   }
@@ -43,8 +46,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color.fromARGB(255, 205, 237, 243),
-              Color.fromARGB(255, 255, 255, 255) // Added missing comma
-            
+              Color.fromARGB(255, 255, 255, 255) 
+             
+             
+
             ],
           ),
         ),
@@ -53,7 +58,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             padding: const EdgeInsets.all(20.0),
             child: Form(
               key: _formKey,
-              child: Column(
+              child: Column( 
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -157,15 +162,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        _authService
+                        AuthService()
                             .registerUser(
-                                _emailController.text, _passwordController.text, _nameController.text)
-                            .then((user) {
-                              if (user != null) {
-                                Navigator.pushReplacement(context,
-                                MaterialPageRoute(builder: (context) => const HomePage()));
+                                _emailController.text,
+                                _passwordController.text,
+                                _nameController.text)
+                            .then((user) { 
+                          if (user != null) {
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
 
                           } else {
+                            
                               _showSnackBar('El correo ya está en uso.');
                             }
                         });
@@ -175,16 +182,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                      
-
                     ),
                     child: const Text(
                       'Registrarse',
                       style: TextStyle(fontSize: 18, fontFamily: 'Roboto'),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  TextButton(
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextButton( 
+
                     onPressed: _navigateToLogin,
                     child: Text(
                        '¿Ya tienes una cuenta? Inicia Sesión', //Fixed the string

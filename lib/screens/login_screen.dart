@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/main.dart';
 import 'package:flutter_application_2/screens/register_screen.dart';
-import 'package:flutter_application_2/screens/register_screen.dart';
-import '../services/auth_service.dart';
+import 'package:flutter_application_2/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
 
@@ -24,43 +23,43 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
 
   Future<void> _login() async {
-    if (_formKey.currentState!.validate() == false) return;
-    setState(() {
-      _isLoading = true;
-    });
-    try {
-      final user = await AuthService()
-          .login(_emailController.text, _passwordController.text);
-      if (user != null) {
-        // ignore: use_build_context_synchronously
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const HomePage()));
-      } else {
-        // ignore: use_build_context_synchronously
-        _showErrorSnackBar('Correo o contraseña incorrectos', context);
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+      try {
+        final user = await AuthService()
+            .login(_emailController.text, _passwordController.text);
+        if (user != null) {
+          // ignore: use_build_context_synchronously
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomePage()),
+              );
+        } else {
+          _showErrorSnackBar('Correo o contraseña incorrectos');
+        }
       } catch (e) {
-        // ignore: use_build_context_synchronously
-        _showErrorSnackBar('Error al iniciar sesión', context);
+        _showErrorSnackBar('Error al iniciar sesión');
       } finally {
         setState(() {
           _isLoading = false;
         });
       }
+    }
   }
 
   void _goToRegisterScreen() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) =>  RegisterScreen()),
+      MaterialPageRoute(builder: (context) => const RegisterScreen()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Center(
+      body: _isLoading ? const Center(child: CircularProgressIndicator()) : Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24.0),
                 child: Form(
@@ -68,8 +67,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        'Bienvenido',
+                      const Text(
+                        'Bienvenido a FinScan',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -79,10 +78,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 30),
                       TextFormField(
                         controller: _emailController,
-                         prefixIcon: const Icon(Icons.email),
+                        prefixIcon: const Icon(Icons.email),
                         decoration: InputDecoration(
-                           prefixIcon: const Icon(Icons.email),
-                          labelText: 'Correo electrónico',
+                          labelText: 'Correo electrónico',                        
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -97,13 +95,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 20),
                       TextFormField(
-                        prefixIcon: const Icon(Icons.lock),
                         controller: _passwordController,
-                        decoration:  InputDecoration(
-                          labelText: 'Contraseña',                         
-                           prefixIcon: const Icon(Icons.lock),
-                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+                        prefixIcon: const Icon(Icons.lock),
+                        decoration: InputDecoration(
+                          labelText: 'Contraseña',
+                          border: OutlineInputBorder(
+                           borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                         obscureText: true,
@@ -117,7 +114,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 30),
                       ElevatedButton(
                         onPressed: _login,
-                        
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).colorScheme.primary,
                           padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
@@ -126,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        child: const Text(
+                        child: const Text(                
                           'Iniciar Sesión',
                           style: TextStyle(color: Colors.white),
                         ),
@@ -135,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextButton(
                         onPressed: _goToRegisterScreen,
                         child: Text(
-                          '¿No tienes cuenta? Regístrate aquí',                    
+                          '¿No tienes cuenta? Regístrate aquí',
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                           ),
@@ -147,10 +143,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
           ),
         ),
-    );
-  }  
-
-  void _showErrorSnackBar(String message, BuildContext context) {
+    );}
+     void _showErrorSnackBar(String message) {
+    final context = _formKey.currentContext!;
+    
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message),
       duration: const Duration(seconds: 3),
