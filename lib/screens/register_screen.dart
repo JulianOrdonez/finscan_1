@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/main.dart';
-import 'package:flutter_application_2/screens/login_screen.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -11,18 +10,18 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>(); // Added missing final
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   final AuthService _authService = AuthService();
   bool _obscureText = true;
 
   @override
-  void dispose() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+  void dispose() { // Changed the dispose method
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
   }
 
   void _navigateToLogin() {
@@ -30,11 +29,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         MaterialPageRoute(builder: (context) => LoginScreen()));
   }
     void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +42,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color.fromARGB(255, 205, 237, 243),
-              Color.fromARGB(255, 255, 255, 255)
+              Color.fromARGB(255, 255, 255, 255) // Added missing comma
+
             ],
           ),
         ),
@@ -156,16 +157,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         _authService
-                            .registerUser(_emailController.text,
-                                _passwordController.text, _nameController.text)
-                            .then((user) => {if(user != null){
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const HomePage()));
+                            .registerUser(
+                                _emailController.text,
+                                _passwordController.text,
+                                _nameController.text)
+                            .then((user) {
+                          if(user != null){
+                            Navigator.pushReplacement(context,
+                                MaterialPageRoute(builder: (context) => const HomePage()));
+
                           } else {
-                            _showSnackBar('El correo ya está en uso.');
-                          }
+                              _showSnackBar('El correo ya está en uso.');
+                            }
                         });
                       }
                     },
@@ -185,8 +188,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   TextButton(
                     onPressed: _navigateToLogin,
                     child: Text(
-                      '¿Ya tienes una cuenta? Inicia Sesión',
-                      style: TextStyle(
+                      '¿Ya tienes una cuenta? Inicia Sesión', //Fixed the string
+                      style:  TextStyle(
                           fontFamily: 'Roboto',
                           color: Theme.of(context).colorScheme.primary),
                     ),

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/main.dart'; // Import HomePage
-import 'package:flutter_application_2/screens/register_screen.dart'; // Import RegisterScreen
-import '../services/auth_service.dart'; // Import AuthService
+import 'package:flutter_application_2/main.dart';
+import 'package:flutter_application_2/screens/register_screen.dart';
+import '../services/auth_service.dart';
+
 class LoginScreen extends StatefulWidget {
 
   const LoginScreen({super.key});
@@ -25,29 +26,24 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() {
       _isLoading = true;
-    });
+    });    
     try {
       final user = await AuthService().login(_emailController.text, _passwordController.text);
-      setState(() {
-
+      if (user != null) {
         setState(() {
           _isLoading = false;
         });
-
-        if (user != null) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => HomePage()),
-          );
-        } else {
-          _showErrorSnackBar('Correo o contraseña incorrectos');
-        }
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      } else {
+        _showErrorSnackBar('Correo o contraseña incorrectos');
       } catch (e) {
         _showErrorSnackBar('Error al iniciar sesión');
       } finally {
         setState(() {
           _isLoading = false;
-          
         });
       }
     }
@@ -72,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Form(
                   key: _formKey,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         'Bienvenido',
@@ -84,10 +80,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       SizedBox(height: 30),
                       TextFormField(
+                        
                         controller: _emailController,
                         decoration: InputDecoration(
                           labelText: 'Correo electrónico',
-                          prefixIcon: Icon(Icons.email),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -98,21 +94,18 @@ class _LoginScreenState extends State<LoginScreen> {
                             return 'Por favor, introduce tu correo electrónico';
                           }
                            return null;
+                          
                         },
                       ),
                       SizedBox(height: 20),
                       TextFormField(
                         controller: _passwordController,
-                        decoration: InputDecoration(
-                        
+                        decoration: const InputDecoration(
                           labelText: 'Contraseña',
-                           prefixIcon: Icon(Icons.lock),
                         ),
-                       
-
                         obscureText: true,
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
+                          if (value == null || value.isEmpty) {                          
                             return 'Por favor, introduce tu contraseña';
                           }
                            return null;
@@ -122,6 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ElevatedButton(
                         onPressed: _login,
                         style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).colorScheme.primary,
                           padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                           textStyle: const TextStyle(
                             fontSize: 18,
@@ -137,6 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextButton(
                         onPressed: _goToRegisterScreen,
                         child: Text(
+                          
                           '¿No tienes cuenta? Regístrate aquí',
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
@@ -152,12 +147,12 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _showErrorSnackBar(String message) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          duration: const Duration(seconds: 3),
-        ),
-      );
-    }
+    void _showErrorSnackBar(String message) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 3),
+      ));
+  }
 }
+
+
