@@ -7,6 +7,7 @@ import '../theme_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
@@ -14,6 +15,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   String _selectedCurrency = 'USD';
   final List<String> _currencies = ['USD', 'EUR', 'MXN', 'COP'];
+
   @override
   void initState() {
     super.initState();
@@ -22,72 +24,91 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _loadSelectedCurrency() async {
     final prefs = await SharedPreferences.getInstance();
-    _selectedCurrency = prefs.getString('currency') ?? 'USD';
+    setState(() {
+      _selectedCurrency = prefs.getString('currency') ?? 'USD';
+    });
   }
-  
+
+  Future<void> _saveSelectedCurrency(String currency) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('currency', currency);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    return  Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            "Ajustes",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+    return Scaffold(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              "Ajustes",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-        ),
-          title: 'Modo Oscuro',
-          trailing: Switch(
-            value: themeProvider.isDarkMode,
-            onChanged: (value) {
-              themeProvider.toggleTheme();
-            },
+          _buildSettingCard(
+            title: 'Modo Oscuro',
+            trailing: Switch(
+              value: themeProvider.isDarkMode,
+              onChanged: (value) {
+                themeProvider.toggleTheme();
+              },
+            ),
           ),
-        ),
-        _buildSettingCard(
-          title: 'Moneda',
-          trailing: DropdownButton<String>(
-            value: _selectedCurrency,
-            items: _currencies.map((String currency) {
-              return DropdownMenuItem<String>(
-                value: currency,
-                child:  Text(currency),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
-              
-                _selectedCurrency = newValue!;
-                final prefs = SharedPreferences.getInstance();
-                prefs.then((value) => value.setString('currency', newValue));
-              
-            },
-        ),
-        _buildSettingCard(
+          _buildSettingCard(
+            title: 'Moneda',
+            trailing: DropdownButton<String>(
+              value: _selectedCurrency,
+              items: _currencies.map((String currency) {
+                return DropdownMenuItem<String>(
+                  value: currency,
+                  child: Text(currency),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                if (newValue != null) {
+                  setState(() {
+                    _selectedCurrency = newValue;
+                  });
+                  _saveSelectedCurrency(newValue);
+                }
+              },
+            ),
+          ),
+          _buildSettingCard(
             title: 'Cerrar Sesión',
             leading: Icon(Icons.logout),
             onTap: () {
               AuthService().logout().then((value) => Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                ));
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen()),
+                  ));
             },
           ),
-                _buildSettingCard(
-          title: 'Soporte al Usuario',
-          leading: Icon(Icons.support_agent),
-          onTap: () {
-            print('Soporte al Usuario');
-          },
-        ),
-      ],
+          _buildSettingCard(
+            title: 'Soporte al Usuario',
+            leading: Icon(Icons.support_agent),
+            onTap: () {
+              print('Soporte al Usuario');
+            },
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildSettingCard({required String title, Widget? trailing, Icon? leading, VoidCallback? onTap}) {
+  Widget _buildSettingCard({
+    required String title,
+    Widget? trailing,
+    Icon? leading,
+    VoidCallback? onTap,
+  }) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
