@@ -4,10 +4,13 @@ import 'package:flutter_application_2/main.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
-
   const LoginScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
@@ -27,21 +30,22 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       final authService = AuthService();
-      try{
+      try {
         final user = await authService.login(
-          _emailController.text, _passwordController.text);
+            _emailController.text, _passwordController.text);
 
         setState(() {
           _isLoading = false;
         });
 
         if (user != null) {
-          // ignore: use_build_context_synchronously
           Navigator.pushReplacement(
-            context,MaterialPageRoute(builder: (context) => const HomePage()),
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
           );
         } else {
           // ignore: use_build_context_synchronously
+
           _showErrorSnackBar('Correo o contraseña incorrectos', context);
         }
 
@@ -49,7 +53,6 @@ class _LoginScreenState extends State<LoginScreen> {
         _showErrorSnackBar('Error al iniciar sesión', context);
       }finally {
         setState(() {
-          _isLoading = false;
         });
       }
       
@@ -77,16 +80,31 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                       const Text(
+                        'Bienvenido a FinScan',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 30),
                       TextFormField(
                         controller: _emailController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Correo electrónico',
+                          prefixIcon: const Icon(Icons.email),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                         keyboardType: TextInputType.emailAddress,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Por favor, introduce tu correo electrónico';
                           }
+                           return null;
+
                           return null;
                         },
                       ),
@@ -94,8 +112,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextFormField(
                         controller: _passwordController,
                         decoration: const InputDecoration(
+                        
                           labelText: 'Contraseña',
+                          prefixIcon: Icon(Icons.lock),
                         ),
+                       
+
                         obscureText: true,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -110,14 +132,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).colorScheme.primary,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 15),
+                              horizontal: 80, vertical: 15),
                           textStyle: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Iniciar Sesión',
+                           
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -137,6 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
     );
   }
+  @override
   void _showErrorSnackBar(String message, BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message),

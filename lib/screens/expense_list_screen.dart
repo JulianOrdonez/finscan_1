@@ -80,7 +80,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               child: Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
-                  'No expenses recorded. Tap the + button to add one.',
+                  'No hay gastos registrados. Presiona el botón + para añadir uno.',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16),
                 ),

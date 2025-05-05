@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_application_2/services/database_helper.dart';
 import 'package:animations/animations.dart';
-import 'package:flutter_application_2/services/auth_service.dart';
 import 'theme_provider.dart';
 import 'models/user.dart';
 import 'screens/expense_list_screen.dart';
@@ -56,9 +55,13 @@ class MyApp extends StatelessWidget {
                       : null,
 
                   builder: (context, userSnapshot) {
-                    return userSnapshot.data != null
-                        ? const HomePage()
-                        : const LoginScreen();
+                    if(userSnapshot.connectionState == ConnectionState.waiting){
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    else{
+                        return userSnapshot.data != null
+                            ? const HomePage()
+                            : const LoginScreen();}
                   },
                 );
             }
@@ -93,40 +96,36 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      
-      body: PageTransitionSwitcher(
-        
-        duration: const Duration(milliseconds: 300),
-        transitionBuilder: (
-          Widget child,
-          Animation<double> animation,
-          Animation<double> secondaryAnimation,
-        ) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
-        },
-        child: _screens[_selectedIndex],
-      ),
-      appBar: AppBar(
-          title: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Welcome to FinScan',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+    return Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text(
+                'FinScan - Gastos',
               ),
             ),
-          ),
-          Expanded(child: _screens[_selectedIndex]),
-          
-        ]
-       ) ,
+            body: PageTransitionSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (
+                Widget child,
+                Animation<double> animation,
+                Animation<double> secondaryAnimation,
+              ) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+              child: _screens[_selectedIndex],
+            ),
+
+            // Column(
+            //   children: [
+
+            //     Expanded(child: _screens[_selectedIndex]),
+            //   ],
+            // ),
+          // ),
       ),
       // Bottom navigation bar
       bottomNavigationBar: BottomNavigationBar(
@@ -152,9 +151,8 @@ class _HomePageState extends State<HomePage> {
         selectedItemColor: Theme.of(context).primaryColor,
         unselectedItemColor: Colors.grey[400],
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        elevation: 0,
         showUnselectedLabels: true,
+        onTap: _onItemTapped,
       ),
 
     );
