@@ -11,13 +11,14 @@ class ExpenseStatsScreen extends StatefulWidget {
   State<ExpenseStatsScreen> createState() => _ExpenseStatsScreenState();
 }
 
-class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
+class _ExpenseStatsScreenState extends State<ExpenseStatsScreen>
+ {
   late Future<List<Expense>> _expensesFuture;
   String _selectedPeriod = 'Mes actual';
   final List<String> _periods = ['Mes actual', 'Últimos 3 meses', 'Último año'];
 
   @override
-  void initState() {
+   void initState() {
     super.initState();
     _refreshExpenses();
   }
@@ -50,7 +51,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
 
     for (var expense in expenses) {
       categoryData[expense.category] = (categoryData[expense.category] ?? 0) + expense.amount;
-    };
+    }
 
     return categoryData;
   }
@@ -64,7 +65,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
       // Crear fecha con solo año y mes
       final monthDate = DateTime(expense.date.year, expense.date.month);
       monthlyData[monthDate] = (monthlyData[monthDate] ?? 0) + expense.amount; //Se cambio esto
-    };
+    }
 
     // Ordenar por fecha
     final sortedEntries = monthlyData.entries.toList()
@@ -105,7 +106,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
 
     for (int i = 0; i < monthlyData.length; i++) {
       spots.add(FlSpot(i.toDouble(), monthlyData[months[i]]!));
-    };
+    }
 
     return spots;
   }
@@ -131,96 +132,82 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : Colors.black;
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Estadísticas y Gráficos')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: FutureBuilder<List<Expense>>(
-          future: _expensesFuture,
-          
-            
-            
-            
+    return Scaffold(appBar: AppBar(title: const Text('Estadísticas y Gráficos')),
+      body: Padding(padding: const EdgeInsets.all(16.0),
+        child: FutureBuilder<List<Expense>>(future: _expensesFuture,
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
+            if (snapshot.connectionState == ConnectionState.waiting)
+            {return const Center(child: CircularProgressIndicator());}
 
-            if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            }
+            if (snapshot.hasError)
+            {return Center(child: Text('Error: ${snapshot.error}'));}
 
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text('No data to show. Add some expenses to see the charts.', textAlign: TextAlign.center));
-            }
+            if (!snapshot.hasData || snapshot.data!.isEmpty)
+            {return const Center(child: Text('No data to show. Add some expenses to see the charts.', textAlign: TextAlign.center));}
 
             final filteredExpenses = _filterByPeriod(snapshot.data!);
             final categoryData = _getCategoryData(filteredExpenses);
             final monthlyData = _getMonthlyData(filteredExpenses);
-            final totalExpenses = _calculateTotal(filteredExpenses);
-            return  SingleChildScrollView(child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start, children: [// Selector de período
-                 Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                       crossAxisAlignment: CrossAxisAlignment.start, children: [Row(children: [
+
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
                               Icon(Icons.calendar_today, color: textColor),
-                              SizedBox(width: 8),
-                              Text('Período',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: textColor)),
+                              const SizedBox(width: 8),
+                              Text('Período', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textColor)),
                             ],
-                          ), 
-                        const SizedBox(height: 8),
-                        DropdownButtonFormField<String>(
-                           decoration: const InputDecoration(
-                            border: OutlineInputBorder(),                            
-                            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          ),                            
+                          ),
+                          const SizedBox(height: 8),
+                          DropdownButtonFormField<String>(
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            ),
                             value: _selectedPeriod,
-                            items: _periods.map((period) {
-                              return DropdownMenuItem(value: period, child: Text(period));
-                            }).toList(), 
+                            items: _periods.map((period) => DropdownMenuItem(value: period, child: Text(period))).toList(),
                             onChanged: (value) {
-                              setState(() {                           
+                              setState(() {
                                 _selectedPeriod = value!;
                               });
-                            }
-                        );
-                      ],
-                      
-                    ),
-                  ),),
-                const SizedBox(height: 16), // Resumen de gastos
-                Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(Icons.money, color: textColor),
-                                SizedBox(width: 8),
-                                Text('Resumen de Gastos',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: textColor)),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            const SizedBox(height: 8),
-                            Text('Número de transacciones: ${filteredExpenses.length}',
-                                style: TextStyle(fontSize: 16, color: textColor)),
-                          ],
-                        ),
+                            },
+                          ),
+                        ],
                       ),
-                ),
-                const SizedBox(height: 16), if (categoryData.isNotEmpty) // Gráfico de categorías (pastel)
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.money, color: textColor),
+                              const SizedBox(width: 8),
+                              Text('Resumen de Gastos', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor)),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          const SizedBox(height: 8),
+                          Text('Número de transacciones: ${filteredExpenses.length}', style: TextStyle(fontSize: 16, color: textColor)),
+                          Text('Total Gastado: €${_calculateTotal(filteredExpenses).toStringAsFixed(2)}', style: TextStyle(fontSize: 16, color: textColor)),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  if (categoryData.isNotEmpty)
                     Card(
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -230,44 +217,35 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                             Row(
                               children: [
                                 Icon(Icons.pie_chart, color: textColor),
-                                SizedBox(width: 8),
-                                Text('Gastos por Categoría',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: textColor)),
+                                const SizedBox(width: 8),
+                                Text('Gastos por Categoría', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor)),
                               ],
                             ),
                             const SizedBox(height: 16),
                             SizedBox(
                               height: 200,
-                              child: PieChart(PieChartData(
-                                  sections: _buildPieSections(categoryData),
-                                  centerSpaceRadius: 40,
-                                  sectionsSpace: 2)),
+                              child: PieChart(PieChartData(sections: _buildPieSections(categoryData), centerSpaceRadius: 40, sectionsSpace: 2)),
                             ),
-                            const SizedBox(height: 16), // Leyenda
-                              Column(
-                                children: categoryData.entries.map((entry) {
-                                  final color = _getCategoryColor(entry.key);                                  
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 4),
-                                    child: Row(
+                            const SizedBox(height: 16),
+                            Column(
+                              children: categoryData.entries.map((entry) {
+                                final color = _getCategoryColor(entry.key);
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 4),
+                                  child: Row(
                                     children: [
-                                      Container(
-                                        width: 16,
-                                        height: 16, color: color,
-                                      ), 
+                                      Container(width: 16, height: 16, color: color),
                                       const SizedBox(width: 8),
                                       Expanded(child: Text(entry.key, style: TextStyle(color: textColor))),
-                                      Text('€${entry.value.toStringAsFixed(2)}',
-                                          style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
+                                      Text('€${entry.value.toStringAsFixed(2)}', style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
                                     ],
                                   ),
                                 );
-                                }).toList(),
+                              }).toList(),
+                            ),
                           ],
-                        )),
+                        ),
+                      ),
                     ),
                   const SizedBox(height: 16),
                   if (monthlyData.isNotEmpty)
@@ -280,70 +258,56 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                             Row(
                               children: [
                                 Icon(Icons.show_chart, color: textColor),
-                                SizedBox(width: 8),
-                                Text('Evolución de Gastos',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                       
-                                        color: textColor)),
+                                const SizedBox(width: 8),
+                                Text('Evolución de Gastos', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor)),
                               ],
                             ),
                             const SizedBox(height: 16),
                             SizedBox(
                               height: 200,
-                              child: LineChart(LineChartData(
-                                  gridData: FlGridData(show: true),                                  
-                                  titlesData: FlTitlesData(                                  
-                                    bottomTitles: AxisTitles(sideTitles: SideTitles(
-                                      showTitles: true,
-                                      getTitlesWidget: (value, meta) {
-                                        if (value.toInt() >= 0 && value.toInt() < monthlyData.keys.length) {
-                                          final date = monthlyData.keys.toList()[value.toInt()]; 
-                                          return Padding(
-                                            padding: const EdgeInsets.only(top: 8.0),
-                                            child: Text(
-                                              DateFormat('MM/yy').format(date),
-                                              style: TextStyle(fontSize: 10, color: textColor),
-                                            ),
-                                          );
-                                        }
-                                        return const Text('');
-                                      },
-                                      reservedSize: 30,
-                                    )),
-                                    leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true,
-                                      getTitlesWidget: (value, meta) { 
-                                        return Text('€${value.toInt()}', style: TextStyle(fontSize: 10, color: textColor));
-                                      },
-                                      reservedSize: 40,
-                                    )),
-                                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                                  ),
-                                  borderData: FlBorderData(show: true),
-                                  lineBarsData: [
-                                    LineChartBarData(
-                                      spots: _getLineSpots(monthlyData),
-                                      isCurved: true,
-                                      color: Theme.of(context).colorScheme.primary,
-                                      barWidth: 4,
-                                      isStrokeCapRound: true,
-                                      dotData: FlDotData(show: true),
-                                      belowBarData: BarAreaData(
-                                        show: true,
-                                        color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                              child: LineChart(
+                                LineChartData(
+                                    gridData: FlGridData(show: true),
+                                    titlesData: FlTitlesData(
+                                        bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (value, meta) {
+                                      if (value.toInt() >= 0 && value.toInt() < monthlyData.keys.length) {
+                                        final date = monthlyData.keys.toList()[value.toInt()];
+                                        return Padding(
+                                          padding: const EdgeInsets.only(top: 8.0),
+                                          child: Text(DateFormat('MM/yy').format(date), style: TextStyle(fontSize: 10, color: textColor)),
+                                        );
+                                      }
+                                      return const Text('');
+                                    }, reservedSize: 30)),
+                                        leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (value, meta) {
+                                      return Text('€${value.toInt()}', style: TextStyle(fontSize: 10, color: textColor));
+                                    }, reservedSize: 40)),
+                                        topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                        rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false))),
+                                    borderData: FlBorderData(show: true),
+                                    lineBarsData: [
+                                      LineChartBarData(
+                                        spots: _getLineSpots(monthlyData),
+                                        isCurved: true,
+                                        color: Theme.of(context).colorScheme.primary,
+                                        barWidth: 4,
+                                        isStrokeCapRound: true,
+                                        dotData: FlDotData(show: true),
+                                        belowBarData: BarAreaData(show: true, color: Theme.of(context).colorScheme.primary.withOpacity(0.2)),
                                       ),
-                                    ),
-                                  ],
-                                )),
+                                    ]),
+                              ),
                             ),
                           ],
-                        )),
-                      )),
-              ],),);
-          },),
-          
-        )
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
-    );}}
+    );
+  }
+}
