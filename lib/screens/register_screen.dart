@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/main.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
+import 'package:flutter_application_2/screens/login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -25,8 +26,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _navigateToLogin() {
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (context) => LoginScreen()));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => const LoginScreen()));
   }
     void _showSnackBar(String message) {
     if (mounted) {
@@ -43,7 +44,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           gradient: LinearGradient(
             colors: [Color.fromARGB(255, 205, 237, 243),
               Color.fromARGB(255, 255, 255, 255) // Added missing comma
-
+            
             ],
           ),
         ),
@@ -158,12 +159,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       if (_formKey.currentState!.validate()) {
                         _authService
                             .registerUser(
-                                _emailController.text,
-                                _passwordController.text,
-                                _nameController.text)
+                                _emailController.text, _passwordController.text, _nameController.text)
                             .then((user) {
-                          if(user != null){
-                            Navigator.pushReplacement(context,
+                              if (user != null) {
+                                Navigator.pushReplacement(context,
                                 MaterialPageRoute(builder: (context) => const HomePage()));
 
                           } else {
@@ -175,9 +174,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       backgroundColor: Theme.of(context).colorScheme.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      )
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      
+
                     ),
                     child: const Text(
                       'Registrarse',
@@ -188,9 +187,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   TextButton(
                     onPressed: _navigateToLogin,
                     child: Text(
-                      '¿Ya tienes una cuenta? Inicia Sesión', //Fixed the string
-                      style:  TextStyle(
-                          fontFamily: 'Roboto',
+                       '¿Ya tienes una cuenta? Inicia Sesión', //Fixed the string
+                      style: TextStyle(
+                         fontFamily: 'Roboto',
                           color: Theme.of(context).colorScheme.primary),
                     ),
                   ),

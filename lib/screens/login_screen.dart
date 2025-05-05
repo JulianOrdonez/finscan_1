@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/main.dart';
 import 'package:flutter_application_2/screens/register_screen.dart';
+import 'package:flutter_application_2/screens/register_screen.dart';
 import '../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -22,38 +23,35 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool _isLoading = false;
 
-  void _login() async {
-    if (!_formKey.currentState!.validate()) return;
+  Future<void> _login() async {
+    if (_formKey.currentState!.validate() == false) return;
     setState(() {
       _isLoading = true;
-    });    
+    });
     try {
-      final user = await AuthService().login(_emailController.text, _passwordController.text);
+      final user = await AuthService()
+          .login(_emailController.text, _passwordController.text);
       if (user != null) {
-        setState(() {
-          _isLoading = false;
-        });
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const HomePage()));
       } else {
-        _showErrorSnackBar('Correo o contraseña incorrectos');
+        // ignore: use_build_context_synchronously
+        _showErrorSnackBar('Correo o contraseña incorrectos', context);
       } catch (e) {
-        _showErrorSnackBar('Error al iniciar sesión');
+        // ignore: use_build_context_synchronously
+        _showErrorSnackBar('Error al iniciar sesión', context);
       } finally {
         setState(() {
           _isLoading = false;
         });
       }
-    }
   }
-  
 
   void _goToRegisterScreen() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const RegisterScreen()),
+      MaterialPageRoute(builder: (context) =>  RegisterScreen()),
     );
   }
 
@@ -66,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24.0),
                 child: Form(
-                  key: _formKey,
+                  key: _formKey,                   
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -78,11 +76,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: 30),
+                      const SizedBox(height: 30),
                       TextFormField(
-                        
                         controller: _emailController,
+                         prefixIcon: const Icon(Icons.email),
                         decoration: InputDecoration(
+                           prefixIcon: const Icon(Icons.email),
                           labelText: 'Correo electrónico',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -93,27 +92,32 @@ class _LoginScreenState extends State<LoginScreen> {
                           if (value == null || value.isEmpty) {
                             return 'Por favor, introduce tu correo electrónico';
                           }
-                           return null;
-                          
+                          return null;
                         },
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       TextFormField(
+                        prefixIcon: const Icon(Icons.lock),
                         controller: _passwordController,
-                        decoration: const InputDecoration(
-                          labelText: 'Contraseña',
+                        decoration:  InputDecoration(
+                          labelText: 'Contraseña',                         
+                           prefixIcon: const Icon(Icons.lock),
+                           border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                         obscureText: true,
                         validator: (value) {
-                          if (value == null || value.isEmpty) {                          
+                          if (value == null || value.isEmpty) {
                             return 'Por favor, introduce tu contraseña';
                           }
-                           return null;
-                        }
+                          return null;
+                        },
                       ),
-                      SizedBox(height: 30),
+                      const SizedBox(height: 30),
                       ElevatedButton(
                         onPressed: _login,
+                        
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).colorScheme.primary,
                           padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
@@ -127,12 +131,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       TextButton(
                         onPressed: _goToRegisterScreen,
                         child: Text(
-                          
-                          '¿No tienes cuenta? Regístrate aquí',
+                          '¿No tienes cuenta? Regístrate aquí',                    
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                           ),
@@ -145,14 +148,13 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
     );
-  }
+  }  
 
-    void _showErrorSnackBar(String message) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 3),
-      ));
+  void _showErrorSnackBar(String message, BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      duration: const Duration(seconds: 3),
+    ));
   }
 }
-
 
