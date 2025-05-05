@@ -40,7 +40,11 @@ class MyApp extends StatelessWidget {
                     if (userSnapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else {
-                      return userSnapshot.data != null ? const HomePage() : const LoginScreen();
+                      return userSnapshot.data != null
+                          ? const HomePage()
+                          : const LoginScreen();
+
+
                     }
                   },
                 );
@@ -71,6 +75,30 @@ class _HomePageState extends State<HomePage> {
   }
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeProvider>(builder: (context, themeProvider, child) => Scaffold(appBar: AppBar(title: const Text('FinScan - Gastos')), body: PageTransitionSwitcher(duration: const Duration(milliseconds: 300), transitionBuilder: (Widget child, Animation<double> animation, Animation<double> secondaryAnimation) => FadeTransition(opacity: animation, child: child), child: _screens[_selectedIndex]), bottomNavigationBar: BottomNavigationBar(items: const <BottomNavigationBarItem>[BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'), BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Estadísticas'), BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Categorías'), BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Ajustes')], selectedItemColor: Theme.of(context).primaryColor, unselectedItemColor: Colors.grey[400], currentIndex: _selectedIndex, showUnselectedLabels: true, onTap: _onItemTapped)));
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) => Scaffold(
+        appBar: AppBar(
+          title: const Text('FinScan - Gastos'),
+        ),
+        body: PageTransitionSwitcher(
+          duration: const Duration(milliseconds: 300),
+          transitionBuilder: (Widget child, Animation<double> animation,
+                  Animation<double> secondaryAnimation) =>
+              FadeTransition(opacity: animation, child: child),
+          child: _screens[_selectedIndex],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
+              BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Estadísticas'),
+              BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Categorías'),
+              BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Ajustes')],
+            selectedItemColor: Theme.of(context).primaryColor,
+            unselectedItemColor: Colors.grey[400],
+            currentIndex: _selectedIndex,
+            showUnselectedLabels: true,
+            onTap: _onItemTapped),
+      ),
+    );
   }
 }
