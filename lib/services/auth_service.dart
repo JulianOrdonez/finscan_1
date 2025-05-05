@@ -7,16 +7,14 @@ class AuthService {
   Future<int> registerUser(String email, String password) async {
     try {
       final id = await _dbHelper.createUser(email, password);
-      final db = await _dbHelper.database;
-      final newId = await db.rawInsert("INSERT INTO users (email, password) VALUES (?, ?)",[email, password]);
-      return newId;
+      return id;
     } catch (e) {
       rethrow;
     }
   }
 
   Future<User?> login(String email, String password) async {
-    final db = await _dbHelper.database;
+    var db = await _dbHelper.database;
     try {
       List<Map<String, dynamic>> result = await db.query(
         'users', 
@@ -30,6 +28,7 @@ class AuthService {
         return User(
           id: userId,
           email: result.first['email'] as String,
+          password: '',
         );
         
       } else {

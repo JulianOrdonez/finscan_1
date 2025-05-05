@@ -108,8 +108,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       });
 
       try {
-        final currentUser = await AuthService().getCurrentUser();
-         if (currentUser == null) return;
+
           final expense = Expense(
               id: widget.expense?.id,
               title: _titleController.text,
@@ -117,7 +116,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
               category: _selectedCategory,
               date: _selectedDate,
               receiptPath: _receiptPath,
-              userId: currentUser.id!,
+              userId: 1,
           );
         if (widget.expense == null) {
           await DatabaseHelper.instance.createExpense(expense);

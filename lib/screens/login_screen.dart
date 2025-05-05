@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final authService = AuthService();
       try{
-        final user = await authService.loginUser(
+        final user = await authService.login(
           _emailController.text, _passwordController.text);
 
         setState(() {

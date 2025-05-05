@@ -75,6 +75,7 @@ class DatabaseHelper {
         return User(
           id: maps.first['id'] as int,
           email: maps.first['email'] as String,
+          password: "",
         );
       }
       return null;
@@ -91,18 +92,16 @@ class DatabaseHelper {
   Future<List<Expense>> getExpenses() async {
     final db = await database;
     try {
-      final List<Map<String, dynamic>> result = await db.query('expenses');
-      
-      List<Expense> expenses = result.map((map) {
+      var result = await db.query('expenses');
+
+      return result.map((map) {
         return Expense(
             id: map['id'] as int,
-            description: map['description'] as String,
-            amount: map['amount'] as double,
-            category: map['category'] as String,
-            date: map['date'] as String);
+            description: map['description'],
+            amount: map['amount'],
+            category: map['category'],
+            date: map['date']);
       }).toList();
-
-      return expenses;
 
     } catch (e) {
       rethrow;
@@ -139,7 +138,7 @@ class DatabaseHelper {
     final db = await database;
     try {
       final sql = 'UPDATE expenses SET description = ?, amount = ?, category = ?, date = ? WHERE id = ?';
-      await db.rawUpdate(sql, [expense.description, expense.amount, expense.category, expense.date, expense.id]);
+      await db.rawUpdate(sql, [expense.description, expense.amount, expense.category, expense.date, expense.id, ]);
     } catch (e) {
       print(e);
       rethrow;

@@ -15,11 +15,12 @@ class User {
   User copyWith({
     int? id,
     String? email,
-    String? password,
+    String? password
   }) {
     return User(
       id: id ?? this.id,
       email: email ?? this.email,
-      password: password ?? this.password,
-    );}
+      password: password ?? "",
+    );
+  }
 }
