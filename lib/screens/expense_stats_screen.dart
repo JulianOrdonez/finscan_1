@@ -259,9 +259,8 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                     children: [
                                       Container(
                                         width: 16,
-                                        height: 16,
-                                        color: color,
-                                      ),
+                                        height: 16, color: color,
+                                      ), 
                                       const SizedBox(width: 8),
                                       Expanded(child: Text(entry.key, style: TextStyle(color: textColor))),
                                       Text('€${entry.value.toStringAsFixed(2)}',
@@ -304,7 +303,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                       showTitles: true,
                                       getTitlesWidget: (value, meta) {
                                         if (value.toInt() >= 0 && value.toInt() < monthlyData.keys.length) {
-                                          final date = monthlyData.keys.toList()[value.toInt()];
+                                          final date = monthlyData.keys.toList()[value.toInt()]; 
                                           return Padding(
                                             padding: const EdgeInsets.only(top: 8.0),
                                             child: Text(
@@ -317,9 +316,8 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                       },
                                       reservedSize: 30,
                                     )),
-                                    leftTitles: AxisTitles(sideTitles: SideTitles(
-                                      showTitles: true,
-                                      getTitlesWidget: (value, meta) {
+                                    leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true,
+                                      getTitlesWidget: (value, meta) { 
                                         return Text('€${value.toInt()}', style: TextStyle(fontSize: 10, color: textColor));
                                       },
                                       reservedSize: 40,
@@ -345,8 +343,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                 ),
                               )),
                             ),
-                          ],
-                        ),
+                          ],),
                       ),
                     ),
                   ],

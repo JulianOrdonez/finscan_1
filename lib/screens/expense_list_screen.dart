@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_application_2/main.dart';
 import '../models/expense.dart';
 import '../services/database_helper.dart';
 import '../theme_provider.dart';
@@ -117,10 +116,9 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              '€${expense.amount.toStringAsFixed(2)}',
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                            ),
+                            Text('€${expense.amount.toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16)),
                             IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
                               onPressed: () => _deleteExpense(expense.id!),
@@ -130,10 +128,10 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                         onTap: () async {
                           await Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => ExpenseFormScreen(expense: expense)),
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    ExpenseFormScreen(expense: expense)),
                           );
-                          
-
                           _refreshExpenses();
                         },
                       ),
@@ -141,8 +139,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                   ),
                 },
               ),
-            );
-          }),
+            ));
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
@@ -172,6 +169,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
     return categoryColors[category] ?? Colors.grey;
   }
+
 
   IconData _getCategoryIcon(String category) {
     final Map<String, IconData> categoryIcons = {
