@@ -1,7 +1,10 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_application_2/models/expense.dart';
+import 'package:flutter_application_2/models/user.dart';
 import 'dart:io';
+
 
 class DatabaseHelper {
   static const String _databaseName = "app.db";
@@ -28,6 +31,10 @@ class DatabaseHelper {
         onCreate: (Database db, int version) async {
           await db.execute(
               'CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT UNIQUE, password TEXT)');
+          await db.execute(
+              'CREATE TABLE current_user (id INTEGER)');
+          await db.execute(
+              'CREATE TABLE expenses (id INTEGER PRIMARY KEY AUTOINCREMENT, description TEXT, amount REAL, category TEXT, date TEXT)');
         },
       );
     } catch (e) {
@@ -40,6 +47,99 @@ class DatabaseHelper {
     try {
       final sql = 'INSERT INTO users (email, password) VALUES (?, ?)';
       return await db.rawInsert(sql, [email, password]);
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
+
+  Future<int?> getCurrentUser() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query('current_user');
+    if (maps.isNotEmpty) {
+      return maps.first['id'] as int;
+    }
+    return null;
+  }
+
+  Future<User?> getUserById(int id) async {
+    final db = await database;
+    try {
+      final List<Map<String, dynamic>> maps = await db.query(
+        'users',
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+
+      if (maps.isNotEmpty) {
+        return User(
+          id: maps.first['id'] as int,
+          email: maps.first['email'] as String,
+        );
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<void> clearCurrentUser() async {
+    final db = await database;
+    await db.execute('DELETE FROM current_user');
+  }
+
+  Future<List<Expense>> getExpenses() async {
+    final db = await database;
+    try {
+      final List<Map<String, dynamic>> result = await db.query('expenses');
+      
+      List<Expense> expenses = result.map((map) {
+        return Expense(
+            id: map['id'] as int,
+            description: map['description'] as String,
+            amount: map['amount'] as double,
+            category: map['category'] as String,
+            date: map['date'] as String);
+      }).toList();
+
+      return expenses;
+
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> deleteExpense(int id) async {
+    final db = await database;
+    await db.delete(
+      'expenses',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<int> createExpense(Expense expense) async {
+    final db = await database;
+    try {
+      final sql =
+          'INSERT INTO expenses (description, amount, category, date) VALUES (?, ?, ?, ?)';
+      return await db.rawInsert(sql, [
+        expense.description,
+        expense.amount,
+        expense.category,
+        expense.date
+      ]);
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
+
+  Future<void> updateExpense(Expense expense) async {
+    final db = await database;
+    try {
+      final sql = 'UPDATE expenses SET description = ?, amount = ?, category = ?, date = ? WHERE id = ?';
+      await db.rawUpdate(sql, [expense.description, expense.amount, expense.category, expense.date, expense.id]);
     } catch (e) {
       print(e);
       rethrow;

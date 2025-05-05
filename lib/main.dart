@@ -32,19 +32,25 @@ class MyApp extends StatelessWidget {
           // Apply the theme from the ThemeProvider
           theme: themeProvider.themeData,
           // Determine the initial screen based on user login status
-          home: FutureBuilder<User?>(
+          home: FutureBuilder<int?>(
             // Check if there is a current user logged in
-            future: AuthService().getCurrentUser(),
+            future: DatabaseHelper.instance.getCurrentUser(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 // Show loading indicator while checking
                 return const CircularProgressIndicator();
               } else {
-                // Go to home if user is logged in, otherwise go to login
-                return snapshot.data != null
-                    ? const HomePage()
-                    : const LoginScreen();
-              }
+              return FutureBuilder<User?>(
+                  future: snapshot.data != null
+                      ? DatabaseHelper.instance.getUserById(snapshot.data!)
+                      : null,
+                  builder: (context, userSnapshot) {
+                    return userSnapshot.data != null
+                        ? const HomePage()
+                        : const LoginScreen();
+                  },
+                );
+            }
             },
           ),
           // Remove the debug banner

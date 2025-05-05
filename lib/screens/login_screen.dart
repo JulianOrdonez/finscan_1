@@ -36,20 +36,15 @@ class _LoginScreenState extends State<LoginScreen> {
         });
 
         if (user != null) {
-          if (_passwordController.text == user.password) {
-            // ignore: use_build_context_synchronously
-            Navigator.pushReplacement(
-              context,MaterialPageRoute(builder: (context) => const HomePage()),
-            );
-          } else {
-            _showErrorSnackBar('Contraseña incorrecta', context);
           // ignore: use_build_context_synchronously
-          _showErrorSnackBar('Contraseña incorrecta', context);
+          Navigator.pushReplacement(
+            context,MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+        } else {
+          // ignore: use_build_context_synchronously
+          _showErrorSnackBar('Correo o contraseña incorrectos', context);
         }
-      } else {
-        // ignore: use_build_context_synchronously
-        _showErrorSnackBar('Correo o contraseña incorrectos', context);
-      } 
+
       } catch(e){
         _showErrorSnackBar('Error al iniciar sesión', context);
       }finally {

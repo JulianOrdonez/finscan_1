@@ -6,27 +6,43 @@ class AuthService {
 
   Future<int> registerUser(String email, String password) async {
     try {
-      final id = await DatabaseHelper.instance.createUser(email, password);
-      return id;
+      final id = await _dbHelper.createUser(email, password);
+      final db = await _dbHelper.database;
+      final newId = await db.rawInsert("INSERT INTO users (email, password) VALUES (?, ?)",[email, password]);
+      return newId;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<User?> loginUser(String email, String password) async {
-    return null;
+  Future<User?> login(String email, String password) async {
+    final db = await _dbHelper.database;
+    try {
+      List<Map<String, dynamic>> result = await db.query(
+        'users', 
+        where: 'email = ? AND password = ?',
+        whereArgs: [email, password],
+      );
+
+      if (result.isNotEmpty) {
+        int userId = result.first['id'] as int;
+        await db.insert('current_user', {'id': userId});
+        return User(
+          id: userId,
+          email: result.first['email'] as String,
+        );
+        
+      } else {
+        return null;
+      }
+    } catch(e){
+      print(e);
+      return null;
+    }
   }
 
-  Future<User?> getCurrentUser() async {
-    final userId = await _dbHelper.getCurrentUser();
-    if (userId != null) {
-      final user = await _dbHelper.getUserById(userId);
-      return user;
-    }
-    return null; 
-  }
-  
-  Future<void> logoutUser() async {
+  Future<void> logout() async {
     await _dbHelper.clearCurrentUser();
   }
+
 }
