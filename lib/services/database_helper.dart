@@ -12,16 +12,17 @@ class DatabaseHelper {
   DatabaseHelper._init();
 
   Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await _initDB('finscan.db');
-    return _database!;
+    if (_database != null) {
+      return _database!;
+    }
+    _database = await _initDB();
+    return _database!; 
   }
 
-  Future<Database> _initDB(String filePath) async {
+  Future<Database> _initDB() async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, filePath);
-
-    final database = await openDatabase(path, version: 1, onCreate: _createDB);
+    final path = join(dbPath, 'finscan.db');
+    final database = await openDatabase(path, version: 1, onCreate: _createDB,);
     return database;
   }
 

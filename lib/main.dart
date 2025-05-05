@@ -11,7 +11,6 @@ import 'screens/login_screen.dart';
 import 'screens/expense_stats_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await DatabaseHelper.instance.database;
   runApp(
     // Wrap the app with ChangeNotifierProvider to provide ThemeProvider
     ChangeNotifierProvider(
