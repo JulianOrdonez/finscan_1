@@ -21,7 +21,9 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    return await openDatabase(path, version: 1, onCreate: _createDB);
+    final database = await openDatabase(path, version: 1, onCreate: _createDB);
+    await _createDB(database, 1);
+    return database;
   }
 
   Future _createDB(Database db, int version) async {
