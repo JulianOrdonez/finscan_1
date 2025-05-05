@@ -92,7 +92,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                     backgroundColor: _getCategoryColor(expense.category),
                     child: Icon(_getCategoryIcon(expense.category), color: Colors.white, size: 20),
                   ),
-                  title: Text(expense.title),
+                  title: Text(expense.description),
                   subtitle: Text(
                     '${expense.category} - ${DateFormat('dd/MM/yyyy').format(expense.date)}',
                   ),

@@ -34,7 +34,7 @@ class DatabaseHelper {
           await db.execute(
               'CREATE TABLE current_user (id INTEGER)');
           await db.execute(
-              'CREATE TABLE expenses (id INTEGER PRIMARY KEY AUTOINCREMENT, description TEXT, amount REAL, category TEXT, date TEXT)');
+              'CREATE TABLE expenses (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, amount REAL, category TEXT, date TEXT, receiptPath TEXT)');
         },
       );
     } catch (e) {
@@ -95,12 +95,13 @@ class DatabaseHelper {
       var result = await db.query('expenses');
 
       return result.map((map) {
-        return Expense(
-            id: map['id'] as int,
-            description: map['description'],
-            amount: map['amount'],
-            category: map['category'],
-            date: map['date']);
+          return Expense(
+            id: map['id'] as int?,
+            description: map['description'] as String,
+            amount: map['amount'] as double,
+            category: map['category'] as String,
+            date: DateTime.parse(map['date'] as String),
+          );
       }).toList();
 
     } catch (e) {
@@ -121,12 +122,13 @@ class DatabaseHelper {
     final db = await database;
     try {
       final sql =
-          'INSERT INTO expenses (description, amount, category, date) VALUES (?, ?, ?, ?)';
+          'INSERT INTO expenses (title, description, amount, category, date, receiptPath) VALUES (?, ?, ?, ?, ?, ?)';
       return await db.rawInsert(sql, [
+        expense.title,
         expense.description,
         expense.amount,
         expense.category,
-        expense.date
+        expense.date, expense.receiptPath
       ]);
     } catch (e) {
       print(e);
@@ -136,9 +138,9 @@ class DatabaseHelper {
 
   Future<void> updateExpense(Expense expense) async {
     final db = await database;
-    try {
-      final sql = 'UPDATE expenses SET description = ?, amount = ?, category = ?, date = ? WHERE id = ?';
-      await db.rawUpdate(sql, [expense.description, expense.amount, expense.category, expense.date, expense.id, ]);
+        final sql = 'UPDATE expenses SET title = ?, description = ?, amount = ?, category = ?, date = ?, receiptPath = ? WHERE id = ?';
+        await db.rawUpdate(sql, [expense.title, expense.description, expense.amount, expense.category, expense.date, expense.receiptPath, expense.id]);
+  
     } catch (e) {
       print(e);
       rethrow;

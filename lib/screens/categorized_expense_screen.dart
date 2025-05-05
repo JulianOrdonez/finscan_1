@@ -89,7 +89,7 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
                     // Map over expenses to create list tiles
                     ...entry.value.map((expense) {
                       return ListTile(
-                        title: Text(expense.title),
+                        title: Text(expense.description),
                         subtitle: Text(
                             DateFormat('dd/MM/yyyy').format(expense.date)),
                         trailing: Text(

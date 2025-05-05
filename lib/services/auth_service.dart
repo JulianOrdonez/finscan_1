@@ -14,7 +14,7 @@ class AuthService {
   }
 
   Future<User?> login(String email, String password) async {
-    var db = await _dbHelper.database;
+    var db = await DatabaseHelper.database;
     try {
       List<Map<String, dynamic>> result = await db.query(
         'users', 
