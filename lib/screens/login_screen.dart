@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/screens/register_screen.dart';
+import 'package:flutter_application_2/main.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -29,14 +30,15 @@ class _LoginScreenState extends State<LoginScreen> {
         final user = await AuthService()
             .login(_emailController.text, _passwordController.text);
         if (user != null) {
-          Navigator.pushReplacement(
+            // ignore: use_build_context_synchronously
+            Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const HomePage()));
+              MaterialPageRoute(builder: (context) => const HomePage()),
+            );
         } else {
-          _showErrorSnackBar('Correo o contraseña incorrectos',context);
+          _showErrorSnackBar('Correo o contraseña incorrectos', context);
         }
-        
-      } catch (e) {
+      } catch (_) {
         _showErrorSnackBar('Error al iniciar sesión');
       } finally {
         setState(() {
@@ -52,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
       MaterialPageRoute(builder: (context) => const RegisterScreen()),
     );
   }  
-
+   void _showErrorSnackBar(String message, BuildContext context) {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,6 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 30),
                       TextFormField(
+                        
                         controller: _emailController,
                         decoration: InputDecoration(
                           labelText: 'Correo electrónico',                        
@@ -81,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        keyboardType: TextInputType.emailAddress,
+                       keyboardType: TextInputType.emailAddress,
                         
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -130,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: _goToRegisterScreen,
                         child: Text(
                           '¿No tienes cuenta? Regístrate aquí',
-                          style: TextStyle(
+                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                           ),
                         ),

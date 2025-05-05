@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/main.dart';
-import 'package:flutter_application_2/services/auth_service.dart';
 import 'package:flutter_application_2/screens/login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -15,7 +14,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _obscureText = true;
+  bool _obscureText = true;  
   final AuthService _authService = AuthService();
 
   @override
@@ -29,7 +28,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _navigateToLogin() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      MaterialPageRoute(builder: (context) =>  LoginScreen()),
     );
   }
 
@@ -38,7 +37,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       SnackBar(
         content: Text(message),
       ),
-    );
+    );    
   }
   @override
   Widget build(BuildContext context) {
@@ -162,10 +161,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       if (_formKey.currentState!.validate()) {
                         _authService
                             .registerUser( 
-                                _emailController.text,
-                                _passwordController.text,
-                                _nameController.text)
-                            .then((user) {
+                                _nameController.text,
+                                _emailController.text, _passwordController.text)
+                            .then((user) {  
                           if (user != null) {
                             Navigator.pushReplacement(
                                 context,
@@ -191,9 +189,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     onPressed: _navigateToLogin,
                     child: Text(
                       '¿Ya tienes una cuenta? Inicia Sesión',
-                      style: TextStyle(
-                        fontFamily: 'Roboto',
-                        color: Theme.of(context).colorScheme.primary,
+                      style: TextStyle(color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   ),
