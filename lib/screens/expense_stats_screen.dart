@@ -50,7 +50,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
 
     for (var expense in expenses) {
       categoryData[expense.category] = (categoryData[expense.category] ?? 0) + expense.amount;
-    }
+    };
 
     return categoryData;
   }
@@ -64,7 +64,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
       // Crear fecha con solo año y mes
       final monthDate = DateTime(expense.date.year, expense.date.month);
       monthlyData[monthDate] = (monthlyData[monthDate] ?? 0) + expense.amount;
-    }
+    };
 
     // Ordenar por fecha
     final sortedEntries = monthlyData.entries.toList()
@@ -95,7 +95,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
           color: Colors.white,
         ),
       );
-    }).toList();
+    }).toList();;
   }
 
   // Método para obtener spots para el gráfico de línea
@@ -105,7 +105,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
 
     for (int i = 0; i < monthlyData.length; i++) {
       spots.add(FlSpot(i.toDouble(), monthlyData[months[i]]!));
-    }
+    };
 
     return spots;
   }
@@ -187,7 +187,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                             value: _selectedPeriod,
                             items: _periods.map((period) {
                               return DropdownMenuItem(value: period, child: Text(period));
-                            }).toList(),
+                            }).toList(),;
                             onChanged: (value) {
                               setState(() { _selectedPeriod = value!; });
                             },
@@ -248,7 +248,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                   sections: _buildPieSections(categoryData),
                                   centerSpaceRadius: 40,
                                   sectionsSpace: 2)),
-                            ),
+                            ),;
                             const SizedBox(height: 16), // Leyenda
                             Column(
                               children: categoryData.entries.map((entry) {
@@ -268,7 +268,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                     ],
                                   ),
                                 );
-                              }).toList(),
+                              }).toList(),;
                             ),
                           ],
                         ),
@@ -340,14 +340,15 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                       ),
                                     ),
                                   ],
-                                ),
+                                ),;
+                                
                               )),
                             ),
                           ],),
                       ),
                     ),
                   ],
-              ),
+                ),;
               ),
             );
           },
