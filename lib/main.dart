@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_application_2/screens/expense_list_screen.dart';
 import 'package:flutter_application_2/screens/categorized_expense_screen.dart';
 import 'package:flutter_application_2/screens/settings_screen.dart';
-import 'package:flutter_application_2/screens/login_screen.dart';
+import 'package:flutter_application_2/screens/login_screen.dart'; 
 import 'package:flutter_application_2/screens/expense_stats_screen.dart';
 import 'package:flutter_application_2/theme_provider.dart';
 import 'package:flutter_application_2/services/database_helper.dart';
@@ -13,7 +13,7 @@ import 'package:animations/animations.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp( // Wrap the app with ChangeNotifierProvider to provide ThemeProvider
-    ChangeNotifierProvider(
+    ChangeNotifierProvider<ThemeProvider>(
       create: (_) => ThemeProvider(),
       child: const MyApp(),
     ),
@@ -30,12 +30,11 @@ class MyApp extends StatelessWidget {
         title: 'FinScan Gastos',
         theme: themeProvider.themeData, // Apply the theme from the ThemeProvider
         home: FutureBuilder<int?>( // Determine the initial screen based on user login status
-            future: DatabaseHelper.instance.getCurrentUser(),
-            builder: (context, snapshot) {
-              return _buildInitialScreen(snapshot);
-            }),
-            debugShowCheckedModeBanner: false, // Remove the debug banner
-      );
+          future: DatabaseHelper.instance.getCurrentUser(),
+          builder: (context, snapshot) => _buildInitialScreen(snapshot),
+        ),
+        debugShowCheckedModeBanner: false, // Remove the debug banner
+      ); 
     });
   }
 
@@ -86,37 +85,39 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(builder: (context, themeProvider, child) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('FinScan - Gastos'),),
-        body: PageTransitionSwitcher(
-          duration: const Duration(milliseconds: 300),
-          transitionBuilder: (
-            Widget child,
-            Animation<double> animation,
-            Animation<double> secondaryAnimation,
-          ) {
-            return FadeTransition(
-              opacity: animation,
-              child: child,
-            );
-          },
-          child: _screens[_selectedIndex],
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Inicio',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.bar_chart),
-              label: 'Estadísticas',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.category),
-              label: 'Categorías',
-            ),
-            BottomNavigationBarItem(
+      return Scaffold( 
+          appBar: AppBar(
+            title: const Text('FinScan - Gastos'),
+          ),
+          body: PageTransitionSwitcher(
+            duration: const Duration(milliseconds: 300),
+            transitionBuilder: (
+              Widget child,
+              Animation<double> animation,
+              Animation<double> secondaryAnimation,
+            ) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+            child: _screens[_selectedIndex],
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Inicio',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.bar_chart),
+                label: 'Estadísticas',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.category),
+                label: 'Categorías',
+              ),
+              BottomNavigationBarItem(
               icon: Icon(Icons.settings),
               label: 'Ajustes',
             ),
