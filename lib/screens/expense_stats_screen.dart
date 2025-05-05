@@ -9,6 +9,7 @@ class ExpenseStatsScreen extends StatefulWidget {
 
   @override
   State<ExpenseStatsScreen> createState() => _ExpenseStatsScreenState();
+  
 }
 
 class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
@@ -190,11 +191,10 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                               return DropdownMenuItem(value: period, child: Text(period),);
                             }).toList(),
                             onChanged: (value) {
-                              setState(() { 
-                                _selectedPeriod = value!; });
-                            },
-                          );
+                              setState(() {_selectedPeriod = value!;});
+                            },);
                       ],
+                      
                     ),
                   ),
                 ),
@@ -351,7 +351,8 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
             ),);
 
 
-          },
+          },),
+          
         )
     ));
   }
