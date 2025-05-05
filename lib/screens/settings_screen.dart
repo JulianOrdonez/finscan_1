@@ -37,13 +37,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    return Scaffold(
-      body: Column(
+    return  Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Text(
+             child: Text(
+            "Ajustes",
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
               "Ajustes",
               style: TextStyle(
                 fontSize: 24,
@@ -56,7 +60,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             trailing: Switch(
               value: themeProvider.isDarkMode,
               onChanged: (value) {
-                themeProvider.toggleTheme();
+                 setState(() {
+                  themeProvider.toggleTheme();
+                 });
+               
               },
             ),
           ),
@@ -84,10 +91,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: 'Cerrar Sesión',
             leading: Icon(Icons.logout),
             onTap: () {
-              AuthService().logout().then((value) => Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginScreen()),
+               AuthService().logout().then((value) => Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  (route) => false,
                   ));
             },
           ),
@@ -99,7 +106,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
         ],
-      ),
     );
   }
 
