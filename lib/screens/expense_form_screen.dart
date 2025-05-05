@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/expense.dart';
 import '../services/database_helper.dart';
+import '../services/auth_service.dart';
 import '../services/scan_service.dart';
 
 class ExpenseFormScreen extends StatefulWidget {
@@ -103,19 +104,26 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
         _isLoading = true;
       });
 
+      final currentUser = await AuthService().getCurrentUser();
+      
       try {
         final expense = Expense(
           id: widget.expense?.id,
           title: _titleController.text,
-          amount: double.parse(_amountController.text),
+          amount: double.parse(_amountController.text),          
           category: _selectedCategory,
           date: _selectedDate,
           receiptPath: _receiptPath,
         );
 
         if (widget.expense == null) {
+          if(currentUser!=null){
+            expense.userId = currentUser.id!;
           await DatabaseHelper.instance.createExpense(expense);
+          }
         } else {
+          if(currentUser!=null)
+            expense.userId = currentUser.id!;
           await DatabaseHelper.instance.updateExpense(expense);
         }
 

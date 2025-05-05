@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_application_2/screens/login_screen.dart';
+import 'package:flutter_application_2/services/auth_service.dart';
 import 'package:flutter_application_2/theme_provider.dart';
+
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -15,6 +19,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final List<String> _currencies = ['USD', 'EUR', 'MXN', 'COP'];
 
   @override
+  void initState() {
+    super.initState();
+    _loadSelectedCurrency();
+    
+  }
+
+  Future<void> _loadSelectedCurrency() async {
+    final prefs = await SharedPreferences.getInstance();
+    _selectedCurrency = prefs.getString('currency') ?? 'USD';
+  }
+
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
@@ -77,6 +92,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       onChanged: (String? newValue) {
                         setState(() {
                           _selectedCurrency = newValue!;
+                          final prefs = SharedPreferences.getInstance();
+                          prefs.then((value) => value.setString('currency', newValue));
                         });
                       },
                     ),
@@ -94,10 +111,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 leading: const Icon(Icons.logout),
                 title: const Text('Cerrar Sesión'),
                 onTap: () {
-                  // Implement logout logic here
-                  // ignore: avoid_print
-                  print('Cerrar Sesión');
-                },
+                    AuthService().logoutUser().then((value) => Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    ));
+                   
+                 },
+                
               ),
             ),
             const SizedBox(height: 20),

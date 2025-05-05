@@ -7,18 +7,21 @@ class CategorizedExpenseScreen extends StatefulWidget {
   const CategorizedExpenseScreen({super.key});
 
   @override
-  State<CategorizedExpenseScreen> createState() => _CategorizedExpenseScreenState();
+  State<CategorizedExpenseScreen> createState() =>
+      _CategorizedExpenseScreenState();
 }
 
 class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
+  // Future to hold the list of expenses
   late Future<List<Expense>> _expensesFuture;
 
   @override
   void initState() {
     super.initState();
-    _refreshExpenses();
+    _refreshExpenses(); // Load expenses when the screen is initialized
   }
 
+  // Refresh the list of expenses
   void _refreshExpenses() {
     setState(() {
       _expensesFuture = DatabaseHelper.instance.getExpenses();
@@ -33,52 +36,57 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
         future: _expensesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+                child: CircularProgressIndicator()); // Show loading indicator
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(
+                child: Text(
+                    'Error: ${snapshot.error}')); // Show error message if something went wrong
           }
 
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No hay gastos registrados'));
+            return const Center(
+                child: Text(
+                    'No hay gastos registrados')); // Show message if no expenses are registered
           }
 
           final expenses = snapshot.data!;
-          Map<String, List<Expense>> categorizedExpenses = {};
+          Map<String, List<Expense>> categorizedExpenses =
+              {}; // Map to hold categorized expenses
 
+          // Categorize expenses
           for (var expense in expenses) {
-            categorizedExpenses.putIfAbsent(expense.category, () => []).add(
-                expense);
+            categorizedExpenses
+                .putIfAbsent(expense.category, () => [])
+                .add(expense);
           }
 
           return ListView(
             children: categorizedExpenses.entries.map((entry) {
               final totalAmount = entry.value.fold(
-                  0.0, (sum, expense) => sum + expense.amount);
+                  0.0, (sum, expense) => sum + expense.amount); // Calculate total for the category
 
               return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 child: ExpansionTile(
                   leading: CircleAvatar(
                     backgroundColor: _getCategoryColor(entry.key),
-                    child: Icon(_getCategoryIcon(entry.key), color: Colors
-                        .white, size: 20),
+                    child: Icon(_getCategoryIcon(entry.key),
+                        color: Colors.white, size: 20),
                   ),
-                  title: Text(
-                      entry.key,
+                  title: Text(entry.key,
                       style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold)
-                  ),
+                          fontSize: 18, fontWeight: FontWeight.bold)),
                   subtitle: Text(
-                    'Total: €${totalAmount.toStringAsFixed(2)} • ${entry.value
-                        .length} gastos',
-                    style: TextStyle(color: Theme
-                        .of(context)
-                        .colorScheme
-                        .secondary),
+                    'Total: €${totalAmount.toStringAsFixed(2)} • ${entry.value.length} gastos',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
                   children: [
+                    // Map over expenses to create list tiles
                     ...entry.value.map((expense) {
                       return ListTile(
                         title: Text(expense.title),
@@ -90,7 +98,7 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
                         ),
                       );
                     }).toList(),
-                    // Mostrar resumen de la categoría
+                    // Show category summary
                     if (entry.value.length > 1)
                       Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -98,18 +106,15 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Promedio: €${(totalAmount / entry.value.length)
-                                  .toStringAsFixed(2)}',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              'Promedio: €${(totalAmount / entry.value.length).toStringAsFixed(2)}',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             Text(
                               'Total: €${totalAmount.toStringAsFixed(2)}',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Theme
-                                    .of(context)
-                                    .colorScheme
-                                    .primary,
+                                color:
+                                    Theme.of(context).colorScheme.primary,
                               ),
                             ),
                           ],
@@ -124,39 +129,36 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
       ),
     );
   }
+
+  // Get color for the category
   Color _getCategoryColor(String category) {
-    // Devuelve diferentes colores según la categoría
-    switch (category.toLowerCase()) {
-      case 'comida':
-        return Colors.green;
-      case 'transporte':
-        return Colors.blue;
-      case 'entretenimiento':
-        return Colors.purple;
-      case 'salud':
-        return Colors.red;
-      case 'compras':
-        return Colors.orange;
-      default:
-        return Colors.grey; // Color por defecto
-    }
+    final Map<String, Color> categoryColors = {
+      'Alimentación': Colors.orange,
+      'Transporte': Colors.blue,
+      'Entretenimiento': Colors.purple,
+      'Salud': Colors.red,
+      'Educación': Colors.green,
+      'Hogar': Colors.brown,
+      'Ropa': Colors.pink,
+      'Otros': Colors.grey,
+    };
+
+    return categoryColors[category] ?? Colors.grey;
   }
 
+  // Get icon for the category
   IconData _getCategoryIcon(String category) {
-    // Devuelve diferentes iconos según la categoría
-    switch (category.toLowerCase()) {
-      case 'comida':
-        return Icons.restaurant;
-      case 'transporte':
-        return Icons.directions_car;
-      case 'entretenimiento':
-        return Icons.movie;
-      case 'salud':
-        return Icons.health_and_safety;
-      case 'compras':
-        return Icons.shopping_cart;
-      default:
-        return Icons.category; // Icono por defecto
-    }
+    final Map<String, IconData> categoryIcons = {
+      'Alimentación': Icons.restaurant,
+      'Transporte': Icons.directions_car,
+      'Entretenimiento': Icons.movie,
+      'Salud': Icons.favorite,
+      'Educación': Icons.school,
+      'Hogar': Icons.home,
+      'Ropa': Icons.shopping_bag,
+      'Otros': Icons.category,
+    };
+
+    return categoryIcons[category] ?? Icons.category;
   }
 }

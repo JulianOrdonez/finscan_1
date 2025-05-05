@@ -5,6 +5,7 @@ class Expense {
   final String category;
   final DateTime date;
   final String? receiptPath;
+  final int userId;
 
   Expense({
     this.id,
@@ -12,6 +13,7 @@ class Expense {
     required this.amount,
     required this.category,
     required this.date,
+    required this.userId,
     this.receiptPath,
   });
 
@@ -22,6 +24,7 @@ class Expense {
       'amount': amount,
       'category': category,
       'date': date.toIso8601String(),
+      'userId': userId,
       'receiptPath': receiptPath,
     };
   }
@@ -34,6 +37,7 @@ class Expense {
       category: map['category'],
       date: DateTime.parse(map['date']),
       receiptPath: map['receiptPath'],
+      userId: map['userId']
     );
   }
 }
