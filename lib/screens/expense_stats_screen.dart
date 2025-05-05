@@ -215,12 +215,6 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                               ],
                             ),
                             const SizedBox(height: 16),
-                          children: [
-                            Text('Resumen de Gastos',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor)),
-                            const SizedBox(height: 16),
-                            Text('Total: €${totalExpenses.toStringAsFixed(2)}',
-                                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary)),
                             const SizedBox(height: 8),
                             Text('Número de transacciones: ${filteredExpenses.length}',
                                 style: TextStyle(fontSize: 16, color: textColor)),
@@ -247,8 +241,6 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                         color: textColor)),
                               ],
                             ),
-                            Text('Gastos por Categoría',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor)),
                             const SizedBox(height: 16),
                             SizedBox(
                               height: 200,
@@ -302,8 +294,6 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                         color: textColor)),
                               ],
                             ),
-                            Text('Evolución de Gastos',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor)),
                             const SizedBox(height: 16),
                             SizedBox(
                               height: 200,
@@ -360,7 +350,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                       ),
                     ),
                   ],
-                ),
+              ),
               ),
             );
           },

@@ -139,9 +139,8 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
         });
       }
     }
-
-    // ignore: use_build_context_synchronously
-     Navigator.pop(context);
+      // ignore: use_build_context_synchronously
+      Navigator.pop(context);
   }
   
 
@@ -155,27 +154,185 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Botón de escaneo
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: ElevatedButton.icon(
-                          onPressed: _scanReceipt,
-                          icon: const Icon(Icons.document_scanner),
-                          label: const Text('Escanear Recibo'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                          ),
-                        ),
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Botón de escaneo
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: ElevatedButton.icon(
+                  onPressed: _scanReceipt,
+                  icon: const Icon(Icons.document_scanner),
+                  label: const Text('Escanear Recibo'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+
+              // Título
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: TextFormField(
+                  controller: _titleController,
+                  decoration: const InputDecoration(                              
+                    labelText: 'Título',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.text_fields)
+
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingresa un título';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+
+              // Cantidad
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: TextFormField(
+                  controller: _amountController,
+                  decoration: const InputDecoration(                            
+                    labelText: 'Cantidad (€)',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.money)
+                  ),
+                  keyboardType: TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingresa una cantidad';
+                    }
+                    if (double.tryParse(value) == null) {
+                      return 'Ingresa un número válido';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+
+              // Categoría
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(                            
+                    labelText: 'Categoría',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.category)
+                  ),
+                  value: _selectedCategory,
+                  items: _categories.map((category) {
+                    return DropdownMenuItem(
+                      value: category,
+                      child: Text(category),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedCategory = value!;
+                    });
+                  },
+                ),
+              ),
+
+              // Fecha
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: _buildDatePicker(),
+              ),
+
+              // Mostrar imagen si hay una
+              _buildReceiptPreview(),
+
+              // Botón guardar
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: _buildSaveButton(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDatePicker() {
+    return InkWell(
+              onTap: () => _selectDate(context),
+              child: InputDecorator(
+                decoration: const InputDecoration(
+                  labelText: 'Fecha',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.calendar_today)
+                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    DateFormat('dd/MM/yyyy').format(_selectedDate),
+                  ),
+                  const Icon(Icons.calendar_today),
+                ],
+                ),
+              ),
+            );
+  }
+  Widget _buildReceiptPreview() {
+    if (_receiptPath != null) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Card(
+          color: Colors.grey[200],
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              children: [
+                const Icon(Icons.receipt_long, size: 40),
+                const SizedBox(height: 8),
+                Text(
+                  'Recibo capturado',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
+  Widget _buildSaveButton() {
+    return ElevatedButton(
+      onPressed: _saveExpense,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(vertical: 15),
+      ),
+      child: Text(
+        widget.expense == null ? 'GUARDAR' : 'ACTUALIZAR',
+        style: const TextStyle(fontSize: 16),
+      ),
+    );
+  }
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _amountController.dispose();
+    _scanService.dispose();
+    super.dispose();
+  }
+}
                       ),
 
                       // Título

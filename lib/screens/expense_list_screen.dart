@@ -130,14 +130,10 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                         onTap: () async {
                           await Navigator.push(
                             context,
-                             PageRouteBuilder(
-                                pageBuilder: (context, animation, secondaryAnimation) => ExpenseFormScreen(expense: expense),
-                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                  const begin = 0.0;
-                                  const end = 1.0;
-                                  return FadeTransition(opacity: Tween(begin: begin, end: end).animate(animation), child: child);
-                                },),
+                            MaterialPageRoute(builder: (context) => ExpenseFormScreen(expense: expense)),
                           );
+                          
+
                           _refreshExpenses();
                         },
                       ),
@@ -152,14 +148,9 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         onPressed: () async {
           await Navigator.push(
             context,
-             PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) => const ExpenseFormScreen(),
-                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                  const begin = 0.0;
-                  const end = 1.0;
-                  return FadeTransition(opacity: Tween(begin: begin, end: end).animate(animation), child: child);
-                },),
+            MaterialPageRoute(builder: (context) => const ExpenseFormScreen()),
           );
+
           _refreshExpenses();
         },
         child: const Icon(Icons.add),

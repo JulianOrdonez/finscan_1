@@ -91,14 +91,14 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
                       return ListTile(
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         title: Text(expense.description),
-                        subtitle: Text(
-                            DateFormat('dd/MM/yyyy').format(expense.date)),
+                        subtitle: Text(DateFormat('dd/MM/yyyy').format(expense.date)),
                         trailing: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                           child: Text(
                           '€${expense.amount.toStringAsFixed(2)}',
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
+                      ),
                       );
                     }).toList(),
                     // Show category summary

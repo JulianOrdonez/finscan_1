@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_application_2/services/database_helper.dart';
+import 'package:animations/animations.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
 import 'theme_provider.dart';
 import 'models/user.dart';
@@ -35,31 +36,25 @@ class MyApp extends StatelessWidget {
           // Determine the initial screen based on user login status
           home: FutureBuilder<int?>(
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
                 return _buildInitialScreen(snapshot);
               },
               future: DatabaseHelper.instance.getCurrentUser()),
           // Remove the debug banner
           debugShowCheckedModeBanner: false,
         );
-      },
+      }
     );
   }
   Widget _buildInitialScreen(AsyncSnapshot<int?> snapshot) {
-            // Check if there is a current user logged in
-            future: DatabaseHelper.instance.getCurrentUser(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                // Show loading indicator while checking
-                return const CircularProgressIndicator();
-              } else {
-              return FutureBuilder<User?>(
+     if (snapshot.connectionState == ConnectionState.waiting) {
+      // Show loading indicator while checking
+      return const Center(child: CircularProgressIndicator());
+    } else {
+      return FutureBuilder<User?>(
                   future: snapshot.data != null
                       ? DatabaseHelper.instance.getUserById(snapshot.data!)
                       : null,
+
                   builder: (context, userSnapshot) {
                     return userSnapshot.data != null
                         ? const HomePage()
@@ -67,10 +62,7 @@ class MyApp extends StatelessWidget {
                   },
                 );
             }
-          },
-        );
-      },
-    );
+
   }
 }
 
@@ -102,9 +94,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Display the selected screen
-
+      
       body: PageTransitionSwitcher(
+        
         duration: const Duration(milliseconds: 300),
         transitionBuilder: (
           Widget child,
@@ -118,10 +110,9 @@ class _HomePageState extends State<HomePage> {
         },
         child: _screens[_selectedIndex],
       ),
-
-      body: Column(
+      appBar: AppBar(
+          title: Column(
         children: [
-          // Welcome text
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
@@ -133,7 +124,9 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Expanded(child: _screens[_selectedIndex]),
-        ],
+          
+        ]
+       ) ,
       ),
       // Bottom navigation bar
       bottomNavigationBar: BottomNavigationBar(
@@ -163,6 +156,7 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         showUnselectedLabels: true,
       ),
+
     );
   }
 }
