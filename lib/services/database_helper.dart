@@ -22,7 +22,6 @@ class DatabaseHelper {
     final path = join(dbPath, filePath);
 
     final database = await openDatabase(path, version: 1, onCreate: _createDB);
-    await _createDB(database, 1);
     return database;
   }
 
