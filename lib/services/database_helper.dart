@@ -43,7 +43,7 @@ class DatabaseHelper {
   }
 
   Future<int> createUser(String email, String password) async {
-    final db = await database;
+    var db = await DatabaseHelper.database;
     try {
       final sql = 'INSERT INTO users (email, password) VALUES (?, ?)';
       return await db.rawInsert(sql, [email, password]);
@@ -54,7 +54,7 @@ class DatabaseHelper {
   }}
 
   Future<int?> getCurrentUser() async {
-    final db = await database;
+    var db = await DatabaseHelper.database;
     final List<Map<String, dynamic>> maps = await db.query('current_user');
     if (maps.isNotEmpty) {
       return maps.first['id'] as int;
@@ -63,7 +63,7 @@ class DatabaseHelper {
   }
 
   Future<User?> getUserById(int id) async {
-    final db = await database;
+    var db = await DatabaseHelper.database;
     try {
       final List<Map<String, dynamic>> maps = await db.query(
         'users',
@@ -85,12 +85,12 @@ class DatabaseHelper {
   }
 
   Future<void> clearCurrentUser() async {
-    final db = await database;
+    var db = await DatabaseHelper.database;
     await db.execute('DELETE FROM current_user');
   }
 
   Future<List<Expense>> getExpenses() async {
-    final db = await database;
+    var db = await DatabaseHelper.database;
     try {
       var result = await db.query('expenses');
 
@@ -111,7 +111,7 @@ class DatabaseHelper {
   }
 
   Future<void> deleteExpense(int id) async {
-    final db = await database;
+    var db = await DatabaseHelper.database;
     await db.delete(
       'expenses',
       where: 'id = ?',
@@ -120,7 +120,7 @@ class DatabaseHelper {
   }
 
   Future<int> createExpense(Expense expense) async {
-    final db = await database;
+    var db = await DatabaseHelper.database;
     try {
       final sql ='INSERT INTO expenses (title, description, amount, category, date, receiptPath) VALUES (?, ?, ?, ?, ?, ?)';
       return await db.rawInsert(sql, [
@@ -138,7 +138,7 @@ class DatabaseHelper {
   }
 
   Future<void> updateExpense(Expense expense) async {
-    final db = await database;
+    var db = await DatabaseHelper.database;
     try {
       final sql = 'UPDATE expenses SET title = ?, description = ?, amount = ?, category = ?, date = ?, receiptPath = ? WHERE id = ?';
       await db.rawUpdate(sql, [expense.title, expense.description, expense.amount, expense.category, expense.date.toIso8601String(), expense.receiptPath, expense.id]);
