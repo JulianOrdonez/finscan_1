@@ -63,14 +63,6 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('FinScan - Gastos'),
-        actions: [
-          IconButton(
-            icon: Icon(themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode),
-            onPressed: () {
-              themeProvider.toggleTheme();
-            },
-          ),
-        ],
       ),
       body: FutureBuilder<List<Expense>>(
         future: _expensesFuture,

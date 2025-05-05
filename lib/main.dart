@@ -60,6 +60,11 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+      ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -79,9 +84,14 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.settings),
             label: 'Ajustes',
           ),
+          
         ],
+        selectedItemColor: Theme.of(context).primaryColor,
+        unselectedItemColor: Colors.grey[400],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+        elevation: 0,
+        showUnselectedLabels: true,
       ),
     );
   }
