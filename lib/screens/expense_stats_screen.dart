@@ -182,14 +182,16 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                           ),                            
                             value: _selectedPeriod,
                             items: _periods.map((period) {
-                              return DropdownMenuItem(value: period, child: Text(period),);
-                            }).toList(), onChanged: (value) {
-                              setState(() {
+                              return DropdownMenuItem(value: period, child: Text(period));
+                            }).toList(), 
+                            onChanged: (value) {
+                              setState(() {                           
                                 _selectedPeriod = value!;
                               });
-                            },
+                            }
                         );
                       ],
+                      
                     ),
                   ),),
                 const SizedBox(height: 16), // Resumen de gastos
@@ -247,7 +249,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                             const SizedBox(height: 16), // Leyenda
                               Column(
                                 children: categoryData.entries.map((entry) {
-                                  final color = _getCategoryColor(entry.key);
+                                  final color = _getCategoryColor(entry.key);                                  
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(vertical: 4),
                                     child: Row(
@@ -263,8 +265,8 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                     ],
                                   ),
                                 );
-                                }).toList(),),
-                          ],,
+                                }).toList(),
+                          ],
                         )),
                     ),
                   const SizedBox(height: 16),
@@ -291,7 +293,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                             SizedBox(
                               height: 200,
                               child: LineChart(LineChartData(
-                                  gridData: FlGridData(show: true),
+                                  gridData: FlGridData(show: true),                                  
                                   titlesData: FlTitlesData(                                  
                                     bottomTitles: AxisTitles(sideTitles: SideTitles(
                                       showTitles: true,
@@ -336,10 +338,10 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                   ],
                                 )),
                             ),
-                          ],),
+                          ],
+                        )),
                       )),
-              ],
-            ),);
+              ],),);
           },),
           
         )
