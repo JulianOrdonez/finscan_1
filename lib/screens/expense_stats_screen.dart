@@ -9,7 +9,6 @@ class ExpenseStatsScreen extends StatefulWidget {
 
   @override
   State<ExpenseStatsScreen> createState() => _ExpenseStatsScreenState();
-  
 }
 
 class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
@@ -64,7 +63,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
     for (var expense in expenses) {
       // Crear fecha con solo año y mes
       final monthDate = DateTime(expense.date.year, expense.date.month);
-      monthlyData[monthDate] = (monthlyData[monthDate] ?? 0) + expense.amount;
+      monthlyData[monthDate] = (monthlyData[monthDate] ?? 0) + expense.amount; //Se cambio esto
     };
 
     // Ordenar por fecha
@@ -160,16 +159,12 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
             final monthlyData = _getMonthlyData(filteredExpenses);
             final totalExpenses = _calculateTotal(filteredExpenses);
             return  SingleChildScrollView(child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [// Selector de período
+              crossAxisAlignment: CrossAxisAlignment.start, children: [// Selector de período
                  Card(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
-                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                            children: [
+                       crossAxisAlignment: CrossAxisAlignment.start, children: [Row(children: [
                               Icon(Icons.calendar_today, color: textColor),
                               SizedBox(width: 8),
                               Text('Período',
@@ -178,26 +173,25 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                       fontWeight: FontWeight.bold,
                                       color: textColor)),
                             ],
-                          ),
+                          ), 
                         const SizedBox(height: 8),
                         DropdownButtonFormField<String>(
                            decoration: const InputDecoration(
                             border: OutlineInputBorder(),                            
                             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          ),
-                            
+                          ),                            
                             value: _selectedPeriod,
-                             items: _periods.map((period) {
+                            items: _periods.map((period) {
                               return DropdownMenuItem(value: period, child: Text(period),);
-                            }).toList(),
-                            onChanged: (value) {
-                              setState(() {_selectedPeriod = value!;});
-                            },);
+                            }).toList(), onChanged: (value) {
+                              setState(() {
+                                _selectedPeriod = value!;
+                              });
+                            },
+                        );
                       ],
-                      
                     ),
-                  ),
-                ),
+                  ),),
                 const SizedBox(height: 16), // Resumen de gastos
                 Card(
                       child: Padding(
@@ -224,8 +218,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                         ),
                       ),
                 ),
-                const SizedBox(height: 16), // Gráfico de categorías (pastel)
-                  if (categoryData.isNotEmpty)
+                const SizedBox(height: 16), if (categoryData.isNotEmpty) // Gráfico de categorías (pastel)
                     Card(
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -270,9 +263,8 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                     ],
                                   ),
                                 );
-                                }).toList(),
-                            ),
-                          ],
+                                }).toList(),),
+                          ],,
                         )),
                     ),
                   const SizedBox(height: 16),
@@ -343,16 +335,13 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                     ),
                                   ],
                                 )),
-                            )
-                          ],
-                        ),
+                            ),
+                          ],),
                       )),
               ],
             ),);
-
-
           },),
           
         )
-    ));
-  }
+      ),
+    );}}
