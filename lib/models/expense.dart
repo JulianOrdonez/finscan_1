@@ -28,6 +28,25 @@ class Expense {
       'receiptPath': receiptPath
     };
   }
+  
+    Expense copyWith({
+    int? id,
+    String? title,
+    String? description,
+    double? amount,
+    String? category,
+    DateTime? date,
+    String? receiptPath,
+  }) {
+    return Expense(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        description: description ?? this.description,
+        amount: amount ?? this.amount,
+        category: category ?? this.category,
+        date: date ?? this.date,
+        receiptPath: receiptPath ?? this.receiptPath);
+  }
 
   factory Expense.fromMap(Map<String, dynamic> map) {
     return Expense(

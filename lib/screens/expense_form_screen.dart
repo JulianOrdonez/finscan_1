@@ -107,13 +107,11 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       try {
 
           final expense = Expense(
-              id: widget.expense?.id,
-              title: _titleController.text,              
-              description: _titleController.text,              
-              amount: double.parse(_amountController.text),              
-              category: _selectedCategory,              
-              description: _titleController.text,
-              amount: double.parse(_amountController.text),              
+              id: widget.expense?.id,              
+              title: _titleController.text,
+              description: "",
+              amount: double.parse(_amountController.text),
+              category: _selectedCategory,
               date: _selectedDate,
               receiptPath: _receiptPath,
              );
