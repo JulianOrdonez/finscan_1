@@ -5,10 +5,10 @@ import 'package:flutter_application_2/services/database_helper.dart';
 import 'package:flutter_application_2/models/user.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter_application_2/screens/expense_list_screen.dart';
-import 'package:flutter_application_2/screens/categorized_expense_screen.dart';
-import 'package:flutter_application_2/screens/settings_screen.dart';
+import 'package:flutter_application_2/screens/categorized_expense_screen.dart';;
 import 'package:flutter_application_2/screens/login_screen.dart';
 import 'package:flutter_application_2/screens/expense_stats_screen.dart';
+import 'package:flutter_application_2/screens/settings_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -64,7 +64,7 @@ class HomePage extends StatefulWidget {
 }
 class _HomePageState extends State<HomePage> {
   final List<Widget> _screens = [
-    const ExpenseListScreen(),
+    ExpenseListScreen(),
     const ExpenseStatsScreen(),
     const CategorizedExpenseScreen(),
     const SettingsScreen(),

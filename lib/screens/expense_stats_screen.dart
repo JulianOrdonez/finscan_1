@@ -132,10 +132,8 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : Colors.black;
 
-    return Scaffold(appBar: AppBar(title: const Text('Estadísticas y Gráficos')),
-      body: Padding(padding: const EdgeInsets.all(16.0),
-        child: FutureBuilder<List<Expense>>(future: _expensesFuture,
-          builder: (context, snapshot) {
+    return Padding(padding: const EdgeInsets.all(16.0),
+        child: FutureBuilder<List<Expense>>(future: _expensesFuture, builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting)
             {return const Center(child: CircularProgressIndicator());}
 
@@ -307,7 +305,6 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen>
             );
           },
         ),
-      ),
     );
   }
 }

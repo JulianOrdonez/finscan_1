@@ -7,7 +7,6 @@ import '../theme_provider.dart';
 import 'expense_form_screen.dart';
 
 class ExpenseListScreen extends StatefulWidget {
-  const ExpenseListScreen({super.key});
 
   @override
   State<ExpenseListScreen> createState() => _ExpenseListScreenState();
@@ -60,10 +59,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('FinScan - Gastos'),
-      ),
+    return  Column(
       body: FutureBuilder<List<Expense>>(
         future: _expensesFuture,
         builder: (context, snapshot) {
@@ -135,18 +131,19 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                 );
               },
             ),
-          );
-        },
-      ),        floatingActionButton: FloatingActionButton(
+          );        },
+
+      ),
+         floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await Navigator.push(context,
+           await Navigator.push(context,
               MaterialPageRoute(builder: (context) => const ExpenseFormScreen()));
-          _refreshExpenses();
+           _refreshExpenses();
 
         },
         child: const Icon(Icons.add),
       ),
-    );
+    ) ;
   }
 
   Color _getCategoryColor(String category) {
@@ -179,3 +176,4 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     return categoryIcons[category] ?? Icons.category;
   }
 }
+
