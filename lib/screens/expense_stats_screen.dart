@@ -159,16 +159,15 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
             final monthlyData = _getMonthlyData(filteredExpenses);
             final totalExpenses = _calculateTotal(filteredExpenses);
             return  SingleChildScrollView(child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [// Selector de período
-                   Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      
-                      child: Column(
-                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [// Selector de período
+                 Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                       crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
                             children: [
                               Icon(Icons.calendar_today, color: textColor),
                               SizedBox(width: 8),
@@ -179,13 +178,12 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                       color: textColor)),
                             ],
                           ),
-                          const SizedBox(height: 8),
-                          
-                          DropdownButtonFormField<String>(
-                             decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            ),
+                        const SizedBox(height: 8),
+                        DropdownButtonFormField<String>(
+                           decoration: const InputDecoration(
+                            border: OutlineInputBorder(),                            
+                            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          ),
                             
                             value: _selectedPeriod,
                              items: _periods.map((period) {
@@ -195,14 +193,13 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                               setState(() { 
                                 _selectedPeriod = value!; });
                             },
-                          ),
-                        ],
-                      ),
+                          );
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 16), // Resumen de gastos
-                  
-                  Card(
+                ),
+                const SizedBox(height: 16), // Resumen de gastos
+                Card(
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
@@ -226,9 +223,8 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                           ],
                         ),
                       ),
-                    ), 
-                  const SizedBox(height: 16), // Gráfico de categorías (pastel)
-                  
+                ),
+                const SizedBox(height: 16), // Gráfico de categorías (pastel)
                   if (categoryData.isNotEmpty)
                     Card(
                       child: Padding(
@@ -256,12 +252,12 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                   sectionsSpace: 2)),
                             ),
                             const SizedBox(height: 16), // Leyenda
-                            Column(
-                              children: categoryData.entries.map((entry) {
-                                final color = _getCategoryColor(entry.key);
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 4),
-                                  child: Row(
+                              Column(
+                                children: categoryData.entries.map((entry) {
+                                  final color = _getCategoryColor(entry.key);
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 4),
+                                    child: Row(
                                     children: [
                                       Container(
                                         width: 16,
@@ -274,11 +270,10 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                     ],
                                   ),
                                 );
-                              }).toList(),
+                                }).toList(),
                             ),
                           ],
-                        ),
-                      ),
+                        )),
                     ),
                   const SizedBox(height: 16),
                   if (monthlyData.isNotEmpty)
@@ -303,9 +298,9 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                             const SizedBox(height: 16),
                             SizedBox(
                               height: 200,
-                              child: LineChart(LineChartData(                                
+                              child: LineChart(LineChartData(
                                   gridData: FlGridData(show: true),
-                                  titlesData: FlTitlesData(
+                                  titlesData: FlTitlesData(                                  
                                     bottomTitles: AxisTitles(sideTitles: SideTitles(
                                       showTitles: true,
                                       getTitlesWidget: (value, meta) {
@@ -348,16 +343,15 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                     ),
                                   ],
                                 )),
-                            ),
-                          ],),
-                      ),
-                    ),
-                  ],
-                ),;
-               ),
-            ); 
+                            )
+                          ],
+                        ),
+                      )),
+              ],
+            ),);
+
+
           },
-        )),
-    );
+        )
+    ));
   }
-}
