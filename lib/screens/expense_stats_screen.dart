@@ -160,9 +160,8 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
             final totalExpenses = _calculateTotal(filteredExpenses);
             return  SingleChildScrollView(child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Selector de período
-                  Card(
+                children: [// Selector de período
+                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       
@@ -187,12 +186,14 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                               border: OutlineInputBorder(),
                               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             ),
+                            
                             value: _selectedPeriod,
                              items: _periods.map((period) {
-                              return DropdownMenuItem(value: period, child: Text(period));
-                            }).toList(),;
+                              return DropdownMenuItem(value: period, child: Text(period),);
+                            }).toList(),
                             onChanged: (value) {
-                              setState(() { _selectedPeriod = value!; });
+                              setState(() { 
+                                _selectedPeriod = value!; });
                             },
                           ),
                         ],
@@ -225,7 +226,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                           ],
                         ),
                       ),
-                    ),
+                    ), 
                   const SizedBox(height: 16), // Gráfico de categorías (pastel)
                   
                   if (categoryData.isNotEmpty)
@@ -302,7 +303,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                             const SizedBox(height: 16),
                             SizedBox(
                               height: 200,
-                              child: LineChart(LineChartData(
+                              child: LineChart(LineChartData(                                
                                   gridData: FlGridData(show: true),
                                   titlesData: FlTitlesData(
                                     bottomTitles: AxisTitles(sideTitles: SideTitles(
@@ -353,8 +354,8 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                     ),
                   ],
                 ),;
-              ),
-            );
+               ),
+            ); 
           },
         )),
     );
