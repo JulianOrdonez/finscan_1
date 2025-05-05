@@ -95,7 +95,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
           color: Colors.white,
         ),
       );
-    }).toList();;
+    }).toList();
   }
 
   // Método para obtener spots para el gráfico de línea
@@ -132,13 +132,15 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
     final textColor = isDark ? Colors.white : Colors.black;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Estadísticas y Gráficos'),
-      ),
+      appBar: AppBar(title: const Text('Estadísticas y Gráficos')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: FutureBuilder<List<Expense>>(
           future: _expensesFuture,
+          
+            
+            
+            
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -156,14 +158,14 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
             final categoryData = _getCategoryData(filteredExpenses);
             final monthlyData = _getMonthlyData(filteredExpenses);
             final totalExpenses = _calculateTotal(filteredExpenses);
-            return SingleChildScrollView(
-              child: Column(
+            return  SingleChildScrollView(child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Selector de período
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
+                      
                       child: Column(
                          crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -179,13 +181,14 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                             ],
                           ),
                           const SizedBox(height: 8),
+                          
                           DropdownButtonFormField<String>(
                              decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             ),
                             value: _selectedPeriod,
-                            items: _periods.map((period) {
+                             items: _periods.map((period) {
                               return DropdownMenuItem(value: period, child: Text(period));
                             }).toList(),;
                             onChanged: (value) {
@@ -197,6 +200,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                     ),
                   ),
                   const SizedBox(height: 16), // Resumen de gastos
+                  
                   Card(
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -223,6 +227,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                       ),
                     ),
                   const SizedBox(height: 16), // Gráfico de categorías (pastel)
+                  
                   if (categoryData.isNotEmpty)
                     Card(
                       child: Padding(
@@ -248,7 +253,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                   sections: _buildPieSections(categoryData),
                                   centerSpaceRadius: 40,
                                   sectionsSpace: 2)),
-                            ),;
+                            ),
                             const SizedBox(height: 16), // Leyenda
                             Column(
                               children: categoryData.entries.map((entry) {
@@ -268,7 +273,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                     ],
                                   ),
                                 );
-                              }).toList(),;
+                              }).toList(),
                             ),
                           ],
                         ),
@@ -290,6 +295,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                     style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
+                                       
                                         color: textColor)),
                               ],
                             ),
@@ -340,9 +346,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                       ),
                                     ),
                                   ],
-                                ),;
-                                
-                              )),
+                                )),
                             ),
                           ],),
                       ),
@@ -352,8 +356,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
               ),
             );
           },
-        ),
-      ),
+        )),
     );
   }
 }

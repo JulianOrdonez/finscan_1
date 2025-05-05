@@ -128,10 +128,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                       onTap: () async {
                         await Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => ExpenseFormScreen(expense: expense)),
-                        );
-                        _refreshExpenses();
+                          MaterialPageRoute(builder: (context) => ExpenseFormScreen(expense: expense)));
                       },
                     ),
                   ),
@@ -140,15 +137,12 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
             ),
           );
         },
-      ),
-      floatingActionButton: FloatingActionButton(
+      ),        floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ExpenseFormScreen()),
-          );
-
+          await Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const ExpenseFormScreen()));
           _refreshExpenses();
+
         },
         child: const Icon(Icons.add),
       ),
@@ -169,58 +163,6 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
     return categoryColors[category] ?? Colors.grey;
   }
-
-  IconData _getCategoryIcon(String category) {
-    final Map<String, IconData> categoryIcons = {
-      'Alimentación': Icons.restaurant,
-      'Transporte': Icons.directions_car,
-      'Entretenimiento': Icons.movie,
-      'Salud': Icons.favorite,
-      'Educación': Icons.school,
-      'Hogar': Icons.home,
-      'Ropa': Icons.shopping_bag,
-      'Otros': Icons.category,
-    };
-
-    return categoryIcons[category] ?? Icons.category;
-  }
-}
-                      ),
-                    ),
-                  ),
-                },
-              ),
-            ));
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ExpenseFormScreen()),
-          );
-
-          _refreshExpenses();
-        },
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
-
-  Color _getCategoryColor(String category) {
-    final Map<String, Color> categoryColors = {
-      'Alimentación': Colors.orange,
-      'Transporte': Colors.blue,
-      'Entretenimiento': Colors.purple,
-      'Salud': Colors.red,
-      'Educación': Colors.green,
-      'Hogar': Colors.brown,
-      'Ropa': Colors.pink,
-      'Otros': Colors.grey,
-    };
-
-    return categoryColors[category] ?? Colors.grey;
-  }
-
 
   IconData _getCategoryIcon(String category) {
     final Map<String, IconData> categoryIcons = {
