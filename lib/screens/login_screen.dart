@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/screens/register_screen.dart';
 import 'package:flutter_application_2/main.dart';
@@ -40,12 +42,12 @@ class _LoginScreenState extends State<LoginScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const HomePage()),
-          );
-        } else {
-          // ignore: use_build_context_synchronously
-
-          _showErrorSnackBar('Correo o contraseña incorrectos', context);
+          );        } else {
+           
+           _showErrorSnackBar('Correo o contraseña incorrectos', context);
         }
+
+
 
       } catch(e){
         _showErrorSnackBar('Error al iniciar sesión', context);

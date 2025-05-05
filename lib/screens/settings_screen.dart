@@ -37,66 +37,73 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              "Ajustes",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 24.0),
+              child: Text(
+                "Ajustes",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          _buildSettingCard(
-            title: 'Modo Oscuro',
-            trailing: Switch(
-              value: themeProvider.isDarkMode,
-              onChanged: (value) {
-                 themeProvider.toggleTheme();
+            _buildSettingCard(
+              title: 'Modo Oscuro',
+              trailing: Switch(
+                value: themeProvider.isDarkMode,
+                onChanged: (value) {
+                  themeProvider.toggleTheme();
                 },
+              ),
             ),
-          ),
-          _buildSettingCard(
-            title: 'Moneda',
-            trailing: DropdownButton<String>(
-              value: _selectedCurrency,
-              items: _currencies.map((String currency) {
-                return DropdownMenuItem<String>(
-                  value: currency,
-                  child: Text(currency, ),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                if (newValue != null) {
-                  setState(() {
-                    _selectedCurrency = newValue;
-                  });
-                  _saveSelectedCurrency(newValue);
-                }
+            _buildSettingCard(
+              title: 'Moneda',
+              trailing: DropdownButton<String>(
+                value: _selectedCurrency,
+                items: _currencies.map((String currency) {
+                  return DropdownMenuItem<String>(
+                    value: currency,
+                    child: Text(currency),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      _selectedCurrency = newValue;
+                    });
+                    _saveSelectedCurrency(newValue);
+                  }
+                },
+              ),
+            ),
+            _buildSettingCard(
+              title: 'Cerrar Sesión',
+              leading: Icon(Icons.logout),
+              onTap: () {
+                AuthService().logout().then((value) => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen())));
               },
             ),
-          ),
-          _buildSettingCard(
-            title: 'Cerrar Sesión',
-            leading: Icon(Icons.logout),
-            onTap: () {
-              AuthService().logout().then((value) =>
-                  Navigator.pushReplacement(context, MaterialPageRoute(
-                    builder: (context) => const LoginScreen())));
-             },
-
-          ),
-          _buildSettingCard(
-            title: 'Soporte al Usuario',
-            leading: Icon(Icons.support_agent),
-            onTap: () {
-              print('Soporte al Usuario');
-            },
-          ),
-        ],
+            _buildSettingCard(
+              title: 'Soporte al Usuario',
+              leading: Icon(Icons.support_agent),
+              onTap: () {
+                print('Soporte al Usuario');
+              },
+            ),
+          ],
+        ),
+      ),
       );
   }
 
@@ -106,14 +113,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Icon? leading,
     VoidCallback? onTap,
   }) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-      child: ListTile(
-        leading: leading,
-        title: Text(title),
-        trailing: trailing,
-        onTap: onTap,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+        child: ListTile(
+          leading: leading,
+          title: Text(title),
+          trailing: trailing,
+          onTap: onTap,
+        ),
       ),
     );
   }
