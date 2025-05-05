@@ -37,17 +37,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    return  Column(
+    return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-             child: Text(
-            "Ajustes",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
+            child: Text(
               "Ajustes",
               style: TextStyle(
                 fontSize: 24,
@@ -60,11 +55,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             trailing: Switch(
               value: themeProvider.isDarkMode,
               onChanged: (value) {
-                 setState(() {
-                  themeProvider.toggleTheme();
-                 });
-               
-              },
+                 themeProvider.toggleTheme();
+                },
             ),
           ),
           _buildSettingCard(
@@ -74,7 +66,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               items: _currencies.map((String currency) {
                 return DropdownMenuItem<String>(
                   value: currency,
-                  child: Text(currency),
+                  child: Text(currency, ),
                 );
               }).toList(),
               onChanged: (String? newValue) {
@@ -91,12 +83,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: 'Cerrar Sesión',
             leading: Icon(Icons.logout),
             onTap: () {
-               AuthService().logout().then((value) => Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  (route) => false,
-                  ));
-            },
+              AuthService().logout().then((value) =>
+                  Navigator.pushReplacement(context, MaterialPageRoute(
+                    builder: (context) => const LoginScreen())));
+             },
+
           ),
           _buildSettingCard(
             title: 'Soporte al Usuario',
@@ -106,7 +97,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
         ],
-    );
+      );
   }
 
   Widget _buildSettingCard({
