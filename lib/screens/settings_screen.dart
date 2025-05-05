@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../screens/login_screen.dart';
+import 'login_screen.dart';
 import '../services/auth_service.dart';
 import '../theme_provider.dart';
 
@@ -27,7 +27,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    return Column(
+    return  Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
@@ -56,17 +56,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
             items: _currencies.map((String currency) {
               return DropdownMenuItem<String>(
                 value: currency,
-                child: Text(currency),
+                child:  Text(currency),
               );
             }).toList(),
             onChanged: (String? newValue) {
-              setState(() {
+              
                 _selectedCurrency = newValue!;
                 final prefs = SharedPreferences.getInstance();
                 prefs.then((value) => value.setString('currency', newValue));
-              });
+              
             },
-          ),
         ),
         _buildSettingCard(
           title: 'Cerrar Sesión',
@@ -74,10 +73,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           onTap: () {
             AuthService().logout().then((value) => Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  MaterialPageRoute(builder: (context) =>  const LoginScreen()),
                 ));
           },
-        ),
+        ),        
         _buildSettingCard(
           title: 'Soporte al Usuario',
           leading: Icon(Icons.support_agent),
@@ -98,94 +97,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         title: Text(title),
         trailing: trailing,
         onTap: onTap,
-      ),
-    );
-  }
-}
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Moneda',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    DropdownButton<String>(
-                      value: _selectedCurrency,
-                      items: _currencies.map((String currency) {
-                        return DropdownMenuItem<String>(
-                          value: currency,
-                          child: Text(currency),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedCurrency = newValue!;
-                          final prefs = SharedPreferences.getInstance();
-                          prefs.then((value) => value.setString('currency', newValue));
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              child: ListTile(
-                leading: const Icon(Icons.logout),
-                title: const Text('Cerrar Sesión'),
-                onTap: () {
-                    AuthService().logout().then((value) => Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const LoginScreen())
-                    )
-                    );
-                 }
-              ),
-            ),           
-             const SizedBox(height: 20),
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              child: ListTile(
-                leading: const Icon(Icons.support_agent),
-                title: const Text('Soporte al Usuario'),
-                onTap: () {
-                  // Implement support logic here
-                  // ignore: avoid_print
-                  print('Soporte al Usuario');
-                },
-              ),
-            ),
-             const SizedBox(height: 20),
-            const Center(
-              child: Text(
-                'FinScan',
-                 style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            )
-          ],
-        ),
       ),
     );
   }
