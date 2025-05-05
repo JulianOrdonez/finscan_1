@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/main.dart';
 import 'package:flutter_application_2/screens/register_screen.dart';
+
 import 'package:flutter_application_2/services/auth_service.dart';
 
 // Login Screen
 class LoginScreen extends StatefulWidget {
-
   const LoginScreen({super.key});
 
   @override
@@ -13,10 +13,9 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 } // _LoginScreenState
  
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen> { 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
-
-  @override
   final TextEditingController _passwordController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -33,21 +32,19 @@ class _LoginScreenState extends State<LoginScreen> {
             .login(_emailController.text, _passwordController.text);
         if (user != null) {
           Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
-          );
+              context, MaterialPageRoute(builder: (context) => HomePage()));
         } else {
-           // ignore: use_build_context_synchronously
-          _showErrorSnackBar('Correo o contraseña incorrectos');
+          _showErrorSnackBar('Correo o contraseña incorrectos', context);
         }
       } catch (e) {
+        _showErrorSnackBar('Error al iniciar sesión', context);
+      } finally {
         setState(() {
-          _showErrorSnackBar('Error al iniciar sesión', context);
           _isLoading = false;
-        });       
+        });
       }
     }
-  } 
+  }
 
   void _goToRegisterScreen() {
     Navigator.push(
@@ -55,15 +52,13 @@ class _LoginScreenState extends State<LoginScreen> {
       MaterialPageRoute(builder: (context) => const RegisterScreen()),
     );
   }  
-
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Center(
-              child: SingleChildScrollView(
+            child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24.0),
                 child: Form(key: _formKey,
                   child: Column(
@@ -81,14 +76,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextFormField(
                         controller: _emailController,
                         decoration: InputDecoration(
-                          labelText: 'Correo electrónico',
-                          icon: const Icon(Icons.email),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),                         
+                          labelText: 'Correo electrónico',                           
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                          prefixIcon: const Icon(Icons.email)
                         ),
-                       keyboardType: TextInputType.emailAddress,
+                        keyboardType: TextInputType.emailAddress,
+                         
                         
+
+
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Por favor, introduce tu correo electrónico';
@@ -101,14 +97,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         controller: _passwordController,
                         decoration: InputDecoration(
                           labelText: 'Contraseña',
-                           icon: const Icon(Icons.lock),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                          )
-                        ),                        
+                          ),
+                           prefixIcon: const Icon(Icons.lock),
+                        ),
                         obscureText: true,
-                         
-                         
+
+
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Por favor, introduce tu contraseña';
@@ -121,7 +117,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: _login,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).colorScheme.primary,
-                          padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 80, vertical: 15),
                           textStyle: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -129,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         child: const Text(
                           'Iniciar Sesión',                          
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Colors.white),                         
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -137,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: _goToRegisterScreen,
                         child: Text(
                           '¿No tienes cuenta? Regístrate aquí',
-                           style: TextStyle(
+                          style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
@@ -145,12 +142,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                 ),
-              ),
-          ),);
+            ),
+          ),
+    );
   }
 
   void _showErrorSnackBar(String message, BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar( SnackBar(
       content: Text(message),
       duration: const Duration(seconds: 3),
     ));
