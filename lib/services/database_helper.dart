@@ -95,16 +95,17 @@ class DatabaseHelper {
       var result = await db.query('expenses');
 
       return result.map((map) {
-          return Expense(
-            id: map['id'] as int?,
-            description: map['description'] as String,
-            amount: map['amount'] as double,
-            category: map['category'] as String,
-            date: DateTime.parse(map['date'] as String),
-          );
+        return Expense(
+          id: map['id'] as int?,
+          title: map['title'] as String,
+          description: map['description'] as String,
+          amount: map['amount'] as double,
+          category: map['category'] as String,
+          date: DateTime.parse(map['date'] as String),
+          receiptPath: map['receiptPath'] as String?,
+        );
       }).toList();
-
-    } catch (e) {
+    }catch (e) {
       rethrow;
     }
   }
@@ -121,14 +122,14 @@ class DatabaseHelper {
   Future<int> createExpense(Expense expense) async {
     final db = await database;
     try {
-      final sql =
-          'INSERT INTO expenses (title, description, amount, category, date, receiptPath) VALUES (?, ?, ?, ?, ?, ?)';
+      final sql ='INSERT INTO expenses (title, description, amount, category, date, receiptPath) VALUES (?, ?, ?, ?, ?, ?)';
       return await db.rawInsert(sql, [
         expense.title,
         expense.description,
         expense.amount,
         expense.category,
-        expense.date, expense.receiptPath
+        expense.date.toIso8601String(), // Convert DateTime to String
+        expense.receiptPath
       ]);
     } catch (e) {
       print(e);
@@ -138,12 +139,14 @@ class DatabaseHelper {
 
   Future<void> updateExpense(Expense expense) async {
     final db = await database;
-        final sql = 'UPDATE expenses SET title = ?, description = ?, amount = ?, category = ?, date = ?, receiptPath = ? WHERE id = ?';
-        await db.rawUpdate(sql, [expense.title, expense.description, expense.amount, expense.category, expense.date, expense.receiptPath, expense.id]);
-  
+    try {
+      final sql = 'UPDATE expenses SET title = ?, description = ?, amount = ?, category = ?, date = ?, receiptPath = ? WHERE id = ?';
+      await db.rawUpdate(sql, [expense.title, expense.description, expense.amount, expense.category, expense.date.toIso8601String(), expense.receiptPath, expense.id]);
+    } catch (e) {
+      print(e);
+      rethrow;
     } catch (e) {
       print(e);
       rethrow;
     }
-  }
 }

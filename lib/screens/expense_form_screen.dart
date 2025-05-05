@@ -113,8 +113,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
               category: _selectedCategory,
               date: _selectedDate,
               receiptPath: _receiptPath,
-              userId: 1,
-          );
+             );
         if (widget.expense == null) {
           await DatabaseHelper.instance.createExpense(expense);
         } else {
