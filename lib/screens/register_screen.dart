@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_application_2/screens/login_screen.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
-import '../main.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -12,10 +10,10 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
   final AuthService _authService = AuthService();
   bool _obscureText = true;
 
@@ -163,7 +161,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       if (_formKey.currentState!.validate()) {
                         _authService
                             .registerUser(_emailController.text,
-                                _passwordController.text)
+                                _passwordController.text, _nameController.text)
                             .then((user) {
                           if (user != null) {
                             Navigator.pushReplacement(
@@ -178,7 +176,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: Theme.of(context).colorScheme.primary,
+                       backgroundColor: Theme.of(context).colorScheme.primary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),

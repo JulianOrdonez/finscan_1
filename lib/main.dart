@@ -4,14 +4,13 @@ import 'package:flutter_application_2/theme_provider.dart';
 import 'package:flutter_application_2/services/database_helper.dart';
 import 'package:flutter_application_2/widgets/neumorphic_container.dart';
 import 'package:flutter_application_2/models/user.dart';
-import 'package:animations/animations.dart';
 import 'package:flutter_application_2/screens/expense_list_screen.dart';
 import 'package:flutter_application_2/screens/categorized_expense_screen.dart';
 import 'package:flutter_application_2/screens/login_screen.dart';
 import 'package:flutter_application_2/screens/expense_stats_screen.dart';
 import 'package:flutter_application_2/screens/settings_screen.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     ChangeNotifierProvider<ThemeProvider>(
@@ -20,7 +19,6 @@ Future<void> main() async {
     ),
   );
 
-}
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
@@ -39,7 +37,7 @@ class MyApp extends StatelessWidget {
                 return FutureBuilder<User?>(
                   future: snapshot.data != null ? DatabaseHelper.instance.getUserById(snapshot.data!) : null,
                   builder: (context, userSnapshot) {
-                    if(userSnapshot.connectionState == ConnectionState.waiting){
+                    if (userSnapshot.connectionState == ConnectionState.waiting){
                       return Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary));
                     } else {
                       return userSnapshot.data != null
@@ -56,13 +54,13 @@ class MyApp extends StatelessWidget {
         );
       },
     );
-  }
-
+  }}
 }
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
   @override
   State<HomePage> createState() => _HomePageState();
+
 }
 class _HomePageState extends State<HomePage> {
   final List<Widget> _screens = [
@@ -77,42 +75,30 @@ class _HomePageState extends State<HomePage> {
   }
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeProvider>(
-      builder: (context, themeProvider, child) => Scaffold(
-        extendBody: true,
-        appBar:  AppBar(
-          title: Text('FinScan - Gastos', style: TextStyle(
-              color: Theme.of(context).colorScheme.onPrimary
-            ),),
-          elevation: 0,
-          centerTitle: true,
-          backgroundColor: Theme.of(context).colorScheme.primary,
+    return  Scaffold(
+      extendBody: true,
+      appBar: AppBar(
+        title: Text('FinScan - Gastos',
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary)),
+        elevation: 0,
+        centerTitle: true,
+        flexibleSpace: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                    Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                  ],
+                )
+            )
         ),
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Theme.of(context).colorScheme.surface,
-                Theme.of(context).colorScheme.background,
-              ],
-            ),
-          ),
-          child: PageTransitionSwitcher(
-            duration: const Duration(milliseconds: 500),
-            transitionBuilder: (Widget child, Animation<double> animation,
-                Animation<double> secondaryAnimation) =>
-                SharedAxisTransition(
-                  animation: animation,
-                  secondaryAnimation: secondaryAnimation,
-                  transitionType: SharedAxisTransitionType.horizontal,
-                  child: child,
-                ),
-            child: _screens[_selectedIndex],
-          ),
-        ), bottomNavigationBar:  NeumorphicContainer(
-          child: BottomNavigationBar(
+      ),
+      body: _screens[_selectedIndex],
+       bottomNavigationBar:  BottomNavigationBar(
+         type: BottomNavigationBarType.fixed,
             items:  <BottomNavigationBarItem>[
               BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio',backgroundColor: Theme.of(context).colorScheme.surface,),
               BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Estadísticas',backgroundColor: Theme.of(context).colorScheme.surface,),
@@ -122,8 +108,8 @@ class _HomePageState extends State<HomePage> {
             unselectedItemColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
             currentIndex: _selectedIndex,
             showUnselectedLabels: true,
-            onTap: _onItemTapped),
-      ),
+            onTap: _onItemTapped,
+        ),
     );
   }
 }

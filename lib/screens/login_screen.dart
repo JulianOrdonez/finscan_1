@@ -1,10 +1,7 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/screens/register_screen.dart';
 import 'package:flutter_application_2/main.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -29,8 +26,8 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = true;
       });
 
-      final authService = AuthService();
       try {
+        final authService = AuthService();
         final user = await authService.login(
             _emailController.text, _passwordController.text);
 
@@ -43,16 +40,14 @@ class _LoginScreenState extends State<LoginScreen> {
             context,
             MaterialPageRoute(builder: (context) => const HomePage()),
           );        } else {
-           
            _showErrorSnackBar('Correo o contraseña incorrectos', context);
         }
-
-
-
       } catch(e){
         _showErrorSnackBar('Error al iniciar sesión', context);
       }finally {
         setState(() {
+
+          _isLoading = false;
         });
       }
     }
@@ -102,8 +97,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           if (value == null || value.isEmpty) {
                             return 'Por favor, introduce tu correo electrónico';
                           }
-                           return null;
-
                           return null;
                         },
                       ),
@@ -121,8 +114,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Por favor, introduce tu contraseña';
-                          }
-                          return null;
                         },
                       ),
                       const SizedBox(height: 30),
@@ -137,9 +128,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Iniciar Sesión',
-                           
+
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -159,7 +150,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
     );
   }
-  @override
   void _showErrorSnackBar(String message, BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message),
