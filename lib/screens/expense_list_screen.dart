@@ -59,7 +59,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
-    return  Column(
+    return  Scaffold(
       body: FutureBuilder<List<Expense>>(
         future: _expensesFuture,
         builder: (context, snapshot) {

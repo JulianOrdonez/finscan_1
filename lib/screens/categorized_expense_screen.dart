@@ -95,30 +95,29 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
                         child: Text(
                         '€${expense.amount.toStringAsFixed(2)}',
                         style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
-                    ),
                     );
                   }).toList(),
                   // Show category summary
                   if (entry.value.length > 1)
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Promedio: €${(totalAmount / entry.value.length).toStringAsFixed(2)}',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Promedio: €${(totalAmount / entry.value.length).toStringAsFixed(2)}',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          'Total: €${totalAmount.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
-                          Text(
-                            'Total: €${totalAmount.toStringAsFixed(2)}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color:
-                                  Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                        ],
+                        ),
+                      ],
                       ),
                     ),
                 ],
@@ -127,53 +126,6 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
           }).toList(),
         );
       },
-    );
-  }
-
-  // Get color for the category
-  Color _getCategoryColor(String category) {
-    final Map<String, Color> categoryColors = {
-      'Alimentación': Colors.orange,
-      'Transporte': Colors.blue,
-      'Entretenimiento': Colors.purple,
-      'Salud': Colors.red,
-      'Educación': Colors.green,
-      'Hogar': Colors.brown,
-      'Ropa': Colors.pink,
-      'Otros': Colors.grey,
-    };
-
-    return categoryColors[category] ?? Colors.grey;
-  }
-
-  // Get icon for the category
-  IconData _getCategoryIcon(String category) {
-    final Map<String, IconData> categoryIcons = {
-      'Alimentación': Icons.restaurant,
-      'Transporte': Icons.directions_car,
-      'Entretenimiento': Icons.movie,
-      'Salud': Icons.favorite,
-      'Educación': Icons.school,
-      'Hogar': Icons.home,
-      'Ropa': Icons.shopping_bag,
-      'Otros': Icons.category,
-    };
-
-    return categoryIcons[category] ?? Icons.category;
-  }
-}
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
-              );
-            }).toList(),
-          );
-        },
-      ),
     );
   }
 
