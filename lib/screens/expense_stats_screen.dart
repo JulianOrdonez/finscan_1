@@ -173,14 +173,15 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor)),
                               const SizedBox(height: 16),
                               SizedBox(
-                                height: 200,
+                                height: 200, // Fixed height
                                 child: PieChart(
-                                  PieChartData(
-                                    sections: _buildPieSections(categoryData),
-                                    centerSpaceRadius: 40,
-                                    sectionsSpace: 2,
+                                  PieChartData(                                    
+                                    sections: _buildPieSections(categoryData),                                    
+                                    centerSpaceRadius: 40,                                    
+                                    sectionsSpace: 2,                                    
                                   ),
-                                ),
+                                ), // Closing PieChart
+                                
                               ),
                               const SizedBox(height: 16),
                               // Leyenda
@@ -235,7 +236,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                               final date = monthlyData.keys.toList()[value.toInt()];
                                               return Padding(
                                                 padding: const EdgeInsets.only(top: 8.0),
-                                                child: Text(
+                                                child: Text(                                                  
                                                   DateFormat('MM/yy').format(date),
                                                   style: TextStyle(fontSize: 10, color: textColor),
                                                 ),
@@ -277,11 +278,11 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                       ),
                                     ),
                                   ],
-                                ),
+                                ), // Closing LineChart
                               ),
                             ],
-                          ), 
-                        ),
+                          ), // Closing Column
+                        ), // Closing Padding
                       ),
                     ]),
                 ), 
@@ -300,13 +301,14 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
     return categoryData.entries.map((entry) {
       final percentage = (entry.value / total) * 100;
       return PieChartSectionData(
-        color: _getCategoryColor(entry.key),
+        color: _getCategoryColor(entry.key), // Color for each category
         value: entry.value,
         title: '${percentage.toStringAsFixed(1)}%',
         radius: 80,
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
+          
           color: Colors.white,
         ),
       );

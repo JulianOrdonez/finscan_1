@@ -17,6 +17,7 @@ class ExpenseFormScreen extends StatefulWidget {
 
 class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   final _formKey = GlobalKey<FormState>();
+
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   String _selectedCategory = 'Otros';
@@ -109,24 +110,23 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       try {
         final currentUser = await AuthService().getCurrentUser();
          if (currentUser == null) return;
-         final expense = Expense(
+          final expense = Expense(
               id: widget.expense?.id,
               title: _titleController.text,
               amount: double.parse(_amountController.text),
               category: _selectedCategory,
               date: _selectedDate,
               receiptPath: _receiptPath,
+              userId: currentUser.id!,
           );
-        if(widget.expense == null){
-            await DatabaseHelper.instance.createExpense(expense.copyWith(userId: currentUser.id!));
-          }
+        if (widget.expense == null) {
+          await DatabaseHelper.instance.createExpense(expense);
         } else {
-          
-          await DatabaseHelper.instance.updateExpense(expense);
+          await DatabaseHelper.instance.updateExpense(expense.copyWith(id: widget.expense!.id));
         }
-
         Navigator.pop(context);
       } catch (e) {
+          // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Error al guardar: $e')));
@@ -137,6 +137,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       }
     }
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -221,8 +222,9 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
+                   
                     _selectedCategory = value!;
-                  });
+                                      });
                 },
               ),
               const SizedBox(height: 15),
