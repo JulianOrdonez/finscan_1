@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/screens/register_screen.dart';
-import 'package:flutter_application_2/main.dart';
+import 'package:flutter_application_2/main.dart'; 
 import 'package:flutter_application_2/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -12,7 +12,7 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
  
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen> { 
   final TextEditingController _emailController = TextEditingController();
 
   final TextEditingController _passwordController = TextEditingController();
@@ -34,14 +34,13 @@ class _LoginScreenState extends State<LoginScreen> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const HomePage()),
-            );
+            ); 
         } else {
           _showErrorSnackBar('Correo o contraseña incorrectos', context);
         }
-      } catch (_) {
-        _showErrorSnackBar('Error al iniciar sesión');
-      } finally {
+      } catch (e) {
         setState(() {
+          _showErrorSnackBar('Error al iniciar sesión', context);
           _isLoading = false;
         });
       }
@@ -55,9 +54,10 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }  
    void _showErrorSnackBar(String message, BuildContext context) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), duration: const Duration(seconds: 3),));
+    }
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) { return Scaffold(
       body: _isLoading ? const Center(child: CircularProgressIndicator()) : Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24.0),
@@ -82,6 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           labelText: 'Correo electrónico',                        
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
+                           ), prefixIcon: Icon(Icons.email),
                           ),
                         ),
                        keyboardType: TextInputType.emailAddress,
@@ -99,6 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: InputDecoration(
                           labelText: 'Contraseña',
                           border: OutlineInputBorder(
+                           prefixIcon: Icon(Icons.lock),
                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),

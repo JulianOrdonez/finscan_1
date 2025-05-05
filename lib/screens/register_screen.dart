@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/main.dart';
 import 'package:flutter_application_2/screens/login_screen.dart';
+import '../services/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -15,7 +16,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;  
-  final AuthService _authService = AuthService();
+  final AuthService _authService = AuthService();//new instance of auth service
 
   @override
   void dispose() {
@@ -28,7 +29,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _navigateToLogin() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) =>  LoginScreen()),
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
     );
   }
 
@@ -161,9 +162,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       if (_formKey.currentState!.validate()) {
                         _authService
                             .registerUser( 
-                                _nameController.text,
-                                _emailController.text, _passwordController.text)
-                            .then((user) {  
+                                _emailController.text, 
+                                _passwordController.text,
+                                _nameController.text,)
+                            .then((user) { 
                           if (user != null) {
                             Navigator.pushReplacement(
                                 context,
@@ -189,8 +191,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     onPressed: _navigateToLogin,
                     child: Text(
                       '¿Ya tienes una cuenta? Inicia Sesión',
-                      style: TextStyle(color: Theme.of(context).colorScheme.primary,
-                      ),
+                      style: TextStyle(color: Theme.of(context).colorScheme.primary),
                     ),
                   ),
                 ],
