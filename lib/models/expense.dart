@@ -17,6 +17,20 @@ class Expense {
     this.receiptPath,
   });
 
+  Expense copyWith({
+    int? id,
+    String? title,
+    double? amount,
+    String? category,
+    DateTime? date,
+    String? receiptPath,
+    int? userId,
+  }) =>
+      Expense(id: id ?? this.id, title: title ?? this.title, amount: amount ?? this.amount, category: category ?? this.category, date: date ?? this.date, receiptPath: receiptPath ?? this.receiptPath, userId: userId ?? this.userId);
+
+
+
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,

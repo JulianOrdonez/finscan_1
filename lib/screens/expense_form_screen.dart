@@ -110,20 +110,15 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
         final currentUser = await AuthService().getCurrentUser();
          if (currentUser == null) return;
          final expense = Expense(
-            id: widget.expense?.id,
-            title: _titleController.text,
-            amount: double.parse(_amountController.text),
-            category: _selectedCategory,
-            date: _selectedDate,
-            receiptPath: _receiptPath,
-            userId: currentUser.id!
+              id: widget.expense?.id,
+              title: _titleController.text,
+              amount: double.parse(_amountController.text),
+              category: _selectedCategory,
+              date: _selectedDate,
+              receiptPath: _receiptPath,
           );
-
-
-        if (widget.expense == null) {
-          if (currentUser != null && currentUser.id != null) {
-            expense.userId = currentUser.id!; 
-            await DatabaseHelper.instance.createExpense(expense);
+        if(widget.expense == null){
+            await DatabaseHelper.instance.createExpense(expense.copyWith(userId: currentUser.id!));
           }
         } else {
           

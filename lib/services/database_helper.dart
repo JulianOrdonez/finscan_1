@@ -47,14 +47,10 @@ CREATE TABLE users (
   Future<int> createExpense(Expense expense) async {
     final currentUser = await getCurrentUser();
     if (currentUser == null) return 0;
-    
-    final expenseToSave = expense.copyWith(
-        userId: currentUser
-      );
-    
-    
+    final expenseWithUser = expense.copyWith(userId: currentUser);
+
     final db = await instance.database;
-    return await db.insert('expenses', expense.toMap());
+    return await db.insert('expenses', expenseWithUser.toMap());
   }
 
   Future<List<Expense>> getExpenses() async {

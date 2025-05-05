@@ -143,9 +143,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {   _authService
-                            .registerUser(_nameController.text,
-                                _emailController.text, _passwordController.text)
-                            .then((user) {
+                            .registerUser( _emailController.text, _passwordController.text).then((user) {
+
                           if (user != null) {
                             Navigator.pushReplacement(
                                 context,
