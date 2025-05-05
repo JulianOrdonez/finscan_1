@@ -47,9 +47,8 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
           }
 
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
-                child: Text(
-                    'No hay gastos registrados')); // Show message if no expenses are registered
+            return const Center(child: Text('No expenses found for this category. Add some expenses to see the data.',
+                 textAlign: TextAlign.center,));
           }
 
           final expenses = snapshot.data!;
@@ -64,7 +63,8 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
           }
 
           return ListView(
-            children: categorizedExpenses.entries.map((entry) {
+            padding: const EdgeInsets.all(16.0),
+            children: categorizedExpenses.entries.map((entry) {              
               final totalAmount = entry.value.fold(
                   0.0, (sum, expense) => sum + expense.amount); // Calculate total for the category
 
@@ -89,10 +89,13 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
                     // Map over expenses to create list tiles
                     ...entry.value.map((expense) {
                       return ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         title: Text(expense.description),
                         subtitle: Text(
                             DateFormat('dd/MM/yyyy').format(expense.date)),
-                        trailing: Text(
+                        trailing: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(
                           '€${expense.amount.toStringAsFixed(2)}',
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),

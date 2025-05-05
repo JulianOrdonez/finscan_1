@@ -8,6 +8,7 @@ import 'screens/expense_list_screen.dart';
 import 'screens/categorized_expense_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/login_screen.dart';
+
 import 'screens/expense_stats_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +34,21 @@ class MyApp extends StatelessWidget {
           theme: themeProvider.themeData,
           // Determine the initial screen based on user login status
           home: FutureBuilder<int?>(
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                return _buildInitialScreen(snapshot);
+              },
+              future: DatabaseHelper.instance.getCurrentUser()),
+          // Remove the debug banner
+          debugShowCheckedModeBanner: false,
+        );
+      },
+    );
+  }
+  Widget _buildInitialScreen(AsyncSnapshot<int?> snapshot) {
             // Check if there is a current user logged in
             future: DatabaseHelper.instance.getCurrentUser(),
             builder: (context, snapshot) {
@@ -51,10 +67,7 @@ class MyApp extends StatelessWidget {
                   },
                 );
             }
-            },
-          ),
-          // Remove the debug banner
-          debugShowCheckedModeBanner: false,
+          },
         );
       },
     );
@@ -90,7 +103,38 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       // Display the selected screen
-      body: _screens[_selectedIndex],
+
+      body: PageTransitionSwitcher(
+        duration: const Duration(milliseconds: 300),
+        transitionBuilder: (
+          Widget child,
+          Animation<double> animation,
+          Animation<double> secondaryAnimation,
+        ) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+        child: _screens[_selectedIndex],
+      ),
+
+      body: Column(
+        children: [
+          // Welcome text
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'Welcome to FinScan',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Expanded(child: _screens[_selectedIndex]),
+        ],
+      ),
       // Bottom navigation bar
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

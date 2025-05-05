@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_application_2/main.dart';
 import '../models/expense.dart';
 import '../services/database_helper.dart';
 import '../theme_provider.dart';
@@ -50,7 +51,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     if (confirmDelete) {
       await DatabaseHelper.instance.deleteExpense(id);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Gasto eliminado')),
+        const SnackBar(content: Text('Expense deleted successfully')),
       );
       _refreshExpenses();
     }
@@ -65,73 +66,99 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         title: const Text('FinScan - Gastos'),
       ),
       body: FutureBuilder<List<Expense>>(
-        future: _expensesFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+          future: _expensesFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
 
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No hay gastos registrados'));
-          }
-
-          final expenses = snapshot.data!;
-
-          return ListView.builder(
-            itemCount: expenses.length,
-            itemBuilder: (context, index) {
-              final expense = expenses[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: _getCategoryColor(expense.category),
-                    child: Icon(_getCategoryIcon(expense.category), color: Colors.white, size: 20),
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    'No expenses recorded. Tap the + button to add one.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
                   ),
-                  title: Text(expense.description),
-                  subtitle: Text(
-                    '${expense.category} - ${DateFormat('dd/MM/yyyy').format(expense.date)}',
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '€${expense.amount.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () => _deleteExpense(expense.id!),
-                      ),
-                    ],
-                  ),
-                  onTap: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ExpenseFormScreen(expense: expense),
-                      ),
-                    );
-                    _refreshExpenses();
-                  },
                 ),
               );
-            },
-          );
-        },
+            }
+
+            final expenses = snapshot.data!;
+
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ListView.builder(
+                itemCount: expenses.length,
+                itemBuilder: (context, index) {
+                  final expense = expenses[index];
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 5),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: CircleAvatar(
+                          backgroundColor: _getCategoryColor(expense.category),
+                          child: Icon(_getCategoryIcon(expense.category), color: Colors.white, size: 20),
+                        ),
+                        title: Padding(
+                          padding: const EdgeInsets.only(bottom: 4.0),
+                          child: Text(expense.description),
+                        ),
+                        subtitle: Text(
+                          '${expense.category} - ${DateFormat('dd/MM/yyyy').format(expense.date)}',
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '€${expense.amount.toStringAsFixed(2)}',
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => _deleteExpense(expense.id!),
+                            ),
+                          ],
+                        ),
+                        onTap: () async {
+                          await Navigator.push(
+                            context,
+                             PageRouteBuilder(
+                                pageBuilder: (context, animation, secondaryAnimation) => ExpenseFormScreen(expense: expense),
+                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                  const begin = 0.0;
+                                  const end = 1.0;
+                                  return FadeTransition(opacity: Tween(begin: begin, end: end).animate(animation), child: child);
+                                },),
+                          );
+                          _refreshExpenses();
+                        },
+                      ),
+                    ),
+                  ),
+                },
+              ),
+            );
+          }),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const ExpenseFormScreen()),
+             PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) => const ExpenseFormScreen(),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  const begin = 0.0;
+                  const end = 1.0;
+                  return FadeTransition(opacity: Tween(begin: begin, end: end).animate(animation), child: child);
+                },),
           );
           _refreshExpenses();
         },
