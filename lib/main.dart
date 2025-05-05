@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_application_2/services/database_helper.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
 import 'theme_provider.dart';
 import 'models/user.dart';
@@ -8,8 +9,9 @@ import 'screens/categorized_expense_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/expense_stats_screen.dart';
-
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DatabaseHelper.instance.database;
   runApp(
     // Wrap the app with ChangeNotifierProvider to provide ThemeProvider
     ChangeNotifierProvider(
