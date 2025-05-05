@@ -50,100 +50,100 @@ class DatabaseHelper {
     } catch (e) {
       print(e);
       rethrow;
+    }}
+  
+    Future<int?> getCurrentUser() async {
+      var db = await DatabaseHelper.database;
+      final List<Map<String, dynamic>> maps = await db.query('current_user');
+      if (maps.isNotEmpty) {
+        return maps.first['id'] as int;
+      }
+      return null;
     }
-  }}
-
-  Future<int?> getCurrentUser() async {
-    var db = await DatabaseHelper.database;
-    final List<Map<String, dynamic>> maps = await db.query('current_user');
-    if (maps.isNotEmpty) {
-      return maps.first['id'] as int;
+  
+    Future<User?> getUserById(int id) async {
+      var db = await DatabaseHelper.database;
+      try {
+        final List<Map<String, dynamic>> maps = await db.query(
+          'users',
+          where: 'id = ?',
+          whereArgs: [id],
+        );
+  
+        if (maps.isNotEmpty) {
+          return User(
+            id: maps.first['id'] as int,
+            email: maps.first['email'] as String,
+            password: "",
+          );
+        }
+        return null;
+      } catch (e) {
+        return null;
+      }
     }
-    return null;
-  }
-
-  Future<User?> getUserById(int id) async {
-    var db = await DatabaseHelper.database;
-    try {
-      final List<Map<String, dynamic>> maps = await db.query(
-        'users',
+  
+    Future<void> clearCurrentUser() async {
+      var db = await DatabaseHelper.database;
+      await db.execute('DELETE FROM current_user');
+    }
+  
+    Future<List<Expense>> getExpenses() async {
+      var db = await DatabaseHelper.database;
+      try {
+        var result = await db.query('expenses');
+  
+        return result.map((map) {
+          return Expense(
+            id: map['id'] as int?,
+            title: map['title'] as String,
+            description: map['description'] as String,
+            amount: map['amount'] as double,
+            category: map['category'] as String,
+            date: DateTime.parse(map['date'] as String),
+            receiptPath: map['receiptPath'] as String?,
+          );
+        }).toList() ;
+      }catch (e) {
+        rethrow;
+      }
+    }
+  
+    Future<void> deleteExpense(int id) async {
+      var db = await DatabaseHelper.database;
+      await db.delete(
+        'expenses',
         where: 'id = ?',
         whereArgs: [id],
       );
-
-      if (maps.isNotEmpty) {
-        return User(
-          id: maps.first['id'] as int,
-          email: maps.first['email'] as String,
-          password: "",
-        );
+    }
+  
+    Future<int> createExpense(Expense expense) async {
+      var db = await DatabaseHelper.database;
+      try {
+        final sql ='INSERT INTO expenses (title, description, amount, category, date, receiptPath) VALUES (?, ?, ?, ?, ?, ?)';
+        return await db.rawInsert(sql, [
+          expense.title,
+          expense.description,
+          expense.amount,
+          expense.category,
+          expense.date.toIso8601String(), // Convert DateTime to String
+          expense.receiptPath
+        ]);
+      } catch (e) {
+        print(e);
+        rethrow;
       }
-      return null;
-    } catch (e) {
-      return null;
     }
+  
+    Future<void> updateExpense(Expense expense) async {
+      var db = await DatabaseHelper.database;
+      try {
+        final sql = 'UPDATE expenses SET title = ?, description = ?, amount = ?, category = ?, date = ?, receiptPath = ? WHERE id = ?';
+        await db.rawUpdate(sql, [expense.title, expense.description, expense.amount, expense.category, expense.date.toIso8601String(), expense.receiptPath, expense.id]);
+       } catch (e) {
+        print(e);
+        rethrow;
+      }
   }
-
-  Future<void> clearCurrentUser() async {
-    var db = await DatabaseHelper.database;
-    await db.execute('DELETE FROM current_user');
-  }
-
-  Future<List<Expense>> getExpenses() async {
-    var db = await DatabaseHelper.database;
-    try {
-      var result = await db.query('expenses');
-
-      return result.map((map) {
-        return Expense(
-          id: map['id'] as int?,
-          title: map['title'] as String,
-          description: map['description'] as String,
-          amount: map['amount'] as double,
-          category: map['category'] as String,
-          date: DateTime.parse(map['date'] as String),
-          receiptPath: map['receiptPath'] as String?,
-        );
-      }).toList() ;
-    }catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<void> deleteExpense(int id) async {
-    var db = await DatabaseHelper.database;
-    await db.delete(
-      'expenses',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-  }
-
-  Future<int> createExpense(Expense expense) async {
-    var db = await DatabaseHelper.database;
-    try {
-      final sql ='INSERT INTO expenses (title, description, amount, category, date, receiptPath) VALUES (?, ?, ?, ?, ?, ?)';
-      return await db.rawInsert(sql, [
-        expense.title,
-        expense.description,
-        expense.amount,
-        expense.category,
-        expense.date.toIso8601String(), // Convert DateTime to String
-        expense.receiptPath
-      ]);
-    } catch (e) {
-      print(e);
-      rethrow;
-    }
-  }
-
-  Future<void> updateExpense(Expense expense) async {
-    var db = await DatabaseHelper.database;
-    try {
-      final sql = 'UPDATE expenses SET title = ?, description = ?, amount = ?, category = ?, date = ?, receiptPath = ? WHERE id = ?';
-      await db.rawUpdate(sql, [expense.title, expense.description, expense.amount, expense.category, expense.date.toIso8601String(), expense.receiptPath, expense.id]);
-     } catch (e) {
-      print(e);
-      rethrow;
-    }
-  }
+}
