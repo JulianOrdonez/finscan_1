@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/main.dart';
-import 'package:flutter_application_2/screens/login_screen.dart';
+import 'package:flutter_application_2/screens/login_screen.dart'; 
 import 'package:flutter_application_2/services/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -15,7 +15,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _obscureText = true;  
+  bool _obscureText = true;
   final AuthService _authService = AuthService();//new instance of auth service
 
   @override
@@ -30,7 +30,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
-    );  
+    );
   }
 
   void _showSnackBar(String message) {
@@ -38,14 +38,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       SnackBar(
         content: Text(message),
       ),
-    );    
-    
+    );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color.fromARGB(255, 205, 237, 243), Color.fromARGB(255, 255, 255, 255)],
             begin: Alignment.topCenter,
@@ -53,15 +52,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
         child: Center(
-          
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(20.0),
             child: Form(
               key: _formKey,
-              child: Column( 
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
+                children: [
                   Icon(
                     Icons.account_circle,
                     size: 100,
@@ -163,22 +161,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         _authService
-                            .registerUser( 
-                                _emailController.text, _passwordController.text, _nameController.text
-                                )
-                            .then((user) { 
+                            .registerUser(
+                                _emailController.text,
+                                _passwordController.text,
+                                _nameController.text)
+                            .then((user) {
                           if (user != null) {
-                            Navigator.pushReplacement( 
-
+                            Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(builder: (context) => const HomePage()));
+                                MaterialPageRoute(
+                                    builder: (context) => const HomePage()));
                           } else {
-                              _showSnackBar('El correo ya está en uso.');
-                            }
+                            _showSnackBar('El correo ya está en uso.');
+                          }
                         });
                       }
                     },
-                    style: ElevatedButton.styleFrom(
+                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
@@ -193,10 +192,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     onPressed: _navigateToLogin,
                     child: Text(
                       '¿Ya tienes una cuenta? Inicia Sesión',
-                      style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                   ),
-                ],
+                ], 
               ),
             ),
           ),
