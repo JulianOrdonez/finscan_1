@@ -10,7 +10,7 @@ class Expense {
   Expense({
     this.id,
     required this.title,
-    required this.description,
+    this.description = "",
     required this.amount,
     required this.category,
     required this.date,
@@ -25,6 +25,7 @@ class Expense {
       'amount': amount,
       'category': category,
       'date': date.toIso8601String(),
+      'receiptPath': receiptPath
     };
   }
 
@@ -37,6 +38,7 @@ class Expense {
       category: map['category'] as String,
       date: DateTime.parse(map['date'] as String),
       receiptPath: map['receiptPath'] as String?,
+
     );
   }
 }

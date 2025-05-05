@@ -41,7 +41,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   void initState() {
     super.initState();
     if (widget.expense != null) {
-      _titleController.text = widget.expense!.description;
+      _titleController.text = widget.expense!.title;
       _amountController.text = widget.expense!.amount.toString();
       _selectedCategory = widget.expense!.category;
       _selectedDate = widget.expense!.date;
@@ -108,9 +108,12 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
 
           final expense = Expense(
               id: widget.expense?.id,
+              title: _titleController.text,              
+              description: _titleController.text,              
+              amount: double.parse(_amountController.text),              
+              category: _selectedCategory,              
               description: _titleController.text,
-              amount: double.parse(_amountController.text),
-              category: _selectedCategory,
+              amount: double.parse(_amountController.text),              
               date: _selectedDate,
               receiptPath: _receiptPath,
              );

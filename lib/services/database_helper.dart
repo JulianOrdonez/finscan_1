@@ -104,7 +104,7 @@ class DatabaseHelper {
           date: DateTime.parse(map['date'] as String),
           receiptPath: map['receiptPath'] as String?,
         );
-      }).toList();
+      }).toList() ;
     }catch (e) {
       rethrow;
     }
@@ -142,10 +142,7 @@ class DatabaseHelper {
     try {
       final sql = 'UPDATE expenses SET title = ?, description = ?, amount = ?, category = ?, date = ?, receiptPath = ? WHERE id = ?';
       await db.rawUpdate(sql, [expense.title, expense.description, expense.amount, expense.category, expense.date.toIso8601String(), expense.receiptPath, expense.id]);
-    } catch (e) {
-      print(e);
-      rethrow;
-    } catch (e) {
+     } catch (e) {
       print(e);
       rethrow;
     }
