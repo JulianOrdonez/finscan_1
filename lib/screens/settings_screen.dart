@@ -110,10 +110,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       context,
                       MaterialPageRoute(builder: (context) => const LoginScreen()),
                     ));
-                 },
-                
+                 }
               ),
-            ),
+            ),           
              const SizedBox(height: 20),
             Card(
               elevation: 4,
@@ -144,6 +143,5 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
     );
-  }}
-}
+  }
 }
