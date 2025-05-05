@@ -4,6 +4,7 @@ import 'theme_provider.dart';
 import 'models/expense.dart';
 import 'screens/expense_list_screen.dart';
 import 'screens/categorized_expense_screen.dart';
+import 'screens/settings_screen.dart';
 import 'screens/expense_stats_screen.dart';
 
 void main() {
@@ -47,6 +48,7 @@ class _HomePageState extends State<HomePage> {
     const ExpenseListScreen(),
     const ExpenseStatsScreen(),
     const CategorizedExpenseScreen(),
+    const SettingsScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -72,6 +74,10 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.category),
             label: 'Categorías',
+          ),
+           BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Ajustes',
           ),
         ],
         currentIndex: _selectedIndex,
