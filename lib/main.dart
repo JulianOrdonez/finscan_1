@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
             builder: (context, snapshot) {
               return _buildInitialScreen(snapshot);
             }),
-        debugShowCheckedModeBanner: false, // Remove the debug banner
+            debugShowCheckedModeBanner: false, // Remove the debug banner
       );
     });
   }
@@ -87,9 +87,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(builder: (context, themeProvider, child) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('FinScan - Gastos'),
-        ),
+        appBar: AppBar(title: const Text('FinScan - Gastos'),),
         body: PageTransitionSwitcher(
           duration: const Duration(milliseconds: 300),
           transitionBuilder: (
