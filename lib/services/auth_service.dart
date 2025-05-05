@@ -1,12 +1,11 @@
 import 'package:flutter_application_2/models/user.dart';
 import 'package:flutter_application_2/services/database_helper.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
+ 
 class AuthService {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
 
-  Future<User?> registerUser(String name, String email, String password) async {
-    final id = await _dbHelper.createUser(name, email, password);
+  Future<User?> registerUser(String email, String password) async {
+    final id = await _dbHelper.createUser(email, password);
     if (id != null && id > 0) {
         final user = await _dbHelper.getUserById(id);
       return user;

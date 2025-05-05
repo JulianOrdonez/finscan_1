@@ -106,8 +106,8 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
           final categoryData = _getCategoryData(filteredExpenses);
           final monthlyData = _getMonthlyData(filteredExpenses);
           final totalExpenses = _calculateTotal(filteredExpenses);
-
           return Padding(
+
             padding: const EdgeInsets.all(16.0),
             child: SingleChildScrollView(
               child: Column(
@@ -118,7 +118,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                         crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text('Período', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textColor)),
                             const SizedBox(height: 8),
@@ -141,10 +141,8 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                         ),
                       ),
                     ),
-            
                     const SizedBox(height: 16),
-            
-                    // Resumen de gastos
+                     // Resumen de gastos
                     Card(
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -163,10 +161,8 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                         ),
                       ),
                     ),
-            
                     const SizedBox(height: 16),
-            
-                    // Gráfico de categorías (pastel)
+                     // Gráfico de categorías (pastel)
                     if (categoryData.isNotEmpty)
                       Card(
                         child: Padding(
@@ -214,10 +210,8 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                         ),
                       ),
             
-                    const SizedBox(height: 16),
-            
-                    // Gráfico de línea mensual
-                    if (monthlyData.isNotEmpty)
+                      const SizedBox(height: 16),
+                     if (monthlyData.isNotEmpty)
                       Card(
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
@@ -288,7 +282,6 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                               ),
                             ],
                           ),
-                        ),
                       ),
                     ),
                   ],

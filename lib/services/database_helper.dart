@@ -47,8 +47,12 @@ CREATE TABLE users (
   Future<int> createExpense(Expense expense) async {
     final currentUser = await getCurrentUser();
     if (currentUser == null) return 0;
-    expense.userId = currentUser;
-
+    
+    final expenseToSave = expense.copyWith(
+        userId: currentUser
+      );
+    
+    
     final db = await instance.database;
     return await db.insert('expenses', expense.toMap());
   }
@@ -56,9 +60,12 @@ CREATE TABLE users (
   Future<List<Expense>> getExpenses() async {
     final db = await instance.database;
     final result = await db.query('expenses', orderBy: 'date DESC');
-    final currentUser = await getCurrentUser();
+    final int? currentUserId = await getCurrentUser();
+
+    if (currentUserId == null) return [];
+
     return result
-        .where((expense) => expense['userId'] == currentUser)
+        .where((expense) => expense['userId'] == currentUserId)
         .map((map) => Expense.fromMap(map)).toList();
   }
 
@@ -118,16 +125,15 @@ CREATE TABLE users (
       return result.isNotEmpty;
     }
 
-    Future<User?> getUserById(int id) async {
+    Future<User?> getUserById(int id) async{
     final db = await instance.database;
     final maps = await db.query('users', where: 'id = ?', whereArgs: [id]);
 
-    if (maps.isNotEmpty) {
-      return User(
-        id: maps.first['id'] as int?,
-        name: maps.first['name'] as String? ?? '',
-        email: maps.first['email'] as String,
-        password: maps.first['password'] as String,
+     if (maps.isNotEmpty) {
+        return User(
+          id: maps.first['id'] as int?,
+          email: maps.first['email'] as String,
+          password: maps.first['password'] as String,
       );
     }
     return null;
@@ -161,17 +167,7 @@ CREATE TABLE users (
 
       return null;
     }
-
-    Future<String?> getUserEmailById(int userId) async {
-      final db = await instance.database;
-      final result = await db.query(
-        'users',
-        where: 'id = ?',
-        whereArgs: [userId],
-      );
-      return result.first['email'] as String?;
-    }
-
+    
   Future close() async {
     final db = await instance.database;
     db.close();

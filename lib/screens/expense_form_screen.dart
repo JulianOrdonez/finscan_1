@@ -44,7 +44,9 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       _amountController.text = widget.expense!.amount.toString();
       _selectedCategory = widget.expense!.category;
       _selectedDate = widget.expense!.date;
-      _receiptPath = widget.expense!.receiptPath;
+      if(widget.expense!.receiptPath != null){
+        _receiptPath = widget.expense!.receiptPath;
+      }
     }
   }
 
@@ -104,26 +106,27 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
         _isLoading = true;
       });
 
-      final currentUser = await AuthService().getCurrentUser();
-      
       try {
-        final expense = Expense(
-          id: widget.expense?.id,
-          title: _titleController.text,
-          amount: double.parse(_amountController.text),          
-          category: _selectedCategory,
-          date: _selectedDate,
-          receiptPath: _receiptPath,
-        );
+        final currentUser = await AuthService().getCurrentUser();
+         if (currentUser == null) return;
+         final expense = Expense(
+            id: widget.expense?.id,
+            title: _titleController.text,
+            amount: double.parse(_amountController.text),
+            category: _selectedCategory,
+            date: _selectedDate,
+            receiptPath: _receiptPath,
+            userId: currentUser.id!
+          );
+
 
         if (widget.expense == null) {
-          if(currentUser!=null){
-            expense.userId = currentUser.id!;
-          await DatabaseHelper.instance.createExpense(expense);
+          if (currentUser != null && currentUser.id != null) {
+            expense.userId = currentUser.id!; 
+            await DatabaseHelper.instance.createExpense(expense);
           }
         } else {
-          if(currentUser!=null)
-            expense.userId = currentUser.id!;
+          
           await DatabaseHelper.instance.updateExpense(expense);
         }
 

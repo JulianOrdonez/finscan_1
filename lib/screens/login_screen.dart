@@ -27,30 +27,43 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       final authService = AuthService();
-      final user =
-          await authService.loginUser(_emailController.text, _passwordController.text);
+      try{
+        final user = await authService.loginUser(
+          _emailController.text, _passwordController.text);
 
-      setState(() {
-        _isLoading = false;
-      });
+        setState(() {
+          _isLoading = false;
+        });
 
-      if (user != null) {
-        // ignore: use_build_context_synchronously
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
+        if (user != null) {
+          if (_passwordController.text == user.password) {
+            // ignore: use_build_context_synchronously
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomePage()),
+            );
+          } else {
+            // ignore: use_build_context_synchronously
+            _showErrorSnackBar('Contraseña incorrecta', context);
+        } else {
+          // ignore: use_build_context_synchronously
+          _showErrorSnackBar('Contraseña incorrecta', context);
+        }
       } else {
         // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Correo o contraseña incorrectos'),
-            duration: Duration(seconds: 3),
-          ),
-        );
+        _showErrorSnackBar('Correo o contraseña incorrectos', context);
+      } 
+      } catch(e){
+         _showErrorSnackBar('Error al iniciar sesión', context);
+      }finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
+      
     }
   }
+  
 
   void _goToRegisterScreen() {
     Navigator.push(
@@ -132,37 +145,10 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
     );
   }
-}
-
-        }
-
-        if (user.password == _passwordController.text) {
-          // ignore: use_build_context_synchronously
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const HomePage(userId: 1)),
-          );
-        } else {
-          setState(() {
-            _errorMessage = 'Contraseña incorrecta';
-          });
-        }
-      } catch (e) {
-        setState(() {
-          _errorMessage = 'Error al iniciar sesión';
-        });
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
+  void _showErrorSnackBar(String message, BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      duration: const Duration(seconds: 3),
+    ));
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Form(
+}
