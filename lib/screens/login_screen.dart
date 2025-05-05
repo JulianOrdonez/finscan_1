@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/main.dart';
 import 'package:flutter_application_2/screens/register_screen.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
 
@@ -11,7 +10,6 @@ class LoginScreen extends StatefulWidget {
   // ignore: library_private_types_in_public_api
   _LoginScreenState createState() => _LoginScreenState();
 }
-
  
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
@@ -26,19 +24,18 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
-      });
+      });      
       try {
         final user = await AuthService()
             .login(_emailController.text, _passwordController.text);
         if (user != null) {
-          // ignore: use_build_context_synchronously
           Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const HomePage()),
-              );
+              MaterialPageRoute(builder: (context) => const HomePage()));
         } else {
-          _showErrorSnackBar('Correo o contraseña incorrectos');
+          _showErrorSnackBar('Correo o contraseña incorrectos',context);
         }
+        
       } catch (e) {
         _showErrorSnackBar('Error al iniciar sesión');
       } finally {
@@ -54,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
       context,
       MaterialPageRoute(builder: (context) => const RegisterScreen()),
     );
-  }
+  }  
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +75,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 30),
                       TextFormField(
                         controller: _emailController,
-                        prefixIcon: const Icon(Icons.email),
                         decoration: InputDecoration(
                           labelText: 'Correo electrónico',                        
                           border: OutlineInputBorder(
@@ -86,6 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         keyboardType: TextInputType.emailAddress,
+                        
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Por favor, introduce tu correo electrónico';
@@ -96,7 +93,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 20),
                       TextFormField(
                         controller: _passwordController,
-                        prefixIcon: const Icon(Icons.lock),
                         decoration: InputDecoration(
                           labelText: 'Contraseña',
                           border: OutlineInputBorder(
@@ -104,6 +100,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         obscureText: true,
+                         
+                         
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Por favor, introduce tu contraseña';
@@ -142,15 +140,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
           ),
-        ),
-    );}
-     void _showErrorSnackBar(String message) {
-    final context = _formKey.currentContext!;
-    
+        );
+    }
+      void _showErrorSnackBar(String message, BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message),
       duration: const Duration(seconds: 3),
     ));
-  }
-}
-

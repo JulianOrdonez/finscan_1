@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/main.dart';
+import 'package:flutter_application_2/services/auth_service.dart';
 import 'package:flutter_application_2/screens/login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -15,29 +16,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
+  final AuthService _authService = AuthService();
 
-  @override  
+  @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    
   }
 
   void _navigateToLogin() {
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const LoginScreen()),);
+      context,
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
   }
+
   void _showSnackBar(String message) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(
-          content: Text(message),
-        ),
-      );
-    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
   }
   @override
   Widget build(BuildContext context) {
@@ -45,12 +46,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color.fromARGB(255, 205, 237, 243),
-              Color.fromARGB(255, 255, 255, 255) 
-             
-             
-
-            ],
+            colors: [Color.fromARGB(255, 205, 237, 243), Color.fromARGB(255, 255, 255, 255)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
         child: Center(
@@ -61,7 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Column( 
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
+                children: <Widget>[
                   Icon(
                     Icons.account_circle,
                     size: 100,
@@ -162,17 +160,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        AuthService()
-                            .registerUser(
+                        _authService
+                            .registerUser( 
                                 _emailController.text,
                                 _passwordController.text,
                                 _nameController.text)
-                            .then((user) { 
+                            .then((user) {
                           if (user != null) {
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
-
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => const HomePage()));
                           } else {
-                            
                               _showSnackBar('El correo ya está en uso.');
                             }
                         });
@@ -188,17 +186,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       style: TextStyle(fontSize: 18, fontFamily: 'Roboto'),
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextButton( 
-
+                  const SizedBox(height: 20),
+                  TextButton(
                     onPressed: _navigateToLogin,
                     child: Text(
-                       '¿Ya tienes una cuenta? Inicia Sesión', //Fixed the string
+                      '¿Ya tienes una cuenta? Inicia Sesión',
                       style: TextStyle(
-                         fontFamily: 'Roboto',
-                          color: Theme.of(context).colorScheme.primary),
+                        fontFamily: 'Roboto',
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                     ),
                   ),
                 ],
