@@ -11,9 +11,7 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
+ 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
 
@@ -55,7 +53,6 @@ class _LoginScreenState extends State<LoginScreen> {
         setState(() {
         });
       }
-      
     }
   }
   
