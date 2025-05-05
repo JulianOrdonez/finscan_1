@@ -51,7 +51,7 @@ class DatabaseHelper {
       print(e);
       rethrow;
     }
-  }
+  }}
 
   Future<int?> getCurrentUser() async {
     final db = await database;
