@@ -40,7 +40,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
         ),
-        _buildSettingCard(
+         _buildSettingCard(
+            title: 'Soporte al Usuario',
+            leading: Icon(Icons.support_agent),
+            onTap: () {
+              print('Soporte al Usuario');
+            },
+          ),        _buildSettingCard(
           title: 'Modo Oscuro',
           trailing: Switch(
             value: themeProvider.isDarkMode,
@@ -67,16 +73,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
               
             },
         ),
-        _buildSettingCard(
-          title: 'Cerrar Sesión',
-          leading: Icon(Icons.logout),
-          onTap: () {
-            AuthService().logout().then((value) => Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) =>  const LoginScreen()),
-                ));
-          },
-        ),        
+       _buildSettingCard(
+            title: 'Cerrar Sesión',
+            leading: Icon(Icons.logout),
+            onTap: () {
+              AuthService().logout().then((value) => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) =>  const LoginScreen()),
+                  ));
+            },
+          ),        
         _buildSettingCard(
           title: 'Soporte al Usuario',
           leading: Icon(Icons.support_agent),
