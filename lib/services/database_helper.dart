@@ -34,7 +34,7 @@ class DatabaseHelper {
           await db.execute(
               'CREATE TABLE current_user (id INTEGER)');
           await db.execute(
-              'CREATE TABLE expenses (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, amount REAL, category TEXT, date TEXT, receiptPath TEXT)');
+              'CREATE TABLE expenses (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, title TEXT, description TEXT, amount REAL, category TEXT, date TEXT, receiptPath TEXT, FOREIGN KEY (user_id) REFERENCES users(id))');
         },
       );
     } catch (e) {
@@ -91,10 +91,17 @@ class DatabaseHelper {
     Future<List<Expense>> getExpenses() async {
       var db = await DatabaseHelper.database;
       try {
-        var result = await db.query('expenses');
-  
+        int? currentUserId = await getCurrentUser();
+        if (currentUserId == null) {
+          return []; // No user logged in, return empty list
+        }
+        var result = await db.query(
+          'expenses',
+          where: 'user_id = ?',
+          whereArgs: [currentUserId],
+        );
         return result.map((map) {
-          return Expense(
+        return Expense(
             id: map['id'] as int?,
             title: map['title'] as String,
             description: map['description'] as String,
@@ -113,11 +120,17 @@ class DatabaseHelper {
       var db = await DatabaseHelper.database;
       await db.delete(
         'expenses',
-        where: 'id = ?',
+        where: 'id = ? ',
         whereArgs: [id],
       );
     }
-  
+    Future<void> setCurrentUser(int userId) async {
+      var db = await DatabaseHelper.database;
+      await db.delete('current_user');
+      await db.insert('current_user', {'id': userId});
+    }
+
+
     Future<int> createExpense(Expense expense) async {
       var db = await DatabaseHelper.database;
       try {
@@ -127,7 +140,9 @@ class DatabaseHelper {
           expense.description,
           expense.amount,
           expense.category,
-          expense.date.toIso8601String(), // Convert DateTime to String
+          expense.date.toIso8601String(),
+          (await getCurrentUser())!,
+           // Convert DateTime to String
           expense.receiptPath
         ]);
       } catch (e) {
