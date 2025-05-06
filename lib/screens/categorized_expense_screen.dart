@@ -14,20 +14,20 @@ class CategorizedExpenseScreen extends StatefulWidget {
 
 class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
   // Future to hold the list of expenses
-  late Future<List<Expense>> _expensesFuture;
+  late Future<List<Expense>> expensesFuture;
 
   @override
   void initState() {
     super.initState();
-    _refreshExpenses(); // Load expenses when the screen is initialized
+    refreshExpenses(); // Load expenses when the screen is initialized
   }
 
   // Refresh the list of expenses
-  void _refreshExpenses() {
+  Future<void> refreshExpenses() async {
+    final userId = await AuthService.getCurrentUserId() ?? 1;
     setState(() {
-      final currentUserId = AuthService.getCurrentUserId();
-      _expensesFuture =
-          DatabaseHelper.instance.getAllExpenses(currentUserId!);
+      expensesFuture =
+          DatabaseHelper.instance.getAllExpenses(userId);
     });
   }
 
@@ -35,7 +35,7 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
   Widget build(BuildContext context) {
     return FutureBuilder<List<Expense>>(
       future: _expensesFuture,
-      builder: (context, snapshot) {
+      builder: (context, snapshot) {        
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
               child: CircularProgressIndicator()); // Show loading indicator

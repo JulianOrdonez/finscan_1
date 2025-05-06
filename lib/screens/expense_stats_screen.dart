@@ -14,7 +14,7 @@ class ExpenseStatsScreen extends StatefulWidget {
 
 class _ExpenseStatsScreenState extends State<ExpenseStatsScreen>
  {
-  late Future<List<Expense>> _expensesFuture;
+  late Future<List<Expense>> expensesFuture;
   String _selectedPeriod = 'Mes actual';
   final List<String> _periods = ['Mes actual', 'Últimos 3 meses', 'Último año'];
 
@@ -25,14 +25,11 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen>
   }
 
   void _refreshExpenses() {
-    final userId = AuthService.getCurrentUserId();
-    if (userId != null) {
-        setState(() {
-            _expensesFuture = DatabaseHelper.instance.getAllExpenses(userId);
-        });
-    } else {
-        // Handle the case where userId is null, perhaps show an error or a message
-    }
+    final userId = AuthService.getCurrentUserId() ?? 1;
+    setState(() {
+      expensesFuture = DatabaseHelper.instance.getAllExpenses(userId);
+    });
+
   }
 
   // Filtrar gastos según el período seleccionado
@@ -139,7 +136,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen>
     final textColor = isDark ? Colors.white : Colors.black;
 
     return Padding(padding: const EdgeInsets.all(16.0),
-        child: FutureBuilder<List<Expense>>(future: _expensesFuture, builder: (context, snapshot) {
+        child: FutureBuilder<List<Expense>>(future: expensesFuture, builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting)
             {return const Center(child: CircularProgressIndicator());}
 

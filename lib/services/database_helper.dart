@@ -127,10 +127,19 @@ class DatabaseHelper {
     try {
       var db = await database;
 
-      var result = await db.query(
-        'expenses',
-        where: userId == null ? null : 'user_id = ?',
-        whereArgs: [userId],
+      List<Map<String, dynamic>> result;
+      if(userId == null){
+        result = await db.query(
+          'expenses',
+        );
+      }else{
+        result = await db.query(
+          'expenses',
+          where: 'user_id = ?',
+          whereArgs: [userId],
+        );
+      }
+      
       );
       return result.map((map) {
         return Expense(
