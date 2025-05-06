@@ -109,7 +109,17 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
 
       try {
         final currencyProvider = Provider.of<CurrencyProvider>(context, listen: false);
-        final currentCurrency = currencyProvider.getCurrency();
+        final currentCurrency = currencyProvider.getSelectedCurrency();
+        Decimal amount = Decimal.parse(_amountController.text);
+        if (currentCurrency != 'EUR') {
+          // Convert to EUR using the conversion rate
+          // Example: Assume 1 EUR = 4500 COP
+          if (currentCurrency == 'COP') {
+            amount = amount / Decimal.parse('4500');
+          }else{
+            amount = amount / Decimal.parse('1');
+          }
+        }
         Decimal amount = Decimal.parse(_amountController.text);
         final userId = await AuthService.getCurrentUserId();
         final expense = Expense(
