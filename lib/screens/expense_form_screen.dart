@@ -231,12 +231,12 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
           keyboardType: const TextInputType.numberWithOptions(
             decimal: true,
           ),
-          validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Por favor ingresa una cantidad';
-        }
-        if (double.tryParse(value) == null) {
-          return 'Ingresa un número válido';
+ validator: (value) {
+ if (value == null || value.isEmpty) {
+ return 'Por favor ingresa una cantidad';
+ }
+ if (double.tryParse(value) == null) {
+ return 'Ingresa un número válido';
         }
         return null;
       },
