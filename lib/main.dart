@@ -39,16 +39,10 @@ class MyApp extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               } else {
                 final userId = snapshot.data;
-
                 if (snapshot.hasData && userId != null) {
-                  return FutureBuilder<User?>(
-                    future: DatabaseHelper.instance.getUserById(userId),
-                    builder: (context, userSnapshot) {
-                      final user = userSnapshot.data;
-                      return user != null ? HomePage() : LoginScreen();
-                    },
-                  );
-                } else {
+                  return HomePage();
+                }
+                 else {
                   return LoginScreen();
                 }
               }
