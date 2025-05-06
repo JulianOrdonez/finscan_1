@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_application_2/main.dart';
 import '../models/expense.dart';
 import '../services/database_helper.dart';
 import '../theme_provider.dart';
@@ -69,13 +68,12 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     return expenses.where((expense) => expense.date.isAfter(startDate)).toList();
   }
 
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-
     return  Scaffold(
       body: FutureBuilder<List<Expense>>(
-        future: _expensesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -102,13 +100,14 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           final filteredExpenses = _filterByPeriod(expenses);
 
 
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
+          return  Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
              children: [
                 Card(
                   child: Padding(
                       padding: const EdgeInsets.all(16.0),
+
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -116,13 +115,15 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                             children: [
                               Icon(Icons.money),
                               const SizedBox(width: 8),
-                              Text('Resumen de Gastos', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                              Text('Resumen de Gastos',
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                             ],
                           ),
                           const SizedBox(height: 16),
-                          Text('Total Gastado: €${_calculateTotal(filteredExpenses).toStringAsFixed(2)}', style: TextStyle(fontSize: 16)),
+                          Text('Total Gastado: €${_calculateTotal(filteredExpenses).toStringAsFixed(2)}',
+                              style: TextStyle(fontSize: 16)),
                         ],
-                      ),
+                    ),
                     ),
                 ),
                  Expanded(
@@ -140,17 +141,19 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                               backgroundColor: _getCategoryColor(expense.category),
                               child: Icon(_getCategoryIcon(expense.category), color: Colors.white, size: 20),
                             ),
-                            title: Text(
-                              expense.description,
+                            title: Text(expense.category,
                               style: const TextStyle(
                                 fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
+                                color: Colors.black
+                              )
+                              ,
                             ),
                             subtitle: Padding(
                               padding: const EdgeInsets.only(top:4.0),
-                              child: Text(
-                                '${expense.category} - ${DateFormat('dd/MM/yyyy').format(expense.date)}',
+                              child:  Text(
+                                '${expense.description} - ${DateFormat('dd/MM/yyyy').format(expense.date)}',
+
+
                               ),
                             ), 
                             trailing: Row(
@@ -177,7 +180,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                                ),
                  ),
               ],
-            ),
+            ) ,
           );
         },
 
@@ -193,6 +196,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       ),
     ) ;
   }
+
 
   Color _getCategoryColor(String category) {
     final Map<String, Color> categoryColors = {
