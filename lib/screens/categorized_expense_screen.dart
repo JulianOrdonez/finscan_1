@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_application_2/helpers.dart';
 import '../models/expense.dart';
+import '../currency_provider.dart';
 import '../services/database_helper.dart';
 
 class CategorizedExpenseScreen extends StatefulWidget {
@@ -58,49 +60,56 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
               .add(expense);
         }
 
-        return ListView(
-          padding: const EdgeInsets.all(16.0),
-          children: categorizedExpenses.entries.map((entry) {
-            final totalAmount = entry.value.fold(0.0, (sum, expense) => sum + expense.amount);
-            return Card(
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              child: ExpansionTile(
-                leading: CircleAvatar(
-                  backgroundColor: Helpers.getCategoryColor(entry.key),
-                  child: Icon(Helpers.getCategoryIcon(entry.key), color: Colors.white, size: 20),
-                ),
-                title: Text(entry.key, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                subtitle: Text(
-                  'Total: €${totalAmount.toStringAsFixed(2)}',
-                  style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-                ),
-                children: entry.value.map((expense) {
-                  return ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    title: Text(
-                      expense.description,
-                      style: const TextStyle(
-                        fontSize: 16,
+ return Consumer<CurrencyProvider>(
+ builder: (context, currencyProvider, child) {
+ return ListView(
+ padding: const EdgeInsets.all(16.0),
+ children: categorizedExpenses.entries.map((entry) {
+ final totalAmount = entry.value.fold(0.0, (sum, expense) => sum + expense.amount);
+ final convertedTotalAmount = currencyProvider.convertAmount(totalAmount);
+ final currencySymbol = currencyProvider.getCurrencySymbol();
+
+ return Card(
+ margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+ child: ExpansionTile(
+ leading: CircleAvatar(
+ backgroundColor: Helpers.getCategoryColor(entry.key),
+ child: Icon(Helpers.getCategoryIcon(entry.key), color: Colors.white, size: 20),
+ ),
+ title: Text(entry.key, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+ subtitle: Text(
+ 'Total: $currencySymbol${convertedTotalAmount.toStringAsFixed(2)}',
+ style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+ ),
+ children: entry.value.map((expense) {
+ final convertedExpenseAmount = currencyProvider.convertAmount(expense.amount);
+ return ListTile(
+ contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+ title: Text(
+ expense.description,
+ style: const TextStyle(
+ fontSize: 16,
+ ),
+ ),
+ subtitle: Padding(
+ padding: const EdgeInsets.only(top: 4.0),
+ child: Text(DateFormat('dd/MM/yyyy').format(DateTime.parse(expense.date))),
+ ),
+ trailing: Padding(
+ padding: const EdgeInsets.symmetric(horizontal: 8),
+ child: Text(
+ '$currencySymbol${convertedExpenseAmount.toStringAsFixed(2)}',
+ style: const TextStyle(fontWeight: FontWeight.bold),
+ ),
                       ),
                     ),
-                    subtitle: Padding(
-                      padding: const EdgeInsets.only(top: 4.0),
-                      child: Text(DateFormat('dd/MM/yyyy').format(DateTime.parse(expense.date))),
-                    ),
-                    trailing: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Text(
-                        '€${expense.amount.toStringAsFixed(2)}',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  );
-                }).toList(),
-                
-                
-              ),
-            );
-          }).toList(),
+ );
+ }).toList(),
+ ),
+ );
+ }).toList(),
+ );
+ }
         );
       },
     );

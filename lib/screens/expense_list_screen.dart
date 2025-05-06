@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../helpers.dart';
+import 'package:provider/provider.dart';
+import '../currency_provider.dart';
 import '../models/expense.dart';
 import '../services/database_helper.dart';
 import 'expense_form_screen.dart';
@@ -59,12 +61,11 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     return expenses.fold(0, (sum, expense) => sum + expense.amount);
   }
 
-  // Filter expenses based on the selected period
-  List<Expense> _filterByPeriod(List<Expense> expenses) {
+  // Sort expenses by date in descending order (latest first)
+  List<Expense> _sortExpenses(List<Expense> expenses) {
     // Sort expenses by date in descending order (latest first)
     return expenses..sort((a, b) => DateTime.parse(b.date).compareTo(DateTime.parse(a.date)));
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,8 +93,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
             );
           }
 
-          final filteredExpenses = _filterByPeriod(snapshot.data!);
-
+          final sortedExpenses = _sortExpenses(snapshot.data!);
+          final currencyProvider = Provider.of<CurrencyProvider>(context);
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -114,18 +115,18 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        Text(
-                            'Total Gastado: €${_calculateTotal(filteredExpenses).toStringAsFixed(2)}',
-                            style: TextStyle(fontSize: 16)),
+                         Text(
+                           'Total Gastado: ${currencyProvider.formatAmount(_calculateTotal(sortedExpenses))}',
+                           style: TextStyle(fontSize: 16)),
                       ],
                     ),
                   ),
                 ),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: filteredExpenses.length,
+                    itemCount: sortedExpenses.length,
                     itemBuilder: (context, index) {
-                      final expense = filteredExpenses[index];
+                      final expense = sortedExpenses[index];
                       return Card(
                         margin: const EdgeInsets.symmetric(vertical: 5),
                         child: Padding(
@@ -156,7 +157,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text('€${expense.amount.toStringAsFixed(2)}',
+                                Text(currencyProvider.formatAmount(expense.amount),
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16)),

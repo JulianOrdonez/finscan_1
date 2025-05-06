@@ -3,6 +3,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../models/expense.dart';
 import '../services/database_helper.dart';
+import 'package:provider/provider.dart';
+import '../currency_provider.dart';
 import '../helpers.dart';
 
 class ExpenseStatsScreen extends StatefulWidget {
@@ -111,6 +113,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final currencyProvider = Provider.of<CurrencyProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : Colors.black;
 
@@ -205,8 +208,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                         Text(
                             'Número de transacciones: ${filteredExpenses.length}',
                             style: TextStyle(fontSize: 16, color: textColor)),
-                        Text(
-                            'Total Gastado: €${_calculateTotal(filteredExpenses).toStringAsFixed(2)}',
+                        Text('Total Gastado: ${currencyProvider.getCurrency()}${currencyProvider.convertAmount(_calculateTotal(filteredExpenses)).toStringAsFixed(2)}',
                             style: TextStyle(fontSize: 16, color: textColor)),
                       ],
                     ),
@@ -254,9 +256,9 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                     Expanded(
                                         child: Text(entry.key,
                                             style: TextStyle(color: textColor))),
-                                    Text('€${entry.value.toStringAsFixed(2)}',
+                                    Text('${currencyProvider.getCurrency()}${currencyProvider.convertAmount(entry.value).toStringAsFixed(2)}',
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold,
+                                            fontWeight: FontWeight.bold, 
                                             color: textColor)),
                                   ],
                                 ),
@@ -322,7 +324,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                           sideTitles: SideTitles(
                                               showTitles: true,
                                               getTitlesWidget:
-                                                  (value, meta) {
+                                                  (double value, TitleMeta meta) {
                                                 return Text('€${value.toInt()}',
                                                     style: TextStyle(
                                                         fontSize: 10,

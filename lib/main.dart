@@ -5,6 +5,7 @@ import 'package:flutter_application_2/models/user.dart';
 import 'package:flutter_application_2/screens/home_page.dart';
 import 'package:flutter_application_2/screens/login_screen.dart';
 import 'package:flutter_application_2/services/database_helper.dart';
+import 'package:flutter_application_2/currency_provider.dart';
 import 'package:flutter_application_2/theme_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -12,9 +13,12 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     ChangeNotifierProvider<ThemeProvider>(
-      create: (_) => ThemeProvider(),
-      child: MyApp(),
-    ),
+      create: (context) => ThemeProvider(),
+      child: ChangeNotifierProvider<CurrencyProvider>(
+        create: (context) => CurrencyProvider(),
+        child: MyApp(),
+      ),
+    )
   );
 }
 

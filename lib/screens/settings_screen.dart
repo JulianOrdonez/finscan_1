@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_application_2/screens/login_screen.dart';
 import '../services/auth_service.dart';
 import 'package:flutter_application_2/screens/support_screen.dart';
+import '../currency_provider.dart';
 import 'package:flutter_application_2/theme_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -14,7 +15,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String _selectedCurrency = 'USD';
+  // String _selectedCurrency = 'USD'; // Removed as currency is now managed by CurrencyProvider
   final List<String> _currencies = ['USD', 'EUR', 'MXN', 'COP'];
 
   @override
@@ -25,15 +26,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   /// Load the selected currency from shared preferences.
   Future<void> _loadSelectedCurrency() async {
+    final currencyProvider = Provider.of<CurrencyProvider>(context, listen: false);
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _selectedCurrency = prefs.getString('currency') ?? 'USD';
-    });
+    final savedCurrency = prefs.getString('currency') ?? 'COP'; // Default to COP
+    currencyProvider.setCurrency(savedCurrency);
   }
 
   /// Save the selected currency to shared preferences.
   Future<void> _saveSelectedCurrency(String currency) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance(); // Kept for saving
     await prefs.setString('currency', currency);
   }
 
@@ -49,6 +50,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final currencyProvider = Provider.of<CurrencyProvider>(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -79,7 +81,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildSettingCard(
               title: 'Moneda',
               trailing: DropdownButton<String>(
-                value: _selectedCurrency,
+                value: currencyProvider.getCurrency(),
                 items: _currencies.map((String currency) {
                   return DropdownMenuItem<String>(
                     value: currency,
@@ -88,9 +90,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 }).toList(),
                 onChanged: (String? newValue) {
                   if (newValue != null) {
-                    setState(() {
-                      _selectedCurrency = newValue;
-                    });
+                    currencyProvider.setCurrency(newValue); // Update currency in provider
                     _saveSelectedCurrency(newValue);
                   }
                 },
