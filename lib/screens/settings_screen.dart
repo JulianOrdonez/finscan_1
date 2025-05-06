@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_application_2/screens/login_screen.dart';
 import '../services/auth_service.dart';
+import 'package:flutter_application_2/screens/support_screen.dart';
 import 'package:flutter_application_2/theme_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -102,8 +103,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildSettingCard(
               title: 'Soporte al Usuario',
               leading: Icon(Icons.support_agent),
-              onTap: () {
-                print('Soporte al Usuario');
+              onTap: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SupportScreen(),
+                  ),
+                );
               },
             ),
           ],
