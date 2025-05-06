@@ -15,10 +15,10 @@ class DatabaseHelper {
   DatabaseHelper._privateConstructor();
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
 
-  static Database? _databaseStatic;
   static Future<Database> get database async {
-    _databaseStatic ??= await instance._initDatabase();
-    return _databaseStatic!;
+    if(instance._database == null) {
+      instance._database = await instance._initDatabase();
+    }    return instance._database!;
   }
 
   Future<Database> _initDatabase() async {
@@ -109,9 +109,9 @@ class DatabaseHelper {
       await db.execute('DELETE FROM current_user');
     }
   
-    Future<List<Expense>> getExpenses() async {
-      var db = await DatabaseHelper.database;
+    Future<List<Expense>> getAllExpenses() async {
       try {
+        var db = await database;
         int? currentUserId = await getCurrentUser();
           
         var result = await db.query(
@@ -135,7 +135,7 @@ class DatabaseHelper {
       }
     }
   
-    Future<void> deleteExpense(int id) async {
+      Future<void> deleteExpense(int id) async {
       var db = await DatabaseHelper.database;
       await db.delete(
         'expenses',
@@ -147,12 +147,14 @@ class DatabaseHelper {
       var db = await DatabaseHelper.database;
       await db.delete('current_user');
       await db.insert('current_user', {'id': userId});
-    }
+    } 
 
 
-    Future<int> createExpense(Expense expense) async {
-      var db = await DatabaseHelper.database;
+     Future<int> insertExpense(Expense expense) async {
       try {
+        var db = await database;
+         int? currentUserId = await getCurrentUser();
+
         final sql ='INSERT INTO expenses (title, description, amount, category, date, receiptPath) VALUES (?, ?, ?, ?, ?, ?)';
         return await db.rawInsert(sql, [
           expense.title,
@@ -160,7 +162,7 @@ class DatabaseHelper {
           expense.amount,
           expense.category,
           expense.date.toIso8601String(),
-          (await getCurrentUser())!,
+          currentUserId,
            // Convert DateTime to String
           expense.receiptPath
         ]);
@@ -169,9 +171,10 @@ class DatabaseHelper {
         rethrow;
       }
     }
-  
+    
+    
     Future<void> updateExpense(Expense expense) async {
-      var db = await DatabaseHelper.database;
+      var db = await database;
       try {
         final sql = 'UPDATE expenses SET title = ?, description = ?, amount = ?, category = ?, date = ?, receiptPath = ? WHERE id = ?';
         await db.rawUpdate(sql, [expense.title, expense.description, expense.amount, expense.category, expense.date.toIso8601String(), expense.receiptPath, expense.id]);

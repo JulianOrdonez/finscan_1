@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_application_2/theme_provider.dart';
-import 'package:flutter_application_2/services/database_helper.dart';
 import 'package:flutter_application_2/models/user.dart';
-import 'package:animations/animations.dart';
-import 'package:flutter_application_2/screens/expense_list_screen.dart';
 import 'package:flutter_application_2/screens/categorized_expense_screen.dart';
-import 'package:flutter_application_2/screens/login_screen.dart';
+import 'package:flutter_application_2/screens/expense_list_screen.dart';
 import 'package:flutter_application_2/screens/expense_stats_screen.dart';
+import 'package:flutter_application_2/screens/login_screen.dart';
 import 'package:flutter_application_2/screens/settings_screen.dart';
+import 'package:flutter_application_2/services/database_helper.dart';
+import 'package:flutter_application_2/theme_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:animations/animations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   runApp(
     ChangeNotifierProvider<ThemeProvider>(
       create: (_) => ThemeProvider(),
@@ -27,27 +28,101 @@ class MyApp extends StatelessWidget {
       builder: (context, themeProvider, child) {
         return MaterialApp(
           title: 'FinScan - Gastos',
+          debugShowCheckedModeBanner: false,
           theme: themeProvider.themeData,
-          home: FutureBuilder<int?>(
-            future: DatabaseHelper.instance.getCurrentUser(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else {
-                return FutureBuilder<User?>(
-                  future: snapshot.data != null
-                      ? DatabaseHelper.instance.getUserById(snapshot.data!)
-                      : null,
-                  builder: (context, userSnapshot) {
-                    if (userSnapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else {
-                      return userSnapshot.data != null
-                          ? HomePage()
-                          : LoginScreen();
-                    }
-                  },
+          home: FutureBuilder<int?>(future: DatabaseHelper.instance.getCurrentUser(), builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else {
+                  if (snapshot.hasData && snapshot.data != null) {
+                    return FutureBuilder<User?>(
+                      future: DatabaseHelper.instance.getUserById(snapshot.data!),
+                      builder: (context, userSnapshot) {
+                        return userSnapshot.data != null
+                            ? HomePage()
+                            : const LoginScreen();
+                      },
+                    );
+                  } else {
+                    return const LoginScreen();
+                  }
+                }
+              },
+            ),
+        );
+      },
+    );
+  }
+}
+
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final List<Widget> _screens = [
+    const ExpenseListScreen(),
+    const ExpenseStatsScreen(),
+    const CategorizedExpenseScreen(),
+    const SettingsScreen(),
+  ];
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) => Scaffold(
+        appBar: AppBar(
+          title: const Text('FinScan - Gastos'),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  themeProvider.themeData.colorScheme.primary,
+                  themeProvider.themeData.colorScheme.primaryContainer
+                ], // Use gradient colors
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
+        ),
+        body: PageTransitionSwitcher(
+          duration: const Duration(milliseconds: 300),
+          transitionBuilder: (Widget child, Animation<double> animation,
+                  Animation<double> secondaryAnimation) =>
+              FadeTransition(opacity: animation, child: child),
+          child: _screens[_selectedIndex],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.bar_chart), label: 'Estadísticas'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.category), label: 'Categorías'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.settings), label: 'Ajustes'),
+            ],
+            selectedItemColor: themeProvider.themeData.colorScheme.tertiary,
+            unselectedItemColor: Colors.grey[400],
+            currentIndex: _selectedIndex,
+            showUnselectedLabels: true,
+            onTap: _onItemTapped,
+            backgroundColor: themeProvider.themeData.cardColor),
+      ),
+    );
+  }
+}
+
+
                 );
               }
             },
