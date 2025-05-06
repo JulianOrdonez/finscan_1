@@ -61,13 +61,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
   // Filter expenses based on the selected period
   List<Expense> _filterByPeriod(List<Expense> expenses) {
-    final now = DateTime.now();
-    // Start of the current month
-    final startDate = DateTime(now.year, now.month, 1);
-
-    return expenses
-        .where((expense) => DateTime.parse(expense.date).isAfter(startDate))
-        .toList();
+    // Sort expenses by date in descending order (latest first)
+    return expenses..sort((a, b) => DateTime.parse(b.date).compareTo(DateTime.parse(a.date)));
   }
 
   @override

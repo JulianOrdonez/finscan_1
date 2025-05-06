@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
                 } else {
                   final user = snapshot.data;
                   if (user != null) {
-                    return HomePage();
+                    return const HomePage();
                   } else {
                     return LoginScreen();
                   }
