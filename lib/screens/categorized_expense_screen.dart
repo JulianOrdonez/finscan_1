@@ -34,7 +34,7 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Expense>>(
-      future: _expensesFuture,
+      future: expensesFuture,
       builder: (context, snapshot) {        
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(

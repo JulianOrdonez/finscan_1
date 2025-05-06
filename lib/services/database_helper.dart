@@ -139,8 +139,7 @@ class DatabaseHelper {
           whereArgs: [userId],
         );
       }
-      
-      );
+
       return result.map((map) {
         return Expense(
           id: map['id'] as int?,
@@ -190,7 +189,7 @@ class DatabaseHelper {
         expense.receiptPath,
         currentUserId
       ]);
-    } catch (e) {
+     } catch (e) {
       print(e);
       rethrow;
     }
