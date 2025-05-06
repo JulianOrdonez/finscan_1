@@ -118,20 +118,4 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
         return Icons.category;
       }
     
-  }
-}
-
-                          ),
-                        ),
-                      ],
-                      ),
-                    ),
-                ],
-              ),
-                );
-              }).toList(),
-        );
-      },
-    );
-  }
-}
+  }}
