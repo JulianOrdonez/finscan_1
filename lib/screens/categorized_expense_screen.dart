@@ -88,8 +88,18 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
                   ...entry.value.map((expense) {
                     return ListTile(
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      title: Text(expense.description),
-                      subtitle: Text(DateFormat('dd/MM/yyyy').format(expense.date)),
+                       title: Text(
+                        expense.description,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                       subtitle: Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                         child: Text(DateFormat('dd/MM/yyyy').format(expense.date)),
+                       ),
+                    
                       trailing: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                         child: Text(
