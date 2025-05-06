@@ -29,7 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final currencyProvider = Provider.of<CurrencyProvider>(context, listen: false);
     final prefs = await SharedPreferences.getInstance();
     final savedCurrency = prefs.getString('currency') ?? 'COP'; // Default to COP
-    currencyProvider.setCurrency(savedCurrency);
+    currencyProvider.setSelectedCurrency(savedCurrency);
   }
 
   /// Save the selected currency to shared preferences.
@@ -81,7 +81,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildSettingCard(
               title: 'Moneda',
               trailing: DropdownButton<String>(
-                value: currencyProvider.getCurrency(),
+                value: currencyProvider.getSelectedCurrency(),
                 items: _currencies.map((String currency) {
                   return DropdownMenuItem<String>(
                     value: currency,

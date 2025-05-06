@@ -257,7 +257,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                         child: Text(entry.key,
                                             style: TextStyle(color: textColor))),
                                     Text('${currencyProvider.getCurrency()}${currencyProvider.convertAmount(entry.value).toStringAsFixed(2)}',
-                                        style: TextStyle(
+                                        style: TextStyle( 
                                             fontWeight: FontWeight.bold, 
                                             color: textColor)),
                                   ],

@@ -115,8 +115,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                           ],
                         ),
                         const SizedBox(height: 16),
-                         Text(
-                           'Total Gastado: ${currencyProvider.formatAmount(_calculateTotal(sortedExpenses))}',
+                        Text(
+                          'Total Gastado: ${currencyProvider.getCurrencySymbol()}${currencyProvider.convertAmountToSelectedCurrency(_calculateTotal(sortedExpenses)).toStringAsFixed(2)}',
                            style: TextStyle(fontSize: 16)),
                       ],
                     ),
@@ -157,7 +157,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(currencyProvider.formatAmount(expense.amount),
+                                Text(currencyProvider.formatAmount(currencyProvider.convertAmountToSelectedCurrency(expense.amount)),
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16)),

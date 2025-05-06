@@ -66,8 +66,7 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
  padding: const EdgeInsets.all(16.0),
  children: categorizedExpenses.entries.map((entry) {
  final totalAmount = entry.value.fold(0.0, (sum, expense) => sum + expense.amount);
- final convertedTotalAmount = currencyProvider.convertAmount(totalAmount);
- final currencySymbol = currencyProvider.getCurrencySymbol();
+ final convertedTotalAmount = currencyProvider.convertAmountToSelectedCurrency(totalAmount);
 
  return Card(
  margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -78,13 +77,13 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
  ),
  title: Text(entry.key, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
  subtitle: Text(
- 'Total: $currencySymbol${convertedTotalAmount.toStringAsFixed(2)}',
+ 'Total: ${currencyProvider.formatAmount(convertedTotalAmount)}',
  style: TextStyle(color: Theme.of(context).colorScheme.secondary),
  ),
  children: entry.value.map((expense) {
- final convertedExpenseAmount = currencyProvider.convertAmount(expense.amount);
+ final convertedExpenseAmount = currencyProvider.convertAmountToSelectedCurrency(expense.amount);
  return ListTile(
- contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+ contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
  title: Text(
  expense.description,
  style: const TextStyle(
@@ -98,11 +97,10 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
  trailing: Padding(
  padding: const EdgeInsets.symmetric(horizontal: 8),
  child: Text(
- '$currencySymbol${convertedExpenseAmount.toStringAsFixed(2)}',
+ currencyProvider.formatAmount(convertedExpenseAmount),
  style: const TextStyle(fontWeight: FontWeight.bold),
  ),
-                      ),
-                    ),
+ ),
  );
  }).toList(),
  ),
@@ -114,17 +112,4 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
       },
     );
   }
-
-  Color _getCategoryColor(String category) {
-    return Helpers.getCategoryColor(category);
-  }
-
-  IconData _getCategoryIcon(String category) {
-      final icon = Helpers.getCategoryIcon(category);
-      if (icon != null){
-        return icon;
-      } else {
-        return Icons.category;
-      }
-    
-  }}
+}
