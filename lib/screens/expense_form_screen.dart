@@ -6,6 +6,7 @@ import '../services/database_helper.dart';
 import 'package:provider/provider.dart';
 import '../currency_provider.dart';
 import '../services/auth_service.dart';
+import 'package:decimal/decimal.dart';
 import '../services/scan_service.dart';
 
 class ExpenseFormScreen extends StatefulWidget {
@@ -107,13 +108,16 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       });
 
       try {
+        final currencyProvider = Provider.of<CurrencyProvider>(context, listen: false);
+        final currentCurrency = currencyProvider.getCurrency();
+        Decimal amount = Decimal.parse(_amountController.text);
         final userId = await AuthService.getCurrentUserId();
         final expense = Expense(
           id: widget.expense?.id ?? -1,
           userId: userId!,
           title: _titleController.text,
           description: "",
-          amount: double.parse(_amountController.text),
+          amount: amount.toDouble(),
           category: _selectedCategory,
           date: DateFormat('yyyy-MM-dd').format(_selectedDate),
           receiptPath: _receiptPath ?? "",
@@ -215,10 +219,12 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       builder: (context, currencyProvider, child) {
         return TextFormField(
           controller: _amountController,
-          decoration: InputDecoration(
-            labelText: 'Cantidad (${currencyProvider.getCurrencySymbol()})',
+          decoration: const InputDecoration(
+            labelText: 'Cantidad',
             border: const OutlineInputBorder(),
             prefixIcon: const Icon(Icons.money),
+            suffixIcon: Padding(
+              padding: EdgeInsets.only(right: 8.0),),
           ),
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           validator: (value) {
