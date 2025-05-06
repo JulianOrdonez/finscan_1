@@ -113,11 +113,9 @@ class DatabaseHelper {
       var db = await DatabaseHelper.database;
       try {
         int? currentUserId = await getCurrentUser();
+          
         var result = await db.query(
           'expenses',
-          where: 'user_id = ?',
-          whereArgs: [currentUserId],
-        );
           where: 'user_id = ?',
           whereArgs: [currentUserId],
         );
@@ -132,7 +130,7 @@ class DatabaseHelper {
             receiptPath: map['receiptPath'] as String?,
           );
         }).toList() ;
-      }catch (e) {
+      } catch (e) {
         rethrow;
       }
     }
