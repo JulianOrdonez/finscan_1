@@ -20,10 +20,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> _createUser(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       try {
-        bool isCreated = await AuthService.createUser(
-          _emailController.text,
-          _passwordController.text,
-        );
+        final name = ""; // No hay un campo para nombre en el formulario, asi que se deja vacio
+        final email = _emailController.text;
+        final password = _passwordController.text;
+        final confirmPassword = _confirmPasswordController.text;
+        bool isCreated = await AuthService.createUser({
+          'name': name,
+          'email': email,
+          'password': password,
+          'confirmPassword': confirmPassword,
+        });
         
         if (isCreated) {
           bool logged = await AuthService.login(

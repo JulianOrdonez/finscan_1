@@ -118,7 +118,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
               receiptPath: _receiptPath,
              );
         if (widget.expense?.id == null) {
-          int? currentUserId = await AuthService().getCurrentUserId();
+          int? currentUserId = await AuthService.getCurrentUserId();
 
           if (currentUserId != null) {
             await DatabaseHelper.instance.insertExpense(expense);
