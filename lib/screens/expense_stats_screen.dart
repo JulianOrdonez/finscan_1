@@ -208,8 +208,11 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                         Text(
                             'Número de transacciones: ${filteredExpenses.length}',
                             style: TextStyle(fontSize: 16, color: textColor)),
-                        Text('Total Gastado: ${currencyProvider.getCurrency()}${currencyProvider.convertAmount(_calculateTotal(filteredExpenses)).toStringAsFixed(2)}',
-                            style: TextStyle(fontSize: 16, color: textColor)),
+                        Text(
+                          'Total Gastado: ${currencyProvider.formatAmount(currencyProvider.convertAmountToSelectedCurrency(_calculateTotal(filteredExpenses)))}',
+                          style: TextStyle(fontSize: 16, color: textColor),
+
+                        ),
                       ],
                     ),
                   ),
@@ -256,9 +259,10 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                                     Expanded(
                                         child: Text(entry.key,
                                             style: TextStyle(color: textColor))),
-                                    Text('${currencyProvider.getCurrency()}${currencyProvider.convertAmount(entry.value).toStringAsFixed(2)}',
-                                        style: TextStyle( 
-                                            fontWeight: FontWeight.bold, 
+                                    Text(
+                                        currencyProvider.formatAmount(currencyProvider.convertAmountToSelectedCurrency(entry.value)),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
                                             color: textColor)),
                                   ],
                                 ),
