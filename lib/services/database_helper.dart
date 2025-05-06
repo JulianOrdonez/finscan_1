@@ -3,6 +3,7 @@ import 'package:path/path.dart';
 import 'package:flutter_application_2/models/expense.dart';
 import '../models/user.dart';
 import 'package:sqflite/sqflite.dart';
+import '../currency_provider.dart';
 class DatabaseHelper {
   static const _databaseName = "expenses_app.db";
   static const _databaseVersion = 1;
@@ -133,7 +134,12 @@ class DatabaseHelper {
         where: '$columnExpenseUserId = ?',
         whereArgs: [userId],
       );
-    return result.map((map) => Expense.fromMap(map)).toList();
+      final currencyProvider = CurrencyProvider();
+      List<Expense> expenses = result.map((map) => Expense.fromMap(map)).toList();
+      for (var expense in expenses) {
+        expense.amount = currencyProvider.convertAmountToSelectedCurrency(expense.amount);
+      }
+      return expenses;
     } catch (e) {}
     return [];
   }

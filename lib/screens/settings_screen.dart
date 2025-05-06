@@ -27,7 +27,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _loadSelectedCurrency() async {
     final currencyProvider = Provider.of<CurrencyProvider>(context, listen: false);
     final prefs = await SharedPreferences.getInstance();
-    final savedCurrency = prefs.getString('currency') ?? 'COP';
+    final savedCurrency = prefs.getString('currency') ?? 'COP';currencyProvider.setSelectedCurrency(savedCurrency);
   }
 
   /// Save the selected currency to shared preferences.
@@ -89,7 +89,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onChanged: (String? newValue) {
                   if (newValue != null) {
                     currencyProvider.setSelectedCurrency(newValue); // Update currency in provider
-                    _saveSelectedCurrency(newValue); // Change the setCurrency method call to setSelectedCurrency
                   }
                 },
               ),

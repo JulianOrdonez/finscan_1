@@ -116,7 +116,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Total Gastado: ${currencyProvider.getCurrencySymbol()}${currencyProvider.formatAmount(currencyProvider.convertAmountToSelectedCurrency(_calculateTotal(sortedExpenses)))}',
+ 'Total Gastado: ${currencyProvider.formatAmount(currencyProvider.convertAmountToSelectedCurrency(_calculateTotal(sortedExpenses)))}',
                            style: TextStyle(fontSize: 16)
                         ),
                       ],
