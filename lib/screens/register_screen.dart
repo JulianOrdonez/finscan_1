@@ -17,24 +17,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  Future<void> _createUser() async {
+  Future<void> _createUser(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       try {
-        final userId = await _authService.createUser(
-          _emailController.text, 
+        bool isCreated = await _authService.createUser(
+          _emailController.text,
           _passwordController.text,
         );
-        if (userId != null ) {
-          await _authService.login(_emailController.text, _passwordController.text);
-          Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const HomePage())
-          );
+
+        if (isCreated) {
+          bool logged = await _authService.login(
+              _emailController.text, _passwordController.text);
+          if (logged) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomePage()),
+            );
+          }
         } else {
-          _showErrorSnackBar('El correo ya está en uso.', context);
-        }
-      } on FirebaseAuthException catch (e){
-        if (e.code == 'email-already-in-use') {
-            _showErrorSnackBar('El correo ya está en uso.', context);
+            _showErrorSnackBar('Error al registrarse, usuario ya existe.', context);
         }
         print('Firebase Error: $e');
       } catch (e) {
@@ -43,7 +44,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-  void _showErrorSnackBar(String message, BuildContext context) {
+  void _showErrorSnackBar(String message, context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
@@ -121,7 +122,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 30),
                 ElevatedButton(
-                  onPressed: _createUser,
+                  onPressed: () => _createUser(context),
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),

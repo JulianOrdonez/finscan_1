@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:isolate';
 import 'package:flutter_application_2/services/auth_service.dart';
 import 'package:flutter_application_2/screens/home_page.dart';
+import 'package:flutter_application_2/models/user.dart';
 import 'package:flutter_application_2/screens/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -20,11 +21,11 @@ class _LoginScreenState extends State<LoginScreen> {
   _login() async {
     if (_formKey.currentState!.validate()) {
         try {
-            final user = await _runLoginInIsolate(
+            final bool user = await _runLoginInIsolate(
                 _emailController.text, _passwordController.text);
 
-            if (user == null) {
-                _showErrorSnackBar('Correo o contraseña incorrectos');
+            if (!user) {
+                _showErrorSnackBar('Usuario o contraseña incorrectos');
                 return;
             }
 
@@ -40,21 +41,21 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-    Future<String?> _runLoginInIsolate(String email, String password) async {
+    Future<bool> _runLoginInIsolate(String email, String password) async {
         final ReceivePort receivePort = ReceivePort();
         await Isolate.spawn(_loginIsolate, [email, password, receivePort.sendPort]);
         final result = await receivePort.first;
         receivePort.close();
         return result;
     }
-
+    
     static void _loginIsolate(List<dynamic> args) async {
         String email = args[0];
         String password = args[1];
         SendPort sendPort = args[2];
         try {
-            final user = await AuthService.login(email, password);
-            sendPort.send(user);
+            final bool success = await AuthService.login(email, password);
+            sendPort.send(success);
         } catch (e) {
             sendPort.send(null);
         }
