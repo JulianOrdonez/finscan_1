@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/expense.dart';
 import '../services/database_helper.dart';
+import 'package:provider/provider.dart';
+import '../currency_provider.dart';
 import '../services/auth_service.dart';
 import '../services/scan_service.dart';
 
@@ -217,15 +219,20 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   }
 
   Widget _buildAmountField() {
-    return TextFormField(
-      controller: _amountController,
-      decoration: const InputDecoration(
-        labelText: 'Cantidad (€)',
-        border: OutlineInputBorder(),
-        prefixIcon: Icon(Icons.money),
-      ),
-      keyboardType: const TextInputType.numberWithOptions(
-        decimal: true,
+    return Consumer<CurrencyProvider>(
+      builder: (context, currencyProvider, child) {
+        return TextFormField(
+          controller: _amountController,
+          decoration: InputDecoration(
+            labelText: 'Cantidad (${currencyProvider.getCurrencySymbol()})',
+            border: const OutlineInputBorder(),
+            prefixIcon: const Icon(Icons.money),
+          ),
+          keyboardType: const TextInputType.numberWithOptions(
+            decimal: true,
+          ),
+
+        );
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
