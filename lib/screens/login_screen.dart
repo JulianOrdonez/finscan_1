@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
+import 'package:flutter_application_2/theme_provider.dart';
 import 'package:flutter_application_2/screens/home_page.dart';
 import 'package:flutter_application_2/screens/register_screen.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -64,63 +66,105 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  prefixIcon: Icon(Icons.email),
-                  border: OutlineInputBorder(),
+  Widget build(BuildContext context) {    
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    return  Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: themeProvider.appBarGradient,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'FinScan',
+                  style: TextStyle(
+                    fontFamily: 'Roboto',
+                    fontSize: 40,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, ingrese su correo';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Contraseña',
-                  prefixIcon: Icon(Icons.lock),
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 40),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    prefixIcon: const Icon(Icons.email, color: Colors.white),
+                    labelStyle: TextStyle(color: Colors.white, fontFamily: 'Roboto'),
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.3),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide.none
+                    ),
+                  ),
+                  style: const TextStyle(fontFamily: 'Roboto', color: Colors.white),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor, ingrese su correo';
+                    }
+                    return null;
+                  },
                 ),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, ingrese su contraseña';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: _login,
-                child: const Text('Iniciar Sesión'),
-              ),
-              const SizedBox(height: 20),
-              TextButton(
-                onPressed: _navigateToRegister,
-                child: const Text('¿No tienes una cuenta? Regístrate'),
-              ),
-            ],
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'Contraseña',
+                    prefixIcon: const Icon(Icons.lock, color: Colors.white),
+                    labelStyle: TextStyle(color: Colors.white, fontFamily: 'Roboto'),
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.3),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide.none
+                    ),
+                  ),
+                  style: const TextStyle(fontFamily: 'Roboto', color: Colors.white),
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor, ingrese su contraseña';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 30),
+                ElevatedButton(
+                  onPressed: _login,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: themeProvider.themeData.colorScheme.secondary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                    textStyle: const TextStyle(fontFamily: 'Roboto', fontSize: 16, fontWeight: FontWeight.bold),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    elevation: 5,
+                  ),
+                  child: const Text('Iniciar Sesión'),
+                ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: _navigateToRegister,
+                  style: TextButton.styleFrom(
+                    textStyle: const TextStyle(fontFamily: 'Roboto', fontSize: 16, decoration: TextDecoration.underline),
+                    foregroundColor: Colors.white
+                  ),
+                  child: const Text('¿No tienes una cuenta? Regístrate'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
+

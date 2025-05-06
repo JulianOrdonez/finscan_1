@@ -148,8 +148,9 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                             ),
                             title: Text(
                               expense.title,
-                              style: const TextStyle(
-                                  fontSize: 18, color: Colors.black),
+                              style: TextStyle(
+                                  fontSize: 18, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black
+                                  ),
                             ),
                             subtitle: Padding(
                               padding: const EdgeInsets.only(top: 4.0),

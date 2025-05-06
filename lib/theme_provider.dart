@@ -28,8 +28,13 @@ class ThemeProvider with ChangeNotifier {
   }
 
   LinearGradient get appBarGradient => LinearGradient(
-    colors: isDarkMode ? [_darkTheme.colorScheme.primary, _darkTheme.colorScheme.primaryContainer] : [_lightTheme.colorScheme.primary, _lightTheme.colorScheme.primaryContainer],
-    begin: Alignment.topLeft,
+        colors: isDarkMode
+            ? [
+                const Color(0xFF1976D2),
+                const Color(0xFF0D47A1)
+              ]
+            : [const Color(0xFF64B5F6), const Color(0xFF0D47A1)],
+        begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
   ThemeData get _lightTheme => ThemeData(
@@ -46,13 +51,18 @@ class ThemeProvider with ChangeNotifier {
         scaffoldBackgroundColor:
             const Color(0xFFE3F2FD), // Light blue background
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
-          elevation: 4,
-          shadowColor: Colors.black,
-          foregroundColor: Colors.white,
-          titleTextStyle: TextStyle(
-              color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-        ),
+            backgroundColor: Colors.transparent,
+            elevation: 4,
+            shadowColor: Colors.black,
+            foregroundColor: Colors.white,
+            titleTextStyle: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold)),
+        fontFamily: 'Roboto',
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(fontFamily: 'Roboto'),
+          bodyLarge: TextStyle(fontFamily: 'Roboto')),
         brightness: Brightness.light,
         cardTheme: const CardTheme(
           color: Colors.white, // White cards

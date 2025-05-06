@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_application_2/screens/home_page.dart';
 import 'package:flutter_application_2/screens/login_screen.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_application_2/theme_provider.dart';
 import '../models/user.dart';
 
-class RegisterScreen extends StatefulWidget {
+class RegisterScreen extends StatefulWidget {\n  
   const RegisterScreen({super.key});
 
   @override
@@ -14,7 +17,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final AuthService _authService = AuthService();
+  final AuthService _authService = AuthService();\n  
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
