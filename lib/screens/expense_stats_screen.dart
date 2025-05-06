@@ -5,18 +5,18 @@ import '../models/expense.dart';
 import '../services/database_helper.dart';
 import '../services/auth_service.dart';
 
-class ExpenseStatsScreen extends StatefulWidget {
+class ExpenseStatsScreen extends StatefulWidget {  
   const ExpenseStatsScreen({super.key});
 
   @override
-  State<ExpenseStatsScreen> createState() => _ExpenseStatsScreenState();
+  State<ExpenseStatsScreen> createState() => ExpenseStatsScreenState();
 }
 
-class _ExpenseStatsScreenState extends State<ExpenseStatsScreen>
+class ExpenseStatsScreenState extends State<ExpenseStatsScreen>
  {
   late Future<List<Expense>> expensesFuture;
   String _selectedPeriod = 'Mes actual';
-  final List<String> _periods = ['Mes actual', 'Últimos 3 meses', 'Último año'];
+  final List<String> _periods = const ['Mes actual', 'Últimos 3 meses', 'Último año'];
 
   @override
    void initState() {
@@ -24,12 +24,13 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen>
     _refreshExpenses();
   }
 
-  void _refreshExpenses() {
-    final userId = AuthService.getCurrentUserId() ?? 1;
+  Future<void> _refreshExpenses() async {
+    int? userId = await AuthService.getCurrentUserId();
+    
     setState(() {
-      expensesFuture = DatabaseHelper.instance.getAllExpenses(userId);
+        expensesFuture = DatabaseHelper.instance.getAllExpenses(userId);
     });
-
+    
   }
 
   // Filtrar gastos según el período seleccionado
@@ -135,7 +136,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : Colors.black;
 
-    return Padding(padding: const EdgeInsets.all(16.0),
+    return Padding(padding: const EdgeInsets.all(16.0),        
         child: FutureBuilder<List<Expense>>(future: expensesFuture, builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting)
             {return const Center(child: CircularProgressIndicator());}

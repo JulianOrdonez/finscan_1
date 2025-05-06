@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'login_screen.dart';
+import 'package:flutter_application_2/screens/login_screen.dart';
 import '../services/auth_service.dart';
-import '../theme_provider.dart';
+import 'package:flutter_application_2/theme_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -12,7 +12,7 @@ class SettingsScreen extends StatefulWidget {
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class _SettingsScreenState extends State<SettingsScreen>  {
   String _selectedCurrency = 'USD';
   final List<String> _currencies = ['USD', 'EUR', 'MXN', 'COP'];
 
@@ -88,10 +88,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: 'Cerrar Sesión',
               leading: Icon(Icons.logout),
               onTap: () {
-                AuthService.logout(); Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginScreen()));
-              },
+                AuthService.logout();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const LoginScreen()),
+                );
+              }
             ),
             _buildSettingCard(
               title: 'Soporte al Usuario',
