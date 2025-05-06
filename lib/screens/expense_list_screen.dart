@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import '../services/auth_service.dart';
 import '../models/expense.dart';
 import '../services/database_helper.dart';
 import '../theme_provider.dart';
@@ -23,7 +24,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
   void _refreshExpenses() {
     setState(() {
-      _expensesFuture = DatabaseHelper.instance.getAllExpenses();
+      _expensesFuture = DatabaseHelper.instance
+          .getAllExpenses(AuthService().getCurrentUserId()!);
     });
   }
 
@@ -55,14 +57,13 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     }
   }
 
-  double _calculateTotal(List<Expense> expenses) {
-    return expenses.fold(0, (sum, expense) => sum + expense.amount);
+  double _calculateTotal(List<Expense> expenses) {    return expenses.fold(0, (sum, expense) => sum + expense.amount);
   }
 
-    // Filter expenses based on the selected period
+  // Filter expenses based on the selected period
   List<Expense> _filterByPeriod(List<Expense> expenses) {
     final now = DateTime.now();
-    // Start of the current month
+    // Start of the current month    
       final startDate = DateTime(now.year, now.month, 1);
 
     return expenses.where((expense) => expense.date.isAfter(startDate)).toList();
@@ -72,7 +73,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    return  Scaffold(
+    return Scaffold(
       body: FutureBuilder<List<Expense>>(
         future: _expensesFuture,
         builder: (context, snapshot) {
@@ -101,68 +102,68 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           final filteredExpenses = _filterByPeriod(expenses);
 
 
-          return  Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-             children: [
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
                 Card(
                   child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.money),
-                              const SizedBox(width: 8),
-                              Text('Resumen de Gastos',
-                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Text('Total Gastado: €${_calculateTotal(filteredExpenses).toStringAsFixed(2)}',
-                              style: TextStyle(fontSize: 16)),
-                        ],
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.money),
+                            const SizedBox(width: 8),
+                            Text('Resumen de Gastos',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                            'Total Gastado: €${_calculateTotal(filteredExpenses).toStringAsFixed(2)}',
+                            style: TextStyle(fontSize: 16)),
+                      ],
                     ),
-                    ),
+                  ),
                 ),
-                 Expanded(
-                   child: ListView.builder(
+                Expanded(
+                  child: ListView.builder(
                     itemCount: expenses.length,
                     itemBuilder: (context, index) {
                       final expense = expenses[index];
                       return Card(
                         margin: const EdgeInsets.symmetric(vertical: 5),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 10),
                           child: ListTile(
                             contentPadding: EdgeInsets.zero,
                             leading: CircleAvatar(
-                              backgroundColor: _getCategoryColor(expense.category),
-                              child: Icon(_getCategoryIcon(expense.category), color: Colors.white, size: 20),
+                              backgroundColor:
+                                  _getCategoryColor(expense.category),
+                              child: Icon(_getCategoryIcon(expense.category),
+                                  color: Colors.white, size: 20),
                             ),
-                            title: Text(expense.category,
+                            title: Text(
+                              expense.category,
                               style: const TextStyle(
-                                fontSize: 18,
-                                color: Colors.black
-                              )
-                              ,
+                                  fontSize: 18, color: Colors.black),
                             ),
                             subtitle: Padding(
-                              padding: const EdgeInsets.only(top:4.0),
-                              child:  Text(
-                                '${expense.description} - ${DateFormat('dd/MM/yyyy').format(expense.date)}',
-
-
-                              ),
-                            ), 
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Text(
+                                  '${expense.description} - ${DateFormat('dd/MM/yyyy').format(expense.date)}'),
+                            ),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text('€${expense.amount.toStringAsFixed(2)}',
                                     style: const TextStyle(
-                                        fontWeight: FontWeight.bold, fontSize: 16)),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16)),
                                 IconButton(
                                   icon: const Icon(Icons.delete, color: Colors.red),
                                   onPressed: () => _deleteExpense(expense.id!),
@@ -170,28 +171,29 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                               ],
                             ),
                             onTap: () async {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => ExpenseFormScreen(expense: expense)));
+                              await Navigator.push(context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ExpenseFormScreen(expense: expense)));
                             },
                           ),
                         ),
                       );
                     },
-                               ),
-                 ),
+                  ),
+                ),
               ],
-            ) ,
+            ),
           );
         },
-
       ),
-         floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () async {
-           await Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const ExpenseFormScreen()));
-           _refreshExpenses();
-
+          await Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const ExpenseFormScreen()));
+          _refreshExpenses();
         },
         child: const Icon(Icons.add),
       ),

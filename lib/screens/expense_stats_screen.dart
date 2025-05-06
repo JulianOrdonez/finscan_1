@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../models/expense.dart';
 import '../services/database_helper.dart';
+import '../services/auth_service.dart';
 
 class ExpenseStatsScreen extends StatefulWidget {
   const ExpenseStatsScreen({super.key});
@@ -25,7 +26,8 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen>
 
   void _refreshExpenses() {
     setState(() {
-      _expensesFuture = DatabaseHelper.instance.getAllExpenses();
+       final userId = AuthService().getCurrentUserId();
+      _expensesFuture = DatabaseHelper.instance.getAllExpenses(userId);
     });
   }
 

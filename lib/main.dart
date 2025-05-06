@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_application_2/theme_provider.dart';
 import 'package:flutter_application_2/services/database_helper.dart';
+import 'package:flutter_application_2/services/auth_service.dart';
 import 'package:flutter_application_2/models/user.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter_application_2/screens/expense_list_screen.dart';
@@ -29,16 +30,18 @@ class MyApp extends StatelessWidget {
           title: 'FinScan - Gastos',
           theme: themeProvider.themeData,
           home: FutureBuilder<int?>(
-            future: DatabaseHelper.instance.getCurrentUser(),
+            future: AuthService().getCurrentUserId(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else {
-                if (snapshot.hasData && snapshot.data != null) {
+                final userId = snapshot.data;
+                if (snapshot.hasData && userId != null) {
                   return FutureBuilder<User?>(
-                    future: DatabaseHelper.instance.getUserById(snapshot.data!),
+                    future: DatabaseHelper.instance.getUserById(userId),
                     builder: (context, userSnapshot) {
-                      return userSnapshot.data != null ? HomePage() : LoginScreen();
+                      final user = userSnapshot.data;
+                      return user != null ? HomePage() : LoginScreen();
                     },
                   );
                 } else {

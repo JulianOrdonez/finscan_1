@@ -1,12 +1,15 @@
-import 'dart:ffi';
-
 import 'package:flutter_application_2/models/user.dart';
 import 'package:flutter_application_2/services/database_helper.dart';
 
 class AuthService {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+  int? _currentUserId;
 
-  Future<int> registerUser(String email, String password) async {
+  int? getCurrentUserId() {
+    return _currentUserId;
+  }
+
+  Future<int> createUser(String email, String password) async {
     try {
       final id = await _dbHelper.createUser(email, password);
       return id;
@@ -15,7 +18,7 @@ class AuthService {
     }
   }
 
-  Future<User?> login(String email, String password) async {
+  Future<int?> login(String email, String password) async {
     var db = await DatabaseHelper.database;
     try {
       List<Map<String, dynamic>> result = await db.query(
@@ -25,16 +28,11 @@ class AuthService {
       );
 
       if (result.isNotEmpty) {
-        int userId = result.first['id'] as int;
-        await db.insert('current_user', {'id': userId});
-        return User(
-          id: userId,
-          email: result.first['email'] as String,
-          password: '',
-        );
-        
+        _currentUserId = result.first['id'] as int;
+        await db.insert('current_user', {'id': _currentUserId});
+        return _currentUserId;
       } else {
-        return null;
+        return null; 
       }
     } catch(e){ 
       print(e);

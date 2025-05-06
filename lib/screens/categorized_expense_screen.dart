@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_application_2/services/auth_service.dart';
 import '../models/expense.dart';
 import '../services/database_helper.dart';
 
@@ -24,7 +25,9 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
   // Refresh the list of expenses
   void _refreshExpenses() {
     setState(() {
-      _expensesFuture = DatabaseHelper.instance.getAllExpenses();
+      final currentUserId = AuthService().getCurrentUserId();
+      _expensesFuture =
+          DatabaseHelper.instance.getAllExpenses(currentUserId!);
     });
   }
 

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../main.dart';
 import '../models/expense.dart';
 import '../services/database_helper.dart';
 import '../services/auth_service.dart';
@@ -117,7 +118,8 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
               receiptPath: _receiptPath,
              );
         if (widget.expense?.id == null) {
-          await DatabaseHelper.instance.insertExpense(expense);
+          int currentUserId = await AuthService().getCurrentUserId();
+          await DatabaseHelper.instance.insertExpense(expense,currentUserId);
             // ignore: use_build_context_synchronously
            ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Expense saved successfully')),
