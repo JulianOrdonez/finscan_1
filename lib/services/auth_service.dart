@@ -22,7 +22,7 @@ class AuthService {
   static Future<int?> login(String email, String password) async {
     try {
       final List<Map<String, dynamic>> users =
-          await (await _dbHelper.database).query(
+          await (await DatabaseHelper.instance.database).query(
         'users',
         where: 'email = ? AND password = ?',
         whereArgs: [email, password],
