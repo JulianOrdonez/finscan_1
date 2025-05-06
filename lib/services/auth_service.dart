@@ -19,21 +19,22 @@ class AuthService {
     }
   }
 
-  Future<int?> login(String email, String password) async {    
-   try {    
-      final List<Map<String, dynamic>> users = await (await _dbHelper.database).query(
+  Future<int?> login(String email, String password) async {
+    try {
+      final List<Map<String, dynamic>> users =
+          await (await _dbHelper.database).query(
         'users',
         where: 'email = ? AND password = ?',
         whereArgs: [email, password],
       );
-      
+
       if (users.isNotEmpty) {
         _currentUserId = users.first['id'] as int;
         return _currentUserId;
       } else {
         return null;
-      }      
-    } catch(e){ 
+      }
+    } catch (e) {
       print(e);
       return null;
     }

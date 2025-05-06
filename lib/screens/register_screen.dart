@@ -17,7 +17,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  void _createUser() async {
+  Future<void> _createUser() async {
     if (_formKey.currentState!.validate()) {
       try {
         final userId = await _authService.createUser(
@@ -26,12 +26,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
         if (userId != null) {
           Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
+            context, MaterialPageRoute(builder: (context) => const HomePage())
           );
         } else {
           _showErrorSnackBar('El correo ya está en uso.', context);
         }
+      } catch (e) {
+        print('Error: $e');
       } catch (e) {
         _showErrorSnackBar('Error al registrarse', context);
       }

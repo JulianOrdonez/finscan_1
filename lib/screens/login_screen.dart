@@ -16,7 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  Future<void> _login() async {
+  _login() async {
     if (_formKey.currentState!.validate()) {
       try {
         final user = await _authService.login(
@@ -25,17 +25,19 @@ class _LoginScreenState extends State<LoginScreen> {
         );
 
         if (user == null) {
-          _showErrorSnackBar('Correo o contraseña incorrectos');
+          _showErrorSnackBar('Correo o contraseña incorrectos', context);
           return;
         }
 
         // If login is successful, navigate to HomePage
-        Navigator.pushReplacement(
+        await Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
         );
+
       } catch (e) {
-        _showErrorSnackBar('Correo o contraseña incorrectos');
+        print('Login error: $e');
+        _showErrorSnackBar('Correo o contraseña incorrectos', context);
       }
     }
   }
