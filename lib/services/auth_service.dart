@@ -25,7 +25,7 @@ class AuthService {
     }
   }
 
-  Future<bool> createUser(User user) async{
+  Future<bool> createUser(User user) async {
     try {
       final id = await DatabaseHelper.instance.insertUser(user);
       if (id > 0) {
@@ -46,3 +46,4 @@ class AuthService {
       rethrow;
     }
   }
+}

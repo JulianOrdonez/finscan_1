@@ -5,28 +5,28 @@ import '../models/expense.dart';
 import '../services/database_helper.dart';
 import '../helpers.dart';
 
-class ExpenseStatsScreen extends StatefulWidget {  
+class ExpenseStatsScreen extends StatefulWidget {
   final int userId;
   const ExpenseStatsScreen({super.key, required this.userId});
 
   @override
-  State<ExpenseStatsScreen> createState() => ExpenseStatsScreenState(userId: userId); 
+  State<ExpenseStatsScreen> createState() => _ExpenseStatsScreenState();
 }
 
-class ExpenseStatsScreenState extends State<ExpenseStatsScreen> { 
+class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
   late Future<List<Expense>> expensesFuture;
-  final int userId;
   String _selectedPeriod = 'Mes actual';
-  final List<String> _periods = const ['Mes actual', 'Últimos 3 meses', 'Último año'];
-  ExpenseStatsScreenState({required this.userId}){
-     _initState();
-  }
-  @override
-  void _initState() {
-    expensesFuture = DatabaseHelper.instance.getAllExpenses(userId);
-  } 
-  
+  final List<String> _periods = const [
+    'Mes actual',
+    'Últimos 3 meses',
+    'Último año'
+  ];
 
+  @override
+  void initState() {
+    super.initState();
+    expensesFuture = DatabaseHelper.instance.getAllExpenses(widget.userId);
+  }
 
   // Filtrar gastos según el período seleccionado
   List<Expense> _filterByPeriod(List<Expense> expenses) {
@@ -41,15 +41,17 @@ class ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
       startDate = DateTime(now.year - 1, now.month, now.day);
     }
 
-    return expenses.where((expense) => expense.date.isAfter(startDate)).toList();
+    return expenses
+        .where((expense) => DateTime.parse(expense.date).isAfter(startDate))
+        .toList();
   }
-
 
   Map<String, double> _getCategoryData(List<Expense> expenses) {
     final Map<String, double> categoryData = {};
 
     for (var expense in expenses) {
-      categoryData[expense.category] = (categoryData[expense.category] ?? 0) + expense.amount;
+      categoryData[expense.category] =
+          (categoryData[expense.category] ?? 0) + expense.amount;
     }
 
     return categoryData;
@@ -58,10 +60,11 @@ class ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
   Map<DateTime, double> _getMonthlyData(List<Expense> expenses) {
     final Map<DateTime, double> monthlyData = {};
 
-
     for (var expense in expenses) {
-      final monthDate = DateTime(expense.date.year, expense.date.month);
-      monthlyData[monthDate] = (monthlyData[monthDate] ?? 0) + expense.amount; //Se cambio esto
+      final expenseDate = DateTime.parse(expense.date);
+      final monthDate = DateTime(expenseDate.year, expenseDate.month);
+      monthlyData[monthDate] =
+          (monthlyData[monthDate] ?? 0) + expense.amount;
     }
 
     // Ordenar por fecha
@@ -75,7 +78,8 @@ class ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
     return expenses.fold(0, (sum, expense) => sum + expense.amount);
   }
 
-  List<PieChartSectionData> _buildPieSections(Map<String, double> categoryData) {
+  List<PieChartSectionData> _buildPieSections(
+      Map<String, double> categoryData) {
     final total = categoryData.values.fold(0.0, (sum, value) => sum + value);
 
     return categoryData.entries.map((entry) {
@@ -105,62 +109,111 @@ class ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
     return spots;
   }
 
-  @override  
-  Widget build(BuildContext context) {    
+  @override
+  Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : Colors.black;
 
-    return Padding(padding: const EdgeInsets.all(16.0),        
-        child: FutureBuilder<List<Expense>>(future: expensesFuture, builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting)
-            {return const Center(child: CircularProgressIndicator());}
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: FutureBuilder<List<Expense>>(
+        future: expensesFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-            if (snapshot.hasError)
-            {return Center(child: Text('Error: ${snapshot.error}'));}
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
 
-            if (!snapshot.hasData || snapshot.data!.isEmpty)
-            {return const Center(child: Text('No data to show. Add some expenses to see the charts.', textAlign: TextAlign.center));}
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(
+                child: Text(
+              'No data to show. Add some expenses to see the charts.',
+              textAlign: TextAlign.center,
+            ));
+          }
 
-            final filteredExpenses = _filterByPeriod(snapshot.data!);
-            final categoryData = _getCategoryData(filteredExpenses);
-            final monthlyData = _getMonthlyData(filteredExpenses);
+          final filteredExpenses = _filterByPeriod(snapshot.data!);
+          final categoryData = _getCategoryData(filteredExpenses);
+          final monthlyData = _getMonthlyData(filteredExpenses);
 
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.calendar_today, color: textColor),
-                              const SizedBox(width: 8),
-                              Text('Período', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textColor)),
-                            ],
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.calendar_today, color: textColor),
+                            const SizedBox(width: 8),
+                            Text('Período',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: textColor)),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        DropdownButtonFormField<String>(
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
                           ),
-                          const SizedBox(height: 8),
-                          DropdownButtonFormField<String>(
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            ),
-                            value: _selectedPeriod,
-                            items: _periods.map((period) => DropdownMenuItem(value: period, child: Text(period))).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedPeriod = value!;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
+                          value: _selectedPeriod,
+                          items: _periods
+                              .map((period) => DropdownMenuItem(
+                                  value: period, child: Text(period)))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedPeriod = value!;
+                            });
+                          },
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                ),
+                const SizedBox(height: 16),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.money, color: textColor),
+                            const SizedBox(width: 8),
+                            Text('Resumen de Gastos',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: textColor)),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        const SizedBox(height: 8),
+                        Text(
+                            'Número de transacciones: ${filteredExpenses.length}',
+                            style: TextStyle(fontSize: 16, color: textColor)),
+                        Text(
+                            'Total Gastado: €${_calculateTotal(filteredExpenses).toStringAsFixed(2)}',
+                            style: TextStyle(fontSize: 16, color: textColor)),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                if (categoryData.isNotEmpty)
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -169,120 +222,149 @@ class ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.money, color: textColor),
+                              Icon(Icons.pie_chart, color: textColor),
                               const SizedBox(width: 8),
-                              Text('Resumen de Gastos', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor)),
+                              Text('Gastos por Categoría',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: textColor)),
                             ],
                           ),
                           const SizedBox(height: 16),
-                          const SizedBox(height: 8),
-                          Text('Número de transacciones: ${filteredExpenses.length}', style: TextStyle(fontSize: 16, color: textColor)),
-                          Text('Total Gastado: €${_calculateTotal(filteredExpenses).toStringAsFixed(2)}', style: TextStyle(fontSize: 16, color: textColor)),
+                          SizedBox(
+                            height: 200,
+                            child: PieChart(PieChartData(
+                                sections: _buildPieSections(categoryData),
+                                centerSpaceRadius: 40,
+                                sectionsSpace: 2)),
+                          ),
+                          const SizedBox(height: 16),
+                          Column(
+                            children: categoryData.entries.map((entry) {
+                              final color = Helpers.getCategoryColor(entry.key);
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                        width: 16, height: 16, color: color),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                        child: Text(entry.key,
+                                            style: TextStyle(color: textColor))),
+                                    Text('€${entry.value.toStringAsFixed(2)}',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: textColor)),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
                         ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  if (categoryData.isNotEmpty)
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(Icons.pie_chart, color: textColor),
-                                const SizedBox(width: 8),
-                                Text('Gastos por Categoría', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor)),
-                              ],
+                const SizedBox(height: 16),
+                if (monthlyData.isNotEmpty)
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.show_chart, color: textColor),
+                              const SizedBox(width: 8),
+                              Text('Evolución de Gastos',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: textColor)),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            height: 200,
+                            child: LineChart(
+                              LineChartData(
+                                  gridData: FlGridData(show: true),
+                                  titlesData: FlTitlesData(
+                                      bottomTitles: AxisTitles(
+                                          sideTitles: SideTitles(
+                                              showTitles: true,
+                                              getTitlesWidget:
+                                                  (value, meta) {
+                                                if (value.toInt() >= 0 &&
+                                                    value.toInt() <
+                                                        monthlyData.keys.length) {
+                                                  final date = monthlyData.keys
+                                                      .toList()[value.toInt()];
+                                                  return Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 8.0),
+                                                    child: Text(
+                                                        DateFormat('MM/yy')
+                                                            .format(date),
+                                                        style: TextStyle(
+                                                            fontSize: 10,
+                                                            color: textColor)),
+                                                  );
+                                                }
+                                                return const Text('');
+                                              },
+                                              reservedSize: 30)),
+                                      leftTitles: AxisTitles(
+                                          sideTitles: SideTitles(
+                                              showTitles: true,
+                                              getTitlesWidget:
+                                                  (value, meta) {
+                                                return Text('€${value.toInt()}',
+                                                    style: TextStyle(
+                                                        fontSize: 10,
+                                                        color: textColor));
+                                              },
+                                              reservedSize: 40)),
+                                      topTitles: AxisTitles(
+                                          sideTitles:
+                                              SideTitles(showTitles: false)),
+                                      rightTitles: AxisTitles(
+                                          sideTitles:
+                                              SideTitles(showTitles: false))),
+                                  borderData: FlBorderData(show: true),
+                                  lineBarsData: [
+                                    LineChartBarData(
+                                      spots: _getLineSpots(monthlyData),
+                                      isCurved: true,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary,
+                                      barWidth: 4,
+                                      isStrokeCapRound: true,
+                                      dotData: FlDotData(show: true),
+                                      belowBarData: BarAreaData(
+                                          show: true,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                              .withOpacity(0.2)),
+                                    ),
+                                  ]),
                             ),
-                            const SizedBox(height: 16),
-                            SizedBox(
-                              height: 200,
-                              child: PieChart(PieChartData(sections: _buildPieSections(categoryData), centerSpaceRadius: 40, sectionsSpace: 2)),
-                            ),
-                            const SizedBox(height: 16),
-                            Column(
-                              children: categoryData.entries.map((entry) {
-                                final color = Helpers.getCategoryColor(entry.key);
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 4),
-                                  child: Row(
-                                    children: [
-                                      Container(width: 16, height: 16, color: color),
-                                      const SizedBox(width: 8),
-                                      Expanded(child: Text(entry.key, style: TextStyle(color: textColor))),
-                                      Text('€${entry.value.toStringAsFixed(2)}', style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
-                                    ],
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  const SizedBox(height: 16),
-                  if (monthlyData.isNotEmpty)
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(Icons.show_chart, color: textColor),
-                                const SizedBox(width: 8),
-                                Text('Evolución de Gastos', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor)),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            SizedBox(
-                              height: 200,
-                              child: LineChart(
-                                LineChartData(
-                                    gridData: FlGridData(show: true),
-                                    titlesData: FlTitlesData(
-                                        bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (value, meta) {
-                                      if (value.toInt() >= 0 && value.toInt() < monthlyData.keys.length) {
-                                        final date = monthlyData.keys.toList()[value.toInt()];
-                                        return Padding(
-                                          padding: const EdgeInsets.only(top: 8.0),
-                                          child: Text(DateFormat('MM/yy').format(date), style: TextStyle(fontSize: 10, color: textColor)),
-                                        );
-                                      }
-                                      return const Text('');
-                                    }, reservedSize: 30)),
-                                        leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (value, meta) {
-                                      return Text('€${value.toInt()}', style: TextStyle(fontSize: 10, color: textColor));
-                                    }, reservedSize: 40)),
-                                        topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                                        rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false))),
-                                    borderData: FlBorderData(show: true),
-                                    lineBarsData: [
-                                      LineChartBarData(
-                                        spots: _getLineSpots(monthlyData),
-                                        isCurved: true,
-                                        color: Theme.of(context).colorScheme.primary,
-                                        barWidth: 4,
-                                        isStrokeCapRound: true,
-                                        dotData: FlDotData(show: true),
-                                        belowBarData: BarAreaData(show: true, color: Theme.of(context).colorScheme.primary.withOpacity(0.2)),
-                                      ),
-                                    ]),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            );
-          },
-        ),
+                  ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

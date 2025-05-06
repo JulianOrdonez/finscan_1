@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_application_2/theme_provider.dart';
-import 'package:flutter_application_2/screens/expense_list_screen.dart'; 
+import 'package:flutter_application_2/screens/expense_list_screen.dart';
 import 'package:flutter_application_2/screens/expense_stats_screen.dart';
 import 'package:flutter_application_2/screens/settings_screen.dart';
+import 'package:flutter_application_2/screens/login_screen.dart';
+import 'package:flutter_application_2/services/database_helper.dart';
+import 'categorized_expense_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -14,13 +17,29 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  int? _userId;
+  List<Widget> _screens = [];
 
-  final List<Widget> _screens = [
-    ExpenseListScreen(),
-    ExpenseStatsScreen(),
-    CategorizedExpenseScreen(),
-    SettingsScreen(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    final userId = await DatabaseHelper.instance.getCurrentUserId();
+    setState(() {
+      _userId = userId;
+      if (_userId != null) {
+        _screens = [
+          ExpenseListScreen(userId: _userId!),
+          ExpenseStatsScreen(userId: _userId!),
+          CategorizedExpenseScreen(userId: _userId!),
+          const SettingsScreen(),
+        ];
+      }
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -30,6 +49,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_userId == null) {
+      return const LoginScreen();
+    }
     return Consumer<ThemeProvider>(builder: (context, themeProvider, child) {
       return Scaffold(
         appBar: AppBar(

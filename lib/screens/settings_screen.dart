@@ -12,7 +12,7 @@ class SettingsScreen extends StatefulWidget {
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen>  {
+class _SettingsScreenState extends State<SettingsScreen> {
   String _selectedCurrency = 'USD';
   final List<String> _currencies = ['USD', 'EUR', 'MXN', 'COP'];
 
@@ -33,7 +33,16 @@ class _SettingsScreenState extends State<SettingsScreen>  {
   /// Save the selected currency to shared preferences.
   Future<void> _saveSelectedCurrency(String currency) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('currency', _selectedCurrency);
+    await prefs.setString('currency', currency);
+  }
+
+  Future<void> _logout(BuildContext context) async {
+    await AuthService().logout();
+    // ignore: use_build_context_synchronously
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
   }
 
   @override
@@ -87,17 +96,9 @@ class _SettingsScreenState extends State<SettingsScreen>  {
               ),
             ),
             _buildSettingCard(
-              title: 'Cerrar Sesión',
-              leading: Icon(Icons.logout),
-              onTap: () {
-                AuthService.logout();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const LoginScreen()),
-                );
-              }
-            ),
+                title: 'Cerrar Sesión',
+                leading: Icon(Icons.logout),
+                onTap: () => _logout(context)),
             _buildSettingCard(
               title: 'Soporte al Usuario',
               leading: Icon(Icons.support_agent),
@@ -108,7 +109,7 @@ class _SettingsScreenState extends State<SettingsScreen>  {
           ],
         ),
       ),
-      );
+    );
   }
 
   Widget _buildSettingCard({

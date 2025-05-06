@@ -46,7 +46,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       _titleController.text = widget.expense!.title;
       _amountController.text = widget.expense!.amount.toString();
       _selectedCategory = widget.expense!.category;
-      _selectedDate = widget.expense!.date;
+      _selectedDate = DateTime.parse(widget.expense!.date);
     }
   }
 
@@ -69,7 +69,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
           if (extractedInfo['amount'] != null) {
             _amountController.text = extractedInfo['amount'].toString();
           }
-          
+
           _receiptPath = "Recibo escaneado"; // Simplificado para este ejemplo
         });
       }
@@ -107,26 +107,22 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       try {
           final userId = await AuthService.getCurrentUserId();
           final expense = Expense(
-              id: widget.expense?.id,
+              id: widget.expense?.id ?? 0,
+              userId: userId!,
               title: _titleController.text,
               description: "",
               amount: double.parse(_amountController.text),
               category: _selectedCategory,
-              date: _selectedDate,
-              receiptPath: _receiptPath,
+              date: DateFormat('yyyy-MM-dd').format(_selectedDate),
+              receiptPath: _receiptPath ?? "",
              );
         if (_isNewExpense) {
-          if (userId != null) {
-           expense.userId = userId;
             await DatabaseHelper.instance.insertExpense(expense);
-          } else {
-            throw Exception("No se pudo obtener el ID del usuario");
-          }
            ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Expense saved successfully')),
           );
         } else {
-          await DatabaseHelper.instance.updateExpense(expense.copyWith(id: widget.expense!.id));
+          await DatabaseHelper.instance.updateExpense(expense);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Expense updated successfully')),
           );
@@ -139,9 +135,9 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
           _isLoading = false;
         });
       }
-    }
       // ignore: use_build_context_synchronously
       Navigator.pop(context);
+    }
   }
   
 

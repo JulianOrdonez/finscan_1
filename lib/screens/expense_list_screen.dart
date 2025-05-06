@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../helpers.dart';
-import '../services/auth_service.dart';
 import '../models/expense.dart';
 import '../services/database_helper.dart';
 import 'expense_form_screen.dart';
@@ -10,10 +9,10 @@ class ExpenseListScreen extends StatefulWidget {
   final int userId;
   const ExpenseListScreen({Key? key, required this.userId}) : super(key: key);
   @override
-  State<ExpenseListScreen> createState() => _ExpenseListScreenState(userId: userId);
+  State<ExpenseListScreen> createState() => _ExpenseListScreenState();
 }
 
-class _ExpenseListScreenState extends State<ExpenseListScreen> {  
+class _ExpenseListScreenState extends State<ExpenseListScreen> {
   late Future<List<Expense>> _expensesFuture;
 
   @override
@@ -23,14 +22,9 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   }
 
   Future<void> _refreshExpenses() async {
-    setState(() {      
-        _expensesFuture = DatabaseHelper.instance.getAllExpenses(widget.userId);
-      
-    });    
-  }
-  _ExpenseListScreenState({
-    required int userId,
-  }) {
+    setState(() {
+      _expensesFuture = DatabaseHelper.instance.getAllExpenses(widget.userId);
+    });
   }
 
   Future<void> _deleteExpense(int id) async {
@@ -71,10 +65,10 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     // Start of the current month
     final startDate = DateTime(now.year, now.month, 1);
 
-
-    return expenses.where((expense) => expense.date.isAfter(startDate)).toList();
+    return expenses
+        .where((expense) => DateTime.parse(expense.date).isAfter(startDate))
+        .toList();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -103,8 +97,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
             );
           }
 
-          final filteredExpenses = _filterByPeriod(expenses);
-
+          final filteredExpenses = _filterByPeriod(snapshot.data!);
 
           return Padding(
             padding: const EdgeInsets.all(16.0),
@@ -135,31 +128,34 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: expenses.length,
-                    itemBuilder: (context, index) {                      
-                      final expense = snapshot.data![index];
+                    itemCount: filteredExpenses.length,
+                    itemBuilder: (context, index) {
+                      final expense = filteredExpenses[index];
                       return Card(
                         margin: const EdgeInsets.symmetric(vertical: 5),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 10),
                           child: ListTile(
-                            contentPadding: EdgeInsets.zero,                            
+                            contentPadding: EdgeInsets.zero,
                             leading: CircleAvatar(
                               backgroundColor:
                                   Helpers.getCategoryColor(expense.category),
-                              child: Icon(Helpers.getCategoryIcon(expense.category),
-                                  color: Colors.white, size: 20),
+                              child: Icon(
+                                  Helpers.getCategoryIcon(expense.category),
+                                  color: Colors.white,
+                                  size: 20),
                             ),
                             title: Text(
-                              expense.category,
+                              expense.title,
                               style: const TextStyle(
                                   fontSize: 18, color: Colors.black),
                             ),
                             subtitle: Padding(
                               padding: const EdgeInsets.only(top: 4.0),
                               child: Text(
-                                  '${expense.description} - ${DateFormat('dd/MM/yyyy').format(expense.date)}'),                                 
+                                  '${expense.description} - ${DateFormat('dd/MM/yyyy').format(DateTime.parse(expense.date))}',
+                                  style: const TextStyle(fontSize: 14)),
                             ),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -169,20 +165,21 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16)),
                                 IconButton(
-                                  icon: const Icon(Icons.delete, color: Colors.red),
-                                  onPressed: () => _deleteExpense(expense.id!),
+                                  icon: const Icon(Icons.delete,
+                                      color: Colors.red),
+                                  onPressed: () => _deleteExpense(expense.id),
                                 ),
                               ],
                             ),
-                            onTap: () async {                                  
+                            onTap: () async {
                               await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => ExpenseFormScreen(expense: expense)
-                                    )
-                                );
+                                      builder: (context) => ExpenseFormScreen(
+                                          expense: expense)));
+                              _refreshExpenses();
                             },
-                          ),                          
+                          ),
                         ),
                       );
                     },
@@ -200,9 +197,9 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               MaterialPageRoute(
                   builder: (context) => const ExpenseFormScreen()));
           _refreshExpenses();
-        },        
+        },
         child: const Icon(Icons.add),
       ),
     );
-  }  
+  }
 }
