@@ -107,7 +107,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       try {
           final userId = await AuthService.getCurrentUserId();
           final expense = Expense(
-              id: widget.expense?.id ?? 0,
+              id: widget.expense?.id ?? -1,
               userId: userId!,
               title: _titleController.text,
               description: "",

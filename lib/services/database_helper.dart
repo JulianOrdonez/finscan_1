@@ -167,12 +167,17 @@ class DatabaseHelper {
   Future<int> insertExpense(Expense expense) async {
     Database db = await instance.database;
     try {
-      return await db.insert(tableExpenses, expense.toMap());
+      Map<String, dynamic> expenseMap = expense.toMap();
+      expenseMap.remove('id');
+      return await db.insert(tableExpenses, expenseMap);
     } catch (e) {
-      print('Error inserting expense: $e');
-      return -1;
+        print('Error inserting expense: $e');
+        return -1;
     }
   }
+
+
+
 
   Future<int> updateExpense(Expense expense) async {
     Database db = await instance.database;
