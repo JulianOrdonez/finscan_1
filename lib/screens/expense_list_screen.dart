@@ -25,7 +25,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   void _refreshExpenses() {
     setState(() {
       _expensesFuture = DatabaseHelper.instance
-          .getAllExpenses(AuthService().getCurrentUserId()!);
+          .getAllExpenses(AuthService.getCurrentUserId()!);
     });
   }
 

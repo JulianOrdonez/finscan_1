@@ -90,8 +90,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onTap: () {
                 AuthService.logout(); Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginScreen())));
+                    MaterialPageRoute(builder: (context) => const LoginScreen()));
               },
             ),
             _buildSettingCard(

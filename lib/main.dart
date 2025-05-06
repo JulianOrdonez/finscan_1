@@ -31,9 +31,9 @@ class MyApp extends StatelessWidget {
           title: 'FinScan - Gastos',
           theme: themeProvider.themeData,
           home: FutureBuilder<int?>(
-            future: () async {
-              return await AuthService().getCurrentUserId();
-            }(),
+            future: (() async {
+              return await AuthService.getCurrentUserId();
+            }()),
             builder: (context, snapshot)  {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());

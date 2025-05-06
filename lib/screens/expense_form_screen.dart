@@ -119,7 +119,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
              );
         if (widget.expense?.id == null) {
           int? currentUserId = await AuthService().getCurrentUserId();
-          
+
           if (currentUserId != null) {
             await DatabaseHelper.instance.insertExpense(expense);
           } else {

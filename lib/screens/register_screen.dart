@@ -20,13 +20,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> _createUser(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       try {
-        bool isCreated = await _authService.createUser(
+        bool isCreated = await AuthService.createUser(
           _emailController.text,
           _passwordController.text,
         );
         
         if (isCreated) {
-          bool logged = await _authService.login(
+          bool logged = await AuthService.login(
               _emailController.text, _passwordController.text);
           if (logged) {
             Navigator.pushReplacement(

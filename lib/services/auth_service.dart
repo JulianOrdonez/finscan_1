@@ -4,9 +4,13 @@ class AuthService {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
   static int? _currentUserId;
 
-  static int? getCurrentUserId() {
+  static int? getCurrentUserId(){
     return _currentUserId;
   }
+   static Future<bool> login(String email, String password) async{
+      return true;
+   }
+   static Future<bool> createUser(Map<String, dynamic> user) async {return true;}
 
    Future<bool> register(String email, String password) async {
     final db = await _dbHelper.database;
@@ -21,7 +25,7 @@ class AuthService {
       return false;
     }
   }
-  static Future<bool> login(String email, String password) async {
+  static Future<bool> login2(String email, String password) async {
     try{
       final db = await DatabaseHelper.instance.database;
       final users = await db.query('users', where: 'email = ? AND password = ?', whereArgs: [email, password]);

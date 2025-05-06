@@ -25,7 +25,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen>
   }
 
   void _refreshExpenses() {
-    final userId = AuthService().getCurrentUserId();
+    final userId = AuthService.getCurrentUserId();
     if (userId != null) {
         setState(() {
             _expensesFuture = DatabaseHelper.instance.getAllExpenses(userId);

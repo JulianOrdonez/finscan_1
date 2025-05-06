@@ -25,7 +25,7 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
   // Refresh the list of expenses
   void _refreshExpenses() {
     setState(() {
-      final currentUserId = AuthService().getCurrentUserId();
+      final currentUserId = AuthService.getCurrentUserId();
       _expensesFuture =
           DatabaseHelper.instance.getAllExpenses(currentUserId!);
     });
