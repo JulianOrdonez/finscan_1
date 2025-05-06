@@ -102,13 +102,19 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                         backgroundColor: _getCategoryColor(expense.category),
                         child: Icon(_getCategoryIcon(expense.category), color: Colors.white, size: 20),
                       ),
-                      title: Padding(
-                        padding: const EdgeInsets.only(bottom: 4.0),
-                        child: Text(expense.description),
+                      title: Text(
+                        expense.description,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      subtitle: Text(
-                        '${expense.category} - ${DateFormat('dd/MM/yyyy').format(expense.date)}',
-                      ),
+                      subtitle: Padding(
+                        padding: const EdgeInsets.only(top:4.0),
+                        child: Text(
+                          '${expense.category} - ${DateFormat('dd/MM/yyyy').format(expense.date)}',
+                        ),
+                      ), 
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
