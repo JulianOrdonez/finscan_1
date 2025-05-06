@@ -19,7 +19,7 @@ class AuthService {
     }
   }
 
-  Future<int?> login(String email, String password) async {
+  static Future<int?> login(String email, String password) async {
     try {
       final List<Map<String, dynamic>> users =
           await (await _dbHelper.database).query(
@@ -29,8 +29,7 @@ class AuthService {
       );
 
       if (users.isNotEmpty) {
-        _currentUserId = users.first['id'] as int;
-        return _currentUserId;
+        return users.first['id'] as int;
       } else {
         return null;
       }

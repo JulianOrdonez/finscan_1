@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:isolate';
 import 'package:flutter_application_2/services/auth_service.dart';
 import 'package:flutter_application_2/screens/home_page.dart';
 import 'package:flutter_application_2/screens/register_screen.dart';
@@ -13,45 +14,62 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final AuthService _authService = AuthService();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+    final TextEditingController _emailController = TextEditingController();
+    final TextEditingController _passwordController = TextEditingController();
 
   _login() async {
     if (_formKey.currentState!.validate()) {
-      try {
-        final user = await _authService.login(
-          _emailController.text,
-          _passwordController.text,
-        );
+        try {
+            final user = await _runLoginInIsolate(
+                _emailController.text, _passwordController.text);
 
-        if (user == null) {
-          _showErrorSnackBar(context,'Correo o contraseña incorrectos');
-          return;
+            if (user == null) {
+                _showErrorSnackBar('Correo o contraseña incorrectos');
+                return;
+            }
+
+            // If login is successful, navigate to HomePage
+            await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage()),
+            );
+        } catch (e) {
+            print('Login error: $e');
+            _showErrorSnackBar('Error de conexion');
         }
-
-        // If login is successful, navigate to HomePage
-        await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
-
-      } catch (e) {
-        print('Login error: $e');
-        _showErrorSnackBar(context, 'Correo o contraseña incorrectos');
-      }
     }
   }
 
-  void _showErrorSnackBar(BuildContext context,String message) {
-    ScaffoldMessenger.of(this.context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
-  }
+    Future<String?> _runLoginInIsolate(String email, String password) async {
+        final ReceivePort receivePort = ReceivePort();
+        await Isolate.spawn(_loginIsolate, [email, password, receivePort.sendPort]);
+        final result = await receivePort.first;
+        receivePort.close();
+        return result;
+    }
 
-  void _navigateToRegister() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => RegisterScreen()));
-  }
+    static void _loginIsolate(List<dynamic> args) async {
+        String email = args[0];
+        String password = args[1];
+        SendPort sendPort = args[2];
+        try {
+            final user = await AuthService.login(email, password);
+            sendPort.send(user);
+        } catch (e) {
+            sendPort.send(null);
+        }
+    }
+
+    void _showErrorSnackBar(String message) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(message)),
+        );
+    }
+
+    void _navigateToRegister() {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => RegisterScreen()));
+    }
 
   @override
   Widget build(BuildContext context) {
