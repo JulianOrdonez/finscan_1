@@ -16,7 +16,6 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   // String _selectedCurrency = 'USD'; // Removed as currency is now managed by CurrencyProvider
-  final List<String> _currencies = ['USD', 'EUR', 'MXN', 'COP'];
 
   @override
   void initState() {
@@ -28,7 +27,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _loadSelectedCurrency() async {
     final currencyProvider = Provider.of<CurrencyProvider>(context, listen: false);
     final prefs = await SharedPreferences.getInstance();
-    currencyProvider.setSelectedCurrency(savedCurrency);
+    final savedCurrency = prefs.getString('currency') ?? 'COP';
   }
 
   /// Save the selected currency to shared preferences.
@@ -81,8 +80,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: 'Moneda',
               trailing: DropdownButton<String>(
                 value: currencyProvider.getSelectedCurrency(),
-                items: _currencies.map((String currency) {
-                  return DropdownMenuItem<String>(
+                items: currencyProvider.supportedCurrencies.map((String currency) {
+                  return DropdownMenuItem<String>( // Use the supportedCurrencies list from the currency provider
                     value: currency,
                     child: Text(currency),
                   );
@@ -90,7 +89,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onChanged: (String? newValue) {
                   if (newValue != null) {
                     currencyProvider.setCurrency(newValue); // Update currency in provider
-                    _saveSelectedCurrency(newValue);
+                    _saveSelectedCurrency(newValue); // Change the setCurrency method call to setSelectedCurrency
                   }
                 },
               ),
