@@ -27,13 +27,14 @@ class MyApp extends StatelessWidget {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         return MaterialApp(
-          title: 'FinScan - Gastos',
+          title: 'FinScan - Gastos',          
           theme: themeProvider.themeData,
           debugShowCheckedModeBanner: false,
-          theme: themeProvider.themeData,
-          home: FutureBuilder<int?>(future: DatabaseHelper.instance.getCurrentUser(), builder: (context, snapshot) {
+          home: FutureBuilder<int?>(
+            future: DatabaseHelper.instance.getCurrentUser(),
+            builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());  
                 } else {
                   if (snapshot.hasData && snapshot.data != null) {
                     return FutureBuilder<User?>(
@@ -41,8 +42,8 @@ class MyApp extends StatelessWidget {
                       builder: (context, userSnapshot) {
                         return userSnapshot.data != null
                             ? const HomePage()
-                            : const LoginScreen();
-                      },
+                            : const LoginScreen();},
+                          
                     );
                   } else {
                     return const LoginScreen();
@@ -50,23 +51,25 @@ class MyApp extends StatelessWidget {
                 }
               },
             ),
-          );
+          
+        );
         },
-      ),
     );
   }
 }
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
   @override
   State<HomePage> createState() => _HomePageState();
 }
+
 class _HomePageState extends State<HomePage> {
   final List<Widget> _screens = [
-    const ExpenseListScreen(),
-    const ExpenseStatsScreen(),
-    const CategorizedExpenseScreen(),
-    const SettingsScreen(),
+    ExpenseListScreen(),
+    ExpenseStatsScreen(),
+    CategorizedExpenseScreen(),
+    SettingsScreen(),
   ];
   int _selectedIndex = 0;
 
@@ -79,38 +82,36 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
-      builder: (context, themeProvider, child) => Scaffold(
-        appBar: AppBar(
-          title: const Text('FinScan - Gastos'),
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  themeProvider.themeData.colorScheme.primary,
-                  themeProvider.themeData.colorScheme.primaryContainer
-                ], // Use gradient colors
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-                end: Alignment.bottomRight,
+      builder: (context, themeProvider, _) => Scaffold(
+          appBar: AppBar(
+            title: const Text('FinScan - Gastos'),
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    themeProvider.themeData.colorScheme.primary,
+                    themeProvider.themeData.colorScheme.primaryContainer
+                  ], // Use gradient colors
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
               ),
             ),
           ),
-        ),
-        body: PageTransitionSwitcher(
-          duration: const Duration(milliseconds: 300),
-          transitionBuilder: (Widget child, Animation<double> animation,
-                  Animation<double> secondaryAnimation) =>
-              FadeTransition(opacity: animation, child: child),
-          child: _screens[_selectedIndex],
-        ),
-           bottomNavigationBar: BottomNavigationBar(
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.bar_chart), label: 'Estadísticas'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.category), label: 'Categorías'),
+          body: PageTransitionSwitcher(
+            duration: const Duration(milliseconds: 300),
+            transitionBuilder:
+                (Widget child, Animation<double> animation, Animation<double> secondaryAnimation) =>
+                    FadeTransition(opacity: animation, child: child),
+            child: _screens[_selectedIndex],
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.bar_chart), label: 'Estadísticas'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.category), label: 'Categorías'),
               BottomNavigationBarItem(
                   icon: Icon(Icons.settings), label: 'Ajustes'),
             ],
@@ -120,9 +121,8 @@ class _HomePageState extends State<HomePage> {
             showUnselectedLabels: true,
             onTap: _onItemTapped,
             backgroundColor: themeProvider.themeData.cardColor),
-      ),
+          
+        ),
     );
   }
 }
-
-
