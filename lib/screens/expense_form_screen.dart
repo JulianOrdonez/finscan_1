@@ -6,7 +6,6 @@ import '../services/database_helper.dart';
 import 'package:provider/provider.dart';
 import '../currency_provider.dart';
 import '../services/auth_service.dart';
-import 'package:decimal/decimal.dart';
 import '../services/scan_service.dart';
 
 class ExpenseFormScreen extends StatefulWidget {
@@ -73,7 +72,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
             _amountController.text = extractedInfo['amount'].toString();
           }
 
-          _receiptPath = "Recibo escaneado";
+          _receiptPath = "Recibo escaneado"; // Simplificado para este ejemplo
         });
       }
     } catch (e) {
@@ -110,24 +109,25 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       try {
         final currencyProvider = Provider.of<CurrencyProvider>(context, listen: false);
         final currentCurrency = currencyProvider.getSelectedCurrency();
-        Decimal amount = Decimal.parse(_amountController.text);
+        double amount = double.parse(_amountController.text);
         if (currentCurrency != 'EUR') {
           // Convert to EUR using the conversion rate
           // Example: Assume 1 EUR = 4500 COP
           if (currentCurrency == 'COP') {
-            amount = amount / Decimal.parse('4500');
+            amount = amount / 4500;
           }else{
-            amount = amount / Decimal.parse('1');
+            amount = amount / 1;
           }
+
         }
-        Decimal amount = Decimal.parse(_amountController.text);
+
         final userId = await AuthService.getCurrentUserId();
         final expense = Expense(
           id: widget.expense?.id ?? -1,
           userId: userId!,
           title: _titleController.text,
           description: "",
-          amount: amount.toDouble(),
+          amount: amount,
           category: _selectedCategory,
           date: DateFormat('yyyy-MM-dd').format(_selectedDate),
           receiptPath: _receiptPath ?? "",
@@ -229,12 +229,10 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       builder: (context, currencyProvider, child) {
         return TextFormField(
           controller: _amountController,
-          decoration: const InputDecoration(
-            labelText: 'Cantidad',
+          decoration: InputDecoration(
+            labelText: 'Cantidad (${currencyProvider.getCurrencySymbol()})',
             border: const OutlineInputBorder(),
             prefixIcon: const Icon(Icons.money),
-            suffixIcon: Padding(
-              padding: EdgeInsets.only(right: 8.0),),
           ),
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           validator: (value) {
