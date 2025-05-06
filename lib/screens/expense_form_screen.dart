@@ -11,7 +11,7 @@ import '../services/scan_service.dart';
 class ExpenseFormScreen extends StatefulWidget {
   final Expense? expense;
 
-  const ExpenseFormScreen({super.key, this.expense});
+  const ExpenseFormScreen({Key? key, this.expense}) : super(key: key);
 
   @override
   State<ExpenseFormScreen> createState() => _ExpenseFormScreenState();
@@ -72,7 +72,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
             _amountController.text = extractedInfo['amount'].toString();
           }
 
-          _receiptPath = "Recibo escaneado"; // Simplificado para este ejemplo
+          _receiptPath = "Recibo escaneado";
         });
       }
     } catch (e) {
@@ -107,31 +107,34 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       });
 
       try {
-          final userId = await AuthService.getCurrentUserId();
-          final expense = Expense(
-              id: widget.expense?.id ?? -1,
-              userId: userId!,
-              title: _titleController.text,
-              description: "",
-              amount: double.parse(_amountController.text),
-              category: _selectedCategory,
-              date: DateFormat('yyyy-MM-dd').format(_selectedDate),
-              receiptPath: _receiptPath ?? "",
-             );
+        final userId = await AuthService.getCurrentUserId();
+        final expense = Expense(
+          id: widget.expense?.id ?? -1,
+          userId: userId!,
+          title: _titleController.text,
+          description: "",
+          amount: double.parse(_amountController.text),
+          category: _selectedCategory,
+          date: DateFormat('yyyy-MM-dd').format(_selectedDate),
+          receiptPath: _receiptPath ?? "",
+        );
         if (_isNewExpense) {
-            await DatabaseHelper.instance.insertExpense(expense);
-           ScaffoldMessenger.of(context).showSnackBar(
+          await DatabaseHelper.instance.insertExpense(expense);
+          // ignore: use_build_context_synchronously
+          ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Expense saved successfully')),
           );
         } else {
           await DatabaseHelper.instance.updateExpense(expense);
+          // ignore: use_build_context_synchronously
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Expense updated successfully')),
           );
         }
       } catch (e) {
         ScaffoldMessenger.of(
-          context).showSnackBar(SnackBar(content: Text('Error al guardar: $e')));
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error al guardar: $e')));
       } finally {
         setState(() {
           _isLoading = false;
@@ -141,7 +144,6 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       Navigator.pop(context);
     }
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -149,43 +151,32 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       appBar: AppBar(
         title: Text(_isNewExpense ? 'Nuevo Gasto' : 'Editar Gasto'),
       ),
-      body:
-      _isLoading
+      body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Botón de escaneo
-              _buildScanButton(),
-
-              const SizedBox(height: 16),
-              // Título
-              _buildTitleField(),
-              const SizedBox(height: 16),
-              // Cantidad
-              _buildAmountField(),
-              const SizedBox(height: 16),
-              // Categoría
-              _buildCategoryDropdown(),
-              const SizedBox(height: 16),
-              // Fecha
-              _buildDatePicker(),
-              const SizedBox(height: 16),
-
-              // Mostrar imagen si hay una
-              _buildReceiptPreview(),
-              const SizedBox(height: 16),
-
-              // Botón guardar
-              _buildSaveButton(),
-            ],
-          ),
-        ),
-      ),
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildScanButton(),
+                    const SizedBox(height: 16),
+                    _buildTitleField(),
+                    const SizedBox(height: 16),
+                    _buildAmountField(),
+                    const SizedBox(height: 16),
+                    _buildCategoryDropdown(),
+                    const SizedBox(height: 16),
+                    _buildDatePicker(),
+                    const SizedBox(height: 16),
+                    _buildReceiptPreview(),
+                    const SizedBox(height: 16),
+                    _buildSaveButton(),
+                  ],
+                ),
+              ),
+            ),
     );
   }
 
@@ -198,9 +189,10 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
+      ),
     );
   }
+
   Widget _buildTitleField() {
     return TextFormField(
       controller: _titleController,
@@ -228,17 +220,17 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
             border: const OutlineInputBorder(),
             prefixIcon: const Icon(Icons.money),
           ),
-          keyboardType: const TextInputType.numberWithOptions(
-            decimal: true,
-          ),
- validator: (value) {
- if (value == null || value.isEmpty) {
- return 'Por favor ingresa una cantidad';
- }
- if (double.tryParse(value) == null) {
- return 'Ingresa un número válido';
-        }
-        return null;
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Por favor ingresa una cantidad';
+            }
+            if (double.tryParse(value) == null) {
+              return 'Ingresa un número válido';
+            }
+            return null;
+          },
+        );
       },
     );
   }
@@ -264,26 +256,27 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       },
     );
   }
+
   Widget _buildDatePicker() {
     return InkWell(
-              onTap: () => _selectDate(context),
-              child: InputDecorator(
-                decoration: const InputDecoration(
-                  labelText: 'Fecha',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.calendar_today),
-                ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    DateFormat('dd/MM/yyyy').format(_selectedDate),
-                  ),
-                  const Icon(Icons.calendar_today),
-                ],
-                ),
-              ),
-            );
+      onTap: () => _selectDate(context),
+      child: InputDecorator(
+        decoration: const InputDecoration(
+          labelText: 'Fecha',
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(Icons.calendar_today),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              DateFormat('dd/MM/yyyy').format(_selectedDate),
+            ),
+            const Icon(Icons.calendar_today),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildReceiptPreview() {
@@ -306,12 +299,12 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
             ),
           ),
         ),
-
       );
     } else {
       return const SizedBox.shrink();
     }
   }
+
   Widget _buildSaveButton() {
     return ElevatedButton(
       onPressed: () => _saveExpense(context),
@@ -326,6 +319,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       ),
     );
   }
+
   @override
   void dispose() {
     _titleController.dispose();
