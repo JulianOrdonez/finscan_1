@@ -81,14 +81,14 @@ class _HomePageState extends State<HomePage> {
         ),
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(icon: Icon(Icons.list), label: const Text(\'Gastos\').data),
+            BottomNavigationBarItem(icon: Icon(Icons.list), label:  Text('Gastos')),
             BottomNavigationBarItem(
-                icon: Icon(Icons.bar_chart), label: const Text(\'Estadísticas\').data),
+                icon: Icon(Icons.bar_chart), label:  Text('Estadísticas')),
             BottomNavigationBarItem(
-                icon: Icon(Icons.category), label: const Text(\'Categorías\').data),
+                icon: Icon(Icons.category), label:  Text('Categorías')),
             BottomNavigationBarItem(
-                icon: Icon(Icons.settings), label: const Text(\'Ajustes\').data),
-          ],
+                icon: Icon(Icons.settings), label: Text('Ajustes')),
+            ],
           currentIndex: _selectedIndex,
           selectedItemColor: const Color(0xFF64B5F6),
           unselectedItemColor: themeProvider.themeData.unselectedWidgetColor,
