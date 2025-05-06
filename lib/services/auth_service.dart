@@ -2,7 +2,7 @@ import 'package:flutter_application_2/services/database_helper.dart';
 import 'package:flutter_application_2/models/user.dart';
 
 class AuthService {
-  Future<int?> getCurrentUserId() async {
+  static Future<int?> getCurrentUserId() async {
     return await DatabaseHelper.instance.getCurrentUserId();
   }
 
