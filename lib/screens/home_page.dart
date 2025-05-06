@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context, themeProvider, child) {
         return Scaffold(
           appBar: AppBar(
-             title: const Text('FinScan - Gastos'),
+             title: const Text('FinScan'),
             backgroundColor: themeProvider.currentTheme.colorScheme.primary,
           ),
           body: AnimatedSwitcher(

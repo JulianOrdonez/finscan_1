@@ -82,19 +82,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
-      builder: (context, themeProvider, child) => Scaffold(
-        appBar: AppBar(
-          title: const Text('FinScan - Gastos'),
-           flexibleSpace: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [themeProvider.themeData.colorScheme.primary, themeProvider.themeData.colorScheme.primaryContainer], // Use gradient colors
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-              ),
-        ),
+      builder: (context, themeProvider, child) => Scaffold(        
         body: PageTransitionSwitcher(
           duration: const Duration(milliseconds: 300),
           transitionBuilder: (Widget child, Animation<double> animation,

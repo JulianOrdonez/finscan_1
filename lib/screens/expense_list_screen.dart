@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_application_2/main.dart';
 import '../models/expense.dart';
 import '../services/database_helper.dart';
 import '../theme_provider.dart';
@@ -55,6 +56,19 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     }
   }
 
+  double _calculateTotal(List<Expense> expenses) {
+    return expenses.fold(0, (sum, expense) => sum + expense.amount);
+  }
+
+    // Filter expenses based on the selected period
+  List<Expense> _filterByPeriod(List<Expense> expenses) {
+    final now = DateTime.now();
+    // Start of the current month
+      final startDate = DateTime(now.year, now.month, 1);
+
+    return expenses.where((expense) => expense.date.isAfter(startDate)).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -85,59 +99,87 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           }
 
           final expenses = snapshot.data!;
+          final filteredExpenses = _filterByPeriod(expenses);
+
 
           return Padding(
             padding: const EdgeInsets.all(16.0),
-            child: ListView.builder(
-              itemCount: expenses.length,
-              itemBuilder: (context, index) {
-                final expense = expenses[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 5),
+            child: Column(
+             children: [
+                Card(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    child: ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: CircleAvatar(
-                        backgroundColor: _getCategoryColor(expense.category),
-                        child: Icon(_getCategoryIcon(expense.category), color: Colors.white, size: 20),
-                      ),
-                      title: Text(
-                        expense.description,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      subtitle: Padding(
-                        padding: const EdgeInsets.only(top:4.0),
-                        child: Text(
-                          '${expense.category} - ${DateFormat('dd/MM/yyyy').format(expense.date)}',
-                        ),
-                      ), 
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('€${expense.amount.toStringAsFixed(2)}',
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () => _deleteExpense(expense.id!),
+                          Row(
+                            children: [
+                              Icon(Icons.money),
+                              const SizedBox(width: 8),
+                              Text('Resumen de Gastos', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            ],
                           ),
+                          const SizedBox(height: 16),
+                          Text('Total Gastado: €${_calculateTotal(filteredExpenses).toStringAsFixed(2)}', style: TextStyle(fontSize: 16)),
                         ],
                       ),
-                      onTap: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ExpenseFormScreen(expense: expense)));
-                      },
                     ),
-                  ),
-                );
-              },
+                ),
+                 Expanded(
+                   child: ListView.builder(
+                    itemCount: expenses.length,
+                    itemBuilder: (context, index) {
+                      final expense = expenses[index];
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 5),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          child: ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            leading: CircleAvatar(
+                              backgroundColor: _getCategoryColor(expense.category),
+                              child: Icon(_getCategoryIcon(expense.category), color: Colors.white, size: 20),
+                            ),
+                            title: Text(
+                              expense.description,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Padding(
+                              padding: const EdgeInsets.only(top:4.0),
+                              child: Text(
+                                '${expense.category} - ${DateFormat('dd/MM/yyyy').format(expense.date)}',
+                              ),
+                            ), 
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text('€${expense.amount.toStringAsFixed(2)}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold, fontSize: 16)),
+                                IconButton(
+                                  icon: const Icon(Icons.delete, color: Colors.red),
+                                  onPressed: () => _deleteExpense(expense.id!),
+                                ),
+                              ],
+                            ),
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => ExpenseFormScreen(expense: expense)));
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                               ),
+                 ),
+              ],
             ),
-          );        },
+          );
+        },
 
       ),
          floatingActionButton: FloatingActionButton(
