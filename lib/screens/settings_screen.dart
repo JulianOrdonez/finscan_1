@@ -88,7 +88,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 }).toList(),
                 onChanged: (String? newValue) {
                   if (newValue != null) {
-                    currencyProvider.setCurrency(newValue); // Update currency in provider
+                    currencyProvider.setSelectedCurrency(newValue); // Update currency in provider
                     _saveSelectedCurrency(newValue); // Change the setCurrency method call to setSelectedCurrency
                   }
                 },

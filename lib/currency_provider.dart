@@ -8,8 +8,7 @@ const Map<String, double> _exchangeRates = {
   'MXN': 17.0, // As of 2024-03-04
   'COP': 3950.0, // As of 2024-03-04
 };
-const List<String> supportedCurrencies = ['COP', 'USD', 'EUR'];
-class CurrencyProvider extends ChangeNotifier {
+class CurrencyProvider extends ChangeNotifier {const List<String> supportedCurrencies = ['COP', 'USD', 'EUR'];
   String _selectedCurrency = 'COP';
 
   CurrencyProvider() {
