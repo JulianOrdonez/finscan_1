@@ -24,7 +24,7 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
   // Refresh the list of expenses
   void _refreshExpenses() {
     setState(() {
-      _expensesFuture = DatabaseHelper.instance.getExpenses();
+      _expensesFuture = DatabaseHelper.instance.getAllExpenses();
     });
   }
 

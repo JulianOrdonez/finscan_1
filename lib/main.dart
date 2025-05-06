@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
       builder: (context, themeProvider, child) {
         return MaterialApp(
           title: 'FinScan - Gastos',
+          theme: themeProvider.themeData,
           debugShowCheckedModeBanner: false,
           theme: themeProvider.themeData,
           home: FutureBuilder<int?>(future: DatabaseHelper.instance.getCurrentUser(), builder: (context, snapshot) {
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
                       future: DatabaseHelper.instance.getUserById(snapshot.data!),
                       builder: (context, userSnapshot) {
                         return userSnapshot.data != null
-                            ? HomePage()
+                            ? const HomePage()
                             : const LoginScreen();
                       },
                     );
@@ -49,17 +50,17 @@ class MyApp extends StatelessWidget {
                 }
               },
             ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
-
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
-
 class _HomePageState extends State<HomePage> {
   final List<Widget> _screens = [
     const ExpenseListScreen(),
@@ -88,7 +89,9 @@ class _HomePageState extends State<HomePage> {
                   themeProvider.themeData.colorScheme.primary,
                   themeProvider.themeData.colorScheme.primaryContainer
                 ], // Use gradient colors
-                begin: Alignment.topLeft,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
                 end: Alignment.bottomRight,
               ),
             ),
@@ -101,13 +104,13 @@ class _HomePageState extends State<HomePage> {
               FadeTransition(opacity: animation, child: child),
           child: _screens[_selectedIndex],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.bar_chart), label: 'Estadísticas'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.category), label: 'Categorías'),
+           bottomNavigationBar: BottomNavigationBar(
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.bar_chart), label: 'Estadísticas'),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.category), label: 'Categorías'),
               BottomNavigationBarItem(
                   icon: Icon(Icons.settings), label: 'Ajustes'),
             ],
@@ -117,82 +120,6 @@ class _HomePageState extends State<HomePage> {
             showUnselectedLabels: true,
             onTap: _onItemTapped,
             backgroundColor: themeProvider.themeData.cardColor),
-      ),
-    );
-  }
-}
-
-
-                );
-              }
-            },
-          ),
-          debugShowCheckedModeBanner: false,
-        ); 
-      },
-    );
-  }
-}
-
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  final List<Widget> _screens = [
-    ExpenseListScreen(),
-    ExpenseStatsScreen(),
-    CategorizedExpenseScreen(),
-    SettingsScreen(),
-  ];
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<ThemeProvider>(
-      builder: (context, themeProvider, child) => Scaffold(
-        appBar: AppBar(
-          title: const Text('FinScan - Gastos'),
-           flexibleSpace: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [themeProvider.themeData.colorScheme.primary, themeProvider.themeData.colorScheme.primaryContainer], // Use gradient colors
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-              ),),
-        body: PageTransitionSwitcher(
-          duration: const Duration(milliseconds: 300),
-          transitionBuilder: (Widget child, Animation<double> animation,
-                  Animation<double> secondaryAnimation) =>
-              FadeTransition(opacity: animation, child: child),
-          child: _screens[_selectedIndex],
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.bar_chart), label: 'Estadísticas'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.category), label: 'Categorías'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.settings), label: 'Ajustes'),
-          ],
-          selectedItemColor: themeProvider.themeData.colorScheme.tertiary,
-            unselectedItemColor: Colors.grey[400],
-            currentIndex: _selectedIndex,
-            showUnselectedLabels: true,
-          onTap: _onItemTapped,
-           backgroundColor: themeProvider.themeData.cardColor
-        ),
       ),
     );
   }

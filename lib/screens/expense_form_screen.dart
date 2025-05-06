@@ -117,7 +117,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
               receiptPath: _receiptPath,
              );
         if (widget.expense?.id == null) {
-          await DatabaseHelper.instance.createExpense(expense);
+          await DatabaseHelper.instance.insertExpense(expense);
             // ignore: use_build_context_synchronously
            ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Expense saved successfully')),

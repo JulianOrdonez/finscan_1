@@ -25,7 +25,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen>
 
   void _refreshExpenses() {
     setState(() {
-      _expensesFuture = DatabaseHelper.instance.getExpenses();
+      _expensesFuture = DatabaseHelper.instance.getAllExpenses();
     });
   }
 
