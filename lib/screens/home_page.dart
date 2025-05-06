@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_application_2/theme_provider.dart'; 
-import 'package:page_transition_switcher/page_transition_switcher.dart';
 import 'package:flutter_application_2/screens/expense_list_screen.dart';
 import 'package:flutter_application_2/screens/expense_stats_screen.dart';
 import 'package:flutter_application_2/screens/categorized_expense_screen.dart';
@@ -39,18 +38,20 @@ class _HomePageState extends State<HomePage> {
              title: const Text('FinScan - Gastos'),
             backgroundColor: themeProvider.currentTheme.colorScheme.primary,
           ),
-          body: Center(
-            child: PageTransitionSwitcher(
-              duration: const Duration(milliseconds: 300),
-              transitionBuilder: (child, primaryAnimation, secondaryAnimation) {
-                return FadeTransition(
-                  opacity: primaryAnimation,
-                  child: child,
-                );
-              },
+          body: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+            child: Center(
+              key: ValueKey<int>(_selectedIndex),
               child: _screens[_selectedIndex],
-              
             ),
+
+          
           ),
           bottomNavigationBar: BottomNavigationBar(
             items: const <BottomNavigationBarItem>[
@@ -72,9 +73,9 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
             currentIndex: _selectedIndex,
-            selectedItemColor: themeProvider.currentTheme.colorScheme.primary,
-            unselectedItemColor: themeProvider.currentTheme.unselectedWidgetColor, 
-            onTap: _onItemTapped,
+            selectedItemColor: themeProvider.currentTheme.primaryColor,
+            unselectedItemColor: themeProvider.currentTheme.unselectedWidgetColor,
+            onTap: _onItemTapped, 
              backgroundColor: themeProvider.currentTheme.canvasColor,
         ),
         );
