@@ -24,15 +24,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
           _emailController.text, 
           _passwordController.text,
         );
-        if (userId != null) {
+        if (userId != null ) {
+          await _authService.login(_emailController.text, _passwordController.text);
           Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => const HomePage())
           );
         } else {
           _showErrorSnackBar('El correo ya está en uso.', context);
         }
-      } catch (e) {
-        print('Error: $e');
+      } on FirebaseAuthException catch (e){
+        if (e.code == 'email-already-in-use') {
+            _showErrorSnackBar('El correo ya está en uso.', context);
+        }
+        print('Firebase Error: $e');
       } catch (e) {
         _showErrorSnackBar('Error al registrarse', context);
       }
