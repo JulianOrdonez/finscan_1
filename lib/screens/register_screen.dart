@@ -17,11 +17,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  void _registerUser() async {
+  void _createUser() async {
     if (_formKey.currentState!.validate()) {
       try {
-        final user = await _authService.registerUser(
-          _emailController.text,
+        final userId = await _authService.createUser(
+          _emailController.text, 
           _passwordController.text,
         );
         if (user != null) {
@@ -116,7 +116,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 30),
                 ElevatedButton(
-                  onPressed: _registerUser,
+                  onPressed: _createUser,
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),

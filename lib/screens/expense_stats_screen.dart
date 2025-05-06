@@ -25,10 +25,14 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen>
   }
 
   void _refreshExpenses() {
-    setState(() {
-       final userId = AuthService().getCurrentUserId();
-      _expensesFuture = DatabaseHelper.instance.getAllExpenses(userId);
-    });
+    final userId = AuthService().getCurrentUserId();
+    if (userId != null) {
+        setState(() {
+            _expensesFuture = DatabaseHelper.instance.getAllExpenses(userId);
+        });
+    } else {
+        // Handle the case where userId is null, perhaps show an error or a message
+    }
   }
 
   // Filtrar gastos según el período seleccionado

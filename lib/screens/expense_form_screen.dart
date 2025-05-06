@@ -118,8 +118,13 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
               receiptPath: _receiptPath,
              );
         if (widget.expense?.id == null) {
-          int currentUserId = await AuthService().getCurrentUserId();
-          await DatabaseHelper.instance.insertExpense(expense,currentUserId);
+          int? currentUserId = await AuthService().getCurrentUserId();
+          
+          if (currentUserId != null) {
+            await DatabaseHelper.instance.insertExpense(expense, currentUserId);
+          } else {
+            throw Exception("No se pudo obtener el ID del usuario");
+          }
             // ignore: use_build_context_synchronously
            ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Expense saved successfully')),

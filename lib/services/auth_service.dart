@@ -11,19 +11,18 @@ class AuthService {
 
   Future<int> createUser(String email, String password) async {
     try {
-      final id = await _dbHelper.createUser(email, password);
+      final id = await _dbHelper.insertUser(email, password);
       return id;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<int?> login(String email, String password) async {
-    var db = await DatabaseHelper.database;
+  Future<int?> login(String email, String password) async {    
     try {
-      List<Map<String, dynamic>> result = await db.query(
+      List<Map<String, dynamic>> result = await _dbHelper.query(
         'users', 
-        where: 'email = ? AND password = ?', 
+        where: 'email = ? AND password = ?',
         whereArgs: [email, password],
       );
 
@@ -33,7 +32,7 @@ class AuthService {
         return _currentUserId;
       } else {
         return null; 
-      }
+      }      
     } catch(e){ 
       print(e);
       return null;

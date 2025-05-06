@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_application_2/theme_provider.dart';
@@ -30,12 +31,15 @@ class MyApp extends StatelessWidget {
           title: 'FinScan - Gastos',
           theme: themeProvider.themeData,
           home: FutureBuilder<int?>(
-            future: AuthService().getCurrentUserId(),
-            builder: (context, snapshot) {
+            future: () async {
+              return await AuthService().getCurrentUserId();
+            }(),
+            builder: (context, snapshot)  {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else {
                 final userId = snapshot.data;
+
                 if (snapshot.hasData && userId != null) {
                   return FutureBuilder<User?>(
                     future: DatabaseHelper.instance.getUserById(userId),
