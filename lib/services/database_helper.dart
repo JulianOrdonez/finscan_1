@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter_application_2/services/auth_service.dart';
 import 'package:flutter_application_2/models/expense.dart';
 import 'package:flutter_application_2/models/user.dart';
 import 'package:path/path.dart';
@@ -49,7 +50,7 @@ class DatabaseHelper {
             // Update existing records with user_id
             List<Map> expenses = await db.query('expenses');
             if (expenses.isNotEmpty) {
-              int? userId = await getCurrentUser();
+              int? userId = await getCurrentUserId();
               if (userId != null) {
                 for (var expense in expenses) {
                   await db.update('expenses', {'user_id': userId},
@@ -81,20 +82,20 @@ class DatabaseHelper {
   
 
 
-    
-      Future<int?> getCurrentUser() async {
-      try{
-        var db = await database;
-        final List<Map<String, dynamic>> maps = await db.query('current_user');
-        if (maps.isNotEmpty) {
-          return maps.first['id'] as int;
-        }
-        return null;
-      } catch(e){
-        rethrow;
+  static Future<int?> getCurrentUserId() async {
+    try {
+      var db = await DatabaseHelper.instance.database;
+      final List<Map<String, dynamic>> maps = await db.query('current_user');
+      if (maps.isNotEmpty) {
+        return maps.first['id'] as int;
       }
+      return null;
+    } catch (e) {
+      rethrow;
     }
-  
+  }
+
+
   Future<User?> getUserById(int id) async {
     try {
       var db = await database;
@@ -122,13 +123,13 @@ class DatabaseHelper {
     await db.execute('DELETE FROM current_user');
   }
 
-  Future<List<Expense>> getAllExpenses(int userId) async {
+  Future<List<Expense>> getAllExpenses(int? userId) async {
     try {
       var db = await database;
 
       var result = await db.query(
         'expenses',
-        where: 'user_id = ?',
+        where: userId == null ? null : 'user_id = ?',
         whereArgs: [userId],
       );
       return result.map((map) {
@@ -164,7 +165,7 @@ class DatabaseHelper {
   Future<int> insertExpense(Expense expense) async {
     try {
       var db = await database;
-      int? currentUserId = await getCurrentUser();
+      int? currentUserId = await AuthService.getCurrentUserId();
       if (currentUserId == null) {
         throw Exception("No user is currently logged in.");
       }

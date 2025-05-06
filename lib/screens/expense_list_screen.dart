@@ -22,10 +22,11 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     _refreshExpenses();
   }
 
-  void _refreshExpenses() {
+  Future<void> _refreshExpenses() async {
+     final userId = await AuthService.getCurrentUserId() ?? 1;
     setState(() {
       _expensesFuture = DatabaseHelper.instance
-          .getAllExpenses(AuthService.getCurrentUserId()!);
+          .getAllExpenses(userId);
     });
   }
 
@@ -231,4 +232,3 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     return categoryIcons[category] ?? Icons.category;
   }
 }
-
