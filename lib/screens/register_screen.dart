@@ -1,30 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_application_2/screens/home_page.dart';
 import 'package:flutter_application_2/screens/login_screen.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_application_2/theme_provider.dart';
 import '../models/user.dart';
 
-class RegisterScreen extends StatefulWidget {\n  
-  const RegisterScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  RegisterScreen({super.key});
 
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final AuthService _authService = AuthService();\n  
+  final AuthService _authService = AuthService();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   Future<void> _createUser(BuildContext context) async {
+    
     if (_formKey.currentState!.validate()) {
       try {
         final name = _nameController.text;
@@ -40,7 +36,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           if (logged) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) =>  HomePage()),
+              MaterialPageRoute(builder: (context) => HomePage()),
             );
           }
         } else {
@@ -59,12 +55,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-    void _navigateToLogin() {
+  void _navigateToLogin() {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
     );
-  }
+  } 
 
   @override
   Widget build(BuildContext context) {

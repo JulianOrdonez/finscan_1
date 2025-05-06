@@ -81,19 +81,23 @@ class _HomePageState extends State<HomePage> {
         ),
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Gastos'),
+            BottomNavigationBarItem(icon: Icon(Icons.list), label: const Text(\'Gastos\').data),
             BottomNavigationBarItem(
-                icon: Icon(Icons.bar_chart), label: 'Estadísticas'),
+                icon: Icon(Icons.bar_chart), label: const Text(\'Estadísticas\').data),
             BottomNavigationBarItem(
-                icon: Icon(Icons.category), label: 'Categorías'),
+                icon: Icon(Icons.category), label: const Text(\'Categorías\').data),
             BottomNavigationBarItem(
-                icon: Icon(Icons.settings), label: 'Ajustes'),
+                icon: Icon(Icons.settings), label: const Text(\'Ajustes\').data),
           ],
           currentIndex: _selectedIndex,
-          selectedItemColor: themeProvider.themeData.colorScheme.tertiary,
+          selectedItemColor: const Color(0xFF64B5F6),
           unselectedItemColor: themeProvider.themeData.unselectedWidgetColor,
           onTap: _onItemTapped,
           backgroundColor: themeProvider.themeData.cardColor,
+          selectedLabelStyle: const TextStyle(fontFamily: 'Roboto'),
+          unselectedLabelStyle: const TextStyle(fontFamily: 'Roboto'),
+          type: BottomNavigationBarType.fixed,
+
         ),
       );
     });
