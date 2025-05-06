@@ -2,30 +2,38 @@ import 'package:flutter_application_2/services/database_helper.dart';
 
 class AuthService {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
-  int? _currentUserId;
+  static int? _currentUserId;
 
-  int? getCurrentUserId() {
+  static int? getCurrentUserId() {
     return _currentUserId;
   }
 
-  Future<bool> createUser(String email, String password) async {
+   Future<bool> register(String email, String password) async {
     final db = await _dbHelper.database;
     try {
       final id = await db.insert('users', {'email': email, 'password': password});
+      if (id > 0){
+        _currentUserId = id;
+      }
       return id > 0;
     } catch (e) {
       print(e);
       return false;
     }
   }
-
-   Future<bool> login(String email, String password) async {
+  static Future<bool> login(String email, String password) async {
     try{
-      final db = await _dbHelper.database;
+      final db = await DatabaseHelper.instance.database;
       final users = await db.query('users', where: 'email = ? AND password = ?', whereArgs: [email, password]);
+      if(users.isNotEmpty){
+        _currentUserId = users.first['id'] as int?;
+      }
       return users.isNotEmpty;
     }catch(e){
       rethrow;
     }
+  }
+  static void logout(){
+    _currentUserId = null;
   }
 }

@@ -88,7 +88,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: 'Cerrar Sesión',
               leading: Icon(Icons.logout),
               onTap: () {
-                AuthService().logout().then((value) => Navigator.pushReplacement(
+                AuthService.logout(); Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                         builder: (context) => const LoginScreen())));

@@ -24,7 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           _emailController.text,
           _passwordController.text,
         );
-
+        
         if (isCreated) {
           bool logged = await _authService.login(
               _emailController.text, _passwordController.text);
@@ -32,15 +32,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const HomePage()),
-            );
+            ); 
           }
         } else {
             _showErrorSnackBar('Error al registrarse, usuario ya existe.', context);
-        }
-        print('Firebase Error: $e');
-      } catch (e) {
+        } 
+      } catch (error) {        
+        print('Firebase Error: $error');
         _showErrorSnackBar('Error al registrarse', context);
-      }
+      } 
     }
   }
 

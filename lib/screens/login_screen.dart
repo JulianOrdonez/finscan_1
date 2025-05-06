@@ -24,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
             final bool user = await _runLoginInIsolate(
                 _emailController.text, _passwordController.text);
 
-            if (!user) {
+            if (!user) {    
                 _showErrorSnackBar('Usuario o contraseña incorrectos');
                 return;
             }
@@ -54,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
         String password = args[1];
         SendPort sendPort = args[2];
         try {
-            final bool success = await AuthService.login(email, password);
+            final bool success = await AuthService().login(email, password);            
             sendPort.send(success);
         } catch (e) {
             sendPort.send(null);
