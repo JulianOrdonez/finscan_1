@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
   /// Uses [Navigator] to replace the current route with the [HomePage].
   void _navigateToHome() {
     Navigator.pushReplacement(
-        context,
+        context, 
         MaterialPageRoute(builder: (context) => HomePage()),
     );
   }

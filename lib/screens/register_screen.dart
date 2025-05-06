@@ -33,10 +33,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (isCreated) {
           bool logged = await _authService.login(
               _emailController.text, _passwordController.text);
-          if (logged) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
+          if (logged) { Navigator.pushReplacement( context, MaterialPageRoute(builder: (context) => HomePage()),
             );
           }
         } else {
