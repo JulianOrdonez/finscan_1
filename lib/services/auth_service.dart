@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import 'package:flutter_application_2/services/database_helper.dart';
 
 class AuthService {
@@ -18,13 +20,13 @@ class AuthService {
   }
 
   Future<int?> login(String email, String password) async {    
-   try {
-      final List<Map<String, dynamic>> users = await _dbHelper.getDatabase().query(
+   try {    
+      final List<Map<String, dynamic>> users = await (await _dbHelper.database).query(
         'users',
         where: 'email = ? AND password = ?',
         whereArgs: [email, password],
       );
-
+      
       if (users.isNotEmpty) {
         _currentUserId = users.first['id'] as int;
         return _currentUserId;
