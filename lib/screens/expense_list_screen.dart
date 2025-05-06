@@ -74,6 +74,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return  Scaffold(
       body: FutureBuilder<List<Expense>>(
+        future: _expensesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
