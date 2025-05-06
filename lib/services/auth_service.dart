@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter_application_2/models/user.dart';
 import 'package:flutter_application_2/services/database_helper.dart';
 
@@ -18,7 +20,7 @@ class AuthService {
     try {
       List<Map<String, dynamic>> result = await db.query(
         'users', 
-        where: 'email = ? AND password = ?',
+        where: 'email = ? AND password = ?', 
         whereArgs: [email, password],
       );
 
@@ -34,7 +36,7 @@ class AuthService {
       } else {
         return null;
       }
-    } catch(e){
+    } catch(e){ 
       print(e);
       return null;
     }
