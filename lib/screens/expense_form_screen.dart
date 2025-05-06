@@ -121,7 +121,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
           int? currentUserId = await AuthService().getCurrentUserId();
           
           if (currentUserId != null) {
-            await DatabaseHelper.instance.insertExpense(expense, currentUserId);
+            await DatabaseHelper.instance.insertExpense(expense);
           } else {
             throw Exception("No se pudo obtener el ID del usuario");
           }

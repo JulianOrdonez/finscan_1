@@ -24,7 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           _emailController.text, 
           _passwordController.text,
         );
-        if (user != null) {
+        if (userId != null) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const HomePage()),
