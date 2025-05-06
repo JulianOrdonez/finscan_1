@@ -72,34 +72,38 @@ class DatabaseHelper {
       print(e);
       rethrow;
     }}
-  
-    Future<int?> getCurrentUser() async {
-      var db = await DatabaseHelper.database;
-      final List<Map<String, dynamic>> maps = await db.query('current_user');
-      if (maps.isNotEmpty) {
-        return maps.first['id'] as int;
+    
+      Future<int?> getCurrentUser() async {
+      try{
+        var db = await database;
+        final List<Map<String, dynamic>> maps = await db.query('current_user');
+        if (maps.isNotEmpty) {
+          return maps.first['id'] as int;
+        }
+        return null;
+      } catch(e){
+        rethrow;
       }
-      return null;
     }
   
-    Future<User?> getUserById(int id) async {
-      var db = await DatabaseHelper.database;
+    Future<User?> getUserById(int id) async {    
       try {
+        var db = await database;
         final List<Map<String, dynamic>> maps = await db.query(
           'users',
           where: 'id = ?',
           whereArgs: [id],
         );
-  
         if (maps.isNotEmpty) {
           return User(
             id: maps.first['id'] as int,
             email: maps.first['email'] as String,
-            password: "",
+            password: maps.first['password'] as String,
           );
         }
         return null;
       } catch (e) {
+        print(e);
         return null;
       }
     }
@@ -156,7 +160,7 @@ class DatabaseHelper {
          int? currentUserId = await getCurrentUser();
 
         final sql ='INSERT INTO expenses (title, description, amount, category, date, receiptPath) VALUES (?, ?, ?, ?, ?, ?)';
-        return await db.rawInsert(sql, [
+        return await db.rawInsert(sql,[
           expense.title,
           expense.description,
           expense.amount,

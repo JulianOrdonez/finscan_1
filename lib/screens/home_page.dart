@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_application_2/theme_provider.dart'; 
 import 'package:flutter_application_2/screens/expense_list_screen.dart';
 import 'package:flutter_application_2/screens/expense_stats_screen.dart';
 import 'package:flutter_application_2/screens/categorized_expense_screen.dart';
@@ -32,54 +31,54 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
-      builder: (context, themeProvider, child) {
+      builder: (context, themeProvider, child) =>
         return Scaffold(
           appBar: AppBar(
-             title: const Text('FinScan'),
-            backgroundColor: themeProvider.currentTheme.colorScheme.primary,
+            title: const Text('FinScan'),
+            elevation: 0,
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    themeProvider.currentTheme.colorScheme.primary,
+                    themeProvider.currentTheme.colorScheme.primaryContainer
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+            ),
           ),
           body: AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
+            transitionBuilder:
+                (Widget child, Animation<double> animation) =>
+                    FadeTransition(opacity: animation, child: child),
             child: Center(
               key: ValueKey<int>(_selectedIndex),
               child: _screens[_selectedIndex],
             ),
-
-          
           ),
           bottomNavigationBar: BottomNavigationBar(
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: Icon(Icons.list),
-                label: 'Gastos',
-              ),
+                  icon: Icon(Icons.list), label: 'Gastos'),
               BottomNavigationBarItem(
-                icon: Icon(Icons.bar_chart),
-                label: 'Estadísticas',
-              ),
+                  icon: Icon(Icons.bar_chart), label: 'Estadísticas'),
               BottomNavigationBarItem(
-                icon: Icon(Icons.category),
-                label: 'Categorías',
-              ),
+                  icon: Icon(Icons.category), label: 'Categorías'),
               BottomNavigationBarItem(
-                icon: Icon(Icons.settings),
-                label: 'Ajustes',
-              ),
+                  icon: Icon(Icons.settings), label: 'Ajustes'),
             ],
             currentIndex: _selectedIndex,
-            selectedItemColor: themeProvider.currentTheme.primaryColor,
-            unselectedItemColor: themeProvider.currentTheme.unselectedWidgetColor,
-            onTap: _onItemTapped, 
-             backgroundColor: themeProvider.currentTheme.canvasColor,
+            selectedItemColor: themeProvider.currentTheme.colorScheme.tertiary,
+            unselectedItemColor:
+                themeProvider.currentTheme.unselectedWidgetColor,
+            onTap: _onItemTapped,
+            backgroundColor: themeProvider.currentTheme.cardColor,
+          ),
         ),
-        );
-      },
+      ),
     );
   }
 }

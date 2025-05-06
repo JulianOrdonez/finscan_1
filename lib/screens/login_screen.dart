@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
 import 'package:flutter_application_2/screens/home_page.dart';
@@ -26,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
 
         if (user == null) {
-          _showErrorSnackBar('Correo o contraseña incorrectos', context);
+          _showErrorSnackBar('Correo o contraseña incorrectos');
           return;
         }
 
@@ -36,13 +35,13 @@ class _LoginScreenState extends State<LoginScreen> {
           MaterialPageRoute(builder: (context) => HomePage()),
         );
       } catch (e) {
-        _showErrorSnackBar('Correo o contraseña incorrectos', context);
+        _showErrorSnackBar('Correo o contraseña incorrectos');
       }
     }
   }
 
-  void _showErrorSnackBar(String message, BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(this.context).showSnackBar(
       SnackBar(content: Text(message)),
     );
   }
