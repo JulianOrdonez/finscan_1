@@ -8,7 +8,7 @@ import 'dart:io';
 
 class DatabaseHelper {
   static const String _databaseName = "app.db";
-  static const int _databaseVersion = 1;
+  static const int _databaseVersion = 2;
 
   Database? _database;
 
@@ -28,13 +28,34 @@ class DatabaseHelper {
       return await openDatabase(
         path,
         version: _databaseVersion,
-        onCreate: (Database db, int version) async {
-          await db.execute(
-              'CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT UNIQUE, password TEXT)');
-          await db.execute(
-              'CREATE TABLE current_user (id INTEGER)');
-          await db.execute(
-              'CREATE TABLE expenses (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, title TEXT, description TEXT, amount REAL, category TEXT, date TEXT, receiptPath TEXT, FOREIGN KEY (user_id) REFERENCES users(id))');
+           onCreate: (Database db, int version) async {
+            await db.execute(
+                'CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT UNIQUE, password TEXT)');
+            await db.execute(
+                'CREATE TABLE current_user (id INTEGER)');
+            await db.execute(
+                'CREATE TABLE expenses (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, title TEXT, description TEXT, amount REAL, category TEXT, date TEXT, receiptPath TEXT, FOREIGN KEY (user_id) REFERENCES users(id))');
+          },
+        onUpgrade: (Database db, int oldVersion, int newVersion) async {
+          if (oldVersion < 2) {
+            // Add user_id column
+            await db.execute(
+                'ALTER TABLE expenses ADD COLUMN user_id INTEGER');
+
+            // Update existing records with user_id
+            List<Map> expenses = await db.query('expenses');
+            if (expenses.isNotEmpty){
+              int? userId = await getCurrentUser();
+              if(userId != null) {
+                for (var expense in expenses){
+                    await db.update('expenses', {'user_id': userId}, where: 'id = ?', whereArgs: [expense['id']]);
+                }
+              }
+            }
+            await db.execute('CREATE TABLE IF NOT EXISTS expenses_temp AS SELECT id, title, description, amount, category, date, receiptPath, user_id FROM expenses');
+            await db.execute('DROP TABLE expenses');
+            await db.execute('ALTER TABLE expenses_temp RENAME TO expenses');
+          }
         },
       );
     } catch (e) {
@@ -92,11 +113,11 @@ class DatabaseHelper {
       var db = await DatabaseHelper.database;
       try {
         int? currentUserId = await getCurrentUser();
-        if (currentUserId == null) {
-          return []; // No user logged in, return empty list
-        }
         var result = await db.query(
           'expenses',
+          where: 'user_id = ?',
+          whereArgs: [currentUserId],
+        );
           where: 'user_id = ?',
           whereArgs: [currentUserId],
         );
