@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../main.dart';
 import '../models/expense.dart';
 import '../services/database_helper.dart';
 import '../services/auth_service.dart';
@@ -17,7 +16,7 @@ class ExpenseFormScreen extends StatefulWidget {
 }
 
 class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
-
+  late bool _isNewExpense;
   final _formKey = GlobalKey<FormState>();
 
   final _titleController = TextEditingController();
@@ -42,6 +41,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   @override
   void initState() {
     super.initState();
+    _isNewExpense = widget.expense?.id == null;
     if (widget.expense != null) {
       _titleController.text = widget.expense!.title;
       _amountController.text = widget.expense!.amount.toString();
@@ -69,9 +69,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
           if (extractedInfo['amount'] != null) {
             _amountController.text = extractedInfo['amount'].toString();
           }
-
-          // Almacenar la ruta de la imagen temporal
-          // En una implementación completa, deberías guardar la imagen en almacenamiento permanente
+          
           _receiptPath = "Recibo escaneado"; // Simplificado para este ejemplo
         });
       }
@@ -100,16 +98,16 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
     }
   }
 
-  Future<void> _saveExpense() async {
+  Future<void> _saveExpense(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
 
       try {
-
+          final userId = await AuthService.getCurrentUserId();
           final expense = Expense(
-              id: widget.expense?.id,              
+              id: widget.expense?.id,
               title: _titleController.text,
               description: "",
               amount: double.parse(_amountController.text),
@@ -117,30 +115,25 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
               date: _selectedDate,
               receiptPath: _receiptPath,
              );
-        if (widget.expense?.id == null) {
-          int? currentUserId = await AuthService.getCurrentUserId();
-
-          if (currentUserId != null) {
+        if (_isNewExpense) {
+          if (userId != null) {
+           expense.userId = userId;
             await DatabaseHelper.instance.insertExpense(expense);
           } else {
             throw Exception("No se pudo obtener el ID del usuario");
           }
-            // ignore: use_build_context_synchronously
            ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Expense saved successfully')),
           );
         } else {
           await DatabaseHelper.instance.updateExpense(expense.copyWith(id: widget.expense!.id));
-             // ignore: use_build_context_synchronously
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Expense updated successfully')),
           );
         }
       } catch (e) {
-          // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error al guardar: $e')));
+          context).showSnackBar(SnackBar(content: Text('Error al guardar: $e')));
       } finally {
         setState(() {
           _isLoading = false;
@@ -156,7 +149,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.expense?.id == null ? 'Nuevo Gasto' : 'Editar Gasto'),
+        title: Text(_isNewExpense ? 'Nuevo Gasto' : 'Editar Gasto'),
       ),
       body:
       _isLoading
@@ -321,7 +314,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   }
   Widget _buildSaveButton() {
     return ElevatedButton(
-      onPressed: _saveExpense,
+      onPressed: () => _saveExpense(context),
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
@@ -341,4 +334,3 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
     super.dispose();
   }
 }
-

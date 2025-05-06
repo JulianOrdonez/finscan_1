@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/screens/home_page.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
+import '../models/user.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({Key? key}) : super(key: key);
+  const RegisterScreen({super.key});
 
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
@@ -13,6 +14,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final AuthService _authService = AuthService();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
@@ -20,17 +22,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> _createUser(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       try {
-        final name = ""; // No hay un campo para nombre en el formulario, asi que se deja vacio
+        final name = _nameController.text; 
         final email = _emailController.text;
         final password = _passwordController.text;
-        final confirmPassword = _confirmPasswordController.text;
-        bool isCreated = await AuthService.createUser({
-          'name': name,
-          'email': email,
-          'password': password,
-          'confirmPassword': confirmPassword,
-        });
+        User newUser = User(id:0, name: name, email: email, password: password);
         
+        bool isCreated = await _authService.createUser(newUser);
+       
+
         if (isCreated) {
           bool logged = await AuthService.login(
               _emailController.text, _passwordController.text);
@@ -41,12 +40,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ); 
           }
         } else {
-            _showErrorSnackBar('Error al registrarse, usuario ya existe.', context);
+          _showErrorSnackBar('Error al registrarse, usuario ya existe.', context);
         } 
-      } catch (error) {        
+      } catch (error) {
         print('Firebase Error: $error');
         _showErrorSnackBar('Error al registrarse', context);
-      } 
+      }
     }
   }
 
@@ -76,6 +75,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
               children: <Widget>[
                 TextFormField(
                   controller: _emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nombre',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor, introduce tu nombre';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _nameController,
                   decoration: const InputDecoration(
                     labelText: 'Correo Electrónico',
                     border: OutlineInputBorder(),

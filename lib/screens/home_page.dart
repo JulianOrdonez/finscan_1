@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:flutter_application_2/theme_provider.dart';
 import 'package:flutter_application_2/screens/expense_list_screen.dart'; 
 import 'package:flutter_application_2/screens/expense_stats_screen.dart';
-import 'package:flutter_application_2/screens/categorized_expense_screen.dart';
 import 'package:flutter_application_2/screens/settings_screen.dart';
 
 class HomePage extends StatefulWidget {

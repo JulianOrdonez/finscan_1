@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
+import '../helpers.dart';
 import '../services/auth_service.dart';
 import '../models/expense.dart';
 import '../services/database_helper.dart';
-import '../theme_provider.dart';
 import 'expense_form_screen.dart';
 
 class ExpenseListScreen extends StatefulWidget {
-
+  final int userId;
+  const ExpenseListScreen({Key? key, required this.userId}) : super(key: key);
   @override
-  State<ExpenseListScreen> createState() => _ExpenseListScreenState();
+  State<ExpenseListScreen> createState() => _ExpenseListScreenState(userId: userId);
 }
 
-class _ExpenseListScreenState extends State<ExpenseListScreen> {
+class _ExpenseListScreenState extends State<ExpenseListScreen> {  
   late Future<List<Expense>> _expensesFuture;
 
   @override
@@ -23,11 +23,14 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   }
 
   Future<void> _refreshExpenses() async {
-     final userId = await AuthService.getCurrentUserId() ?? 1;
-    setState(() {
-      _expensesFuture = DatabaseHelper.instance
-          .getAllExpenses(userId);
-    });
+    setState(() {      
+        _expensesFuture = DatabaseHelper.instance.getAllExpenses(widget.userId);
+      
+    });    
+  }
+  _ExpenseListScreenState({
+    required int userId,
+  }) {
   }
 
   Future<void> _deleteExpense(int id) async {
@@ -58,14 +61,16 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     }
   }
 
-  double _calculateTotal(List<Expense> expenses) {    return expenses.fold(0, (sum, expense) => sum + expense.amount);
+  double _calculateTotal(List<Expense> expenses) {
+    return expenses.fold(0, (sum, expense) => sum + expense.amount);
   }
 
   // Filter expenses based on the selected period
   List<Expense> _filterByPeriod(List<Expense> expenses) {
     final now = DateTime.now();
-    // Start of the current month    
-      final startDate = DateTime(now.year, now.month, 1);
+    // Start of the current month
+    final startDate = DateTime(now.year, now.month, 1);
+
 
     return expenses.where((expense) => expense.date.isAfter(startDate)).toList();
   }
@@ -73,7 +78,6 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       body: FutureBuilder<List<Expense>>(
         future: _expensesFuture,
@@ -99,7 +103,6 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
             );
           }
 
-          final expenses = snapshot.data!;
           final filteredExpenses = _filterByPeriod(expenses);
 
 
@@ -133,19 +136,19 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                 Expanded(
                   child: ListView.builder(
                     itemCount: expenses.length,
-                    itemBuilder: (context, index) {
-                      final expense = expenses[index];
+                    itemBuilder: (context, index) {                      
+                      final expense = snapshot.data![index];
                       return Card(
                         margin: const EdgeInsets.symmetric(vertical: 5),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 10),
                           child: ListTile(
-                            contentPadding: EdgeInsets.zero,
+                            contentPadding: EdgeInsets.zero,                            
                             leading: CircleAvatar(
                               backgroundColor:
-                                  _getCategoryColor(expense.category),
-                              child: Icon(_getCategoryIcon(expense.category),
+                                  Helpers.getCategoryColor(expense.category),
+                              child: Icon(Helpers.getCategoryIcon(expense.category),
                                   color: Colors.white, size: 20),
                             ),
                             title: Text(
@@ -156,7 +159,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                             subtitle: Padding(
                               padding: const EdgeInsets.only(top: 4.0),
                               child: Text(
-                                  '${expense.description} - ${DateFormat('dd/MM/yyyy').format(expense.date)}'),
+                                  '${expense.description} - ${DateFormat('dd/MM/yyyy').format(expense.date)}'),                                 
                             ),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -171,13 +174,15 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                                 ),
                               ],
                             ),
-                            onTap: () async {
-                              await Navigator.push(context,
+                            onTap: () async {                                  
+                              await Navigator.push(
+                                  context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          ExpenseFormScreen(expense: expense)));
+                                      builder: (context) => ExpenseFormScreen(expense: expense)
+                                    )
+                                );
                             },
-                          ),
+                          ),                          
                         ),
                       );
                     },
@@ -195,40 +200,9 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               MaterialPageRoute(
                   builder: (context) => const ExpenseFormScreen()));
           _refreshExpenses();
-        },
+        },        
         child: const Icon(Icons.add),
       ),
-    ) ;
-  }
-
-
-  Color _getCategoryColor(String category) {
-    final Map<String, Color> categoryColors = {
-      'Alimentación': Colors.orange,
-      'Transporte': Colors.blue,
-      'Entretenimiento': Colors.purple,
-      'Salud': Colors.red,
-      'Educación': Colors.green,
-      'Hogar': Colors.brown,
-      'Ropa': Colors.pink,
-      'Otros': Colors.grey,
-    };
-
-    return categoryColors[category] ?? Colors.grey;
-  }
-
-  IconData _getCategoryIcon(String category) {
-    final Map<String, IconData> categoryIcons = {
-      'Alimentación': Icons.restaurant,
-      'Transporte': Icons.directions_car,
-      'Entretenimiento': Icons.movie,
-      'Salud': Icons.favorite,
-      'Educación': Icons.school,
-      'Hogar': Icons.home,
-      'Ropa': Icons.shopping_bag,
-      'Otros': Icons.category,
-    };
-
-    return categoryIcons[category] ?? Icons.category;
-  }
+    );
+  }  
 }

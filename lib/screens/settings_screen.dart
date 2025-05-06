@@ -22,6 +22,7 @@ class _SettingsScreenState extends State<SettingsScreen>  {
     _loadSelectedCurrency();
   }
 
+  /// Load the selected currency from shared preferences.
   Future<void> _loadSelectedCurrency() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -29,9 +30,10 @@ class _SettingsScreenState extends State<SettingsScreen>  {
     });
   }
 
+  /// Save the selected currency to shared preferences.
   Future<void> _saveSelectedCurrency(String currency) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('currency', currency);
+    await prefs.setString('currency', _selectedCurrency);
   }
 
   @override

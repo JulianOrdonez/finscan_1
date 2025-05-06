@@ -3,35 +3,30 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../models/expense.dart';
 import '../services/database_helper.dart';
-import '../services/auth_service.dart';
+import '../helpers.dart';
 
 class ExpenseStatsScreen extends StatefulWidget {  
-  const ExpenseStatsScreen({super.key});
+  final int userId;
+  const ExpenseStatsScreen({super.key, required this.userId});
 
   @override
-  State<ExpenseStatsScreen> createState() => ExpenseStatsScreenState();
+  State<ExpenseStatsScreen> createState() => ExpenseStatsScreenState(userId: userId); 
 }
 
-class ExpenseStatsScreenState extends State<ExpenseStatsScreen>
- {
+class ExpenseStatsScreenState extends State<ExpenseStatsScreen> { 
   late Future<List<Expense>> expensesFuture;
+  final int userId;
   String _selectedPeriod = 'Mes actual';
   final List<String> _periods = const ['Mes actual', 'Últimos 3 meses', 'Último año'];
-
+  ExpenseStatsScreenState({required this.userId}){
+     _initState();
+  }
   @override
-   void initState() {
-    super.initState();
-    _refreshExpenses();
-  }
+  void _initState() {
+    expensesFuture = DatabaseHelper.instance.getAllExpenses(userId);
+  } 
+  
 
-  Future<void> _refreshExpenses() async {
-    int? userId = await AuthService.getCurrentUserId();
-    
-    setState(() {
-        expensesFuture = DatabaseHelper.instance.getAllExpenses(userId);
-    });
-    
-  }
 
   // Filtrar gastos según el período seleccionado
   List<Expense> _filterByPeriod(List<Expense> expenses) {
@@ -49,7 +44,7 @@ class ExpenseStatsScreenState extends State<ExpenseStatsScreen>
     return expenses.where((expense) => expense.date.isAfter(startDate)).toList();
   }
 
-  // Obtener datos para el gráfico de categorías
+
   Map<String, double> _getCategoryData(List<Expense> expenses) {
     final Map<String, double> categoryData = {};
 
@@ -60,13 +55,11 @@ class ExpenseStatsScreenState extends State<ExpenseStatsScreen>
     return categoryData;
   }
 
-  // Obtener datos para el gráfico de línea mensual
   Map<DateTime, double> _getMonthlyData(List<Expense> expenses) {
     final Map<DateTime, double> monthlyData = {};
 
-    // Agrupar por mes
+
     for (var expense in expenses) {
-      // Crear fecha con solo año y mes
       final monthDate = DateTime(expense.date.year, expense.date.month);
       monthlyData[monthDate] = (monthlyData[monthDate] ?? 0) + expense.amount; //Se cambio esto
     }
@@ -78,19 +71,17 @@ class ExpenseStatsScreenState extends State<ExpenseStatsScreen>
     return Map.fromEntries(sortedEntries);
   }
 
-  // Calcular el total de gastos
   double _calculateTotal(List<Expense> expenses) {
     return expenses.fold(0, (sum, expense) => sum + expense.amount);
   }
 
-  // Método para construir secciones del gráfico de pastel
   List<PieChartSectionData> _buildPieSections(Map<String, double> categoryData) {
     final total = categoryData.values.fold(0.0, (sum, value) => sum + value);
 
     return categoryData.entries.map((entry) {
       final percentage = (entry.value / total) * 100;
       return PieChartSectionData(
-        color: _getCategoryColor(entry.key),
+        color: Helpers.getCategoryColor(entry.key),
         value: entry.value,
         title: '${percentage.toStringAsFixed(1)}%',
         radius: 80,
@@ -103,7 +94,6 @@ class ExpenseStatsScreenState extends State<ExpenseStatsScreen>
     }).toList();
   }
 
-  // Método para obtener spots para el gráfico de línea
   List<FlSpot> _getLineSpots(Map<DateTime, double> monthlyData) {
     final List<FlSpot> spots = [];
     final months = monthlyData.keys.toList();
@@ -115,24 +105,8 @@ class ExpenseStatsScreenState extends State<ExpenseStatsScreen>
     return spots;
   }
 
-  // Método para asignar colores a categorías
-  Color _getCategoryColor(String category) {
-    final Map<String, Color> categoryColors = {
-      'Alimentación': Colors.orange,
-      'Transporte': Colors.blue,
-      'Entretenimiento': Colors.purple,
-      'Salud': Colors.red,
-      'Educación': Colors.green,
-      'Hogar': Colors.brown,
-      'Ropa': Colors.pink,
-      'Otros': Colors.grey,
-    };
-
-    return categoryColors[category] ?? Colors.grey;
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  @override  
+  Widget build(BuildContext context) {    
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : Colors.black;
 
@@ -231,7 +205,7 @@ class ExpenseStatsScreenState extends State<ExpenseStatsScreen>
                             const SizedBox(height: 16),
                             Column(
                               children: categoryData.entries.map((entry) {
-                                final color = _getCategoryColor(entry.key);
+                                final color = Helpers.getCategoryColor(entry.key);
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(vertical: 4),
                                   child: Row(

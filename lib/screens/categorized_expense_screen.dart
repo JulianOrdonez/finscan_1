@@ -1,30 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_application_2/helpers.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
 import '../models/expense.dart';
 import '../services/database_helper.dart';
 
 class CategorizedExpenseScreen extends StatefulWidget {
-  const CategorizedExpenseScreen({super.key});
+  final int userId;
+  const CategorizedExpenseScreen({super.key, required this.userId});
 
   @override
   State<CategorizedExpenseScreen> createState() =>
       _CategorizedExpenseScreenState();
 }
 
-class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
-  // Future to hold the list of expenses
+class _CategorizedExpenseScreenState
+    extends State<CategorizedExpenseScreen> {
   late Future<List<Expense>> expensesFuture;
 
   @override
   void initState() {
     super.initState();
-    refreshExpenses(); // Load expenses when the screen is initialized
+    refreshExpenses();
   }
 
-  // Refresh the list of expenses
+  /// Refreshes the list of expenses by fetching them from the database.
   Future<void> refreshExpenses() async {
-    final userId = await AuthService.getCurrentUserId() ?? 1;
+    int? userId = await AuthService.getCurrentUserId();
+    userId ??= widget.userId;
+    
     setState(() {
       expensesFuture =
           DatabaseHelper.instance.getAllExpenses(userId);
@@ -35,14 +39,15 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
   Widget build(BuildContext context) {
     return FutureBuilder<List<Expense>>(
       future: expensesFuture,
-      builder: (context, snapshot) {        
+      builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-              child: CircularProgressIndicator()); // Show loading indicator
+          return const Center(child: CircularProgressIndicator());
         }
 
         if (snapshot.hasError) {
-          return Center(
+          return const Center(
+
+
               child: Text(
                   'Error: ${snapshot.error}')); // Show error message if something went wrong
         }
@@ -51,7 +56,7 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
           return const Center(child: Text('No expenses found for this category. Add some expenses to see the data.',
                textAlign: TextAlign.center,));
         }
-
+        
         final expenses = snapshot.data!;
         Map<String, List<Expense>> categorizedExpenses =
             {}; // Map to hold categorized expenses
@@ -64,15 +69,14 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
         }
 
         return ListView(
-          padding: const EdgeInsets.all(16.0),
-          children: categorizedExpenses.entries.map((entry) {              
+            padding: const EdgeInsets.all(16.0),
+            children: categorizedExpenses.entries.map((entry) {
             final totalAmount = entry.value.fold(
-                0.0, (sum, expense) => sum + expense.amount); // Calculate total for the category
-
+                0.0, (sum, expense) => sum + expense.amount);
             return Card(
               margin:
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              child: ExpansionTile(
+                  child: ExpansionTile(
                 leading: CircleAvatar(
                   backgroundColor: _getCategoryColor(entry.key),
                   child: Icon(_getCategoryIcon(entry.key),
@@ -87,7 +91,6 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
                       color: Theme.of(context).colorScheme.secondary),
                 ),
                 children: [
-                  // Map over expenses to create list tiles
                   ...entry.value.map((expense) {
                     return ListTile(
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -100,7 +103,7 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
                       ),
                        subtitle: Padding(
                         padding: const EdgeInsets.only(top: 4.0),
-                         child: Text(DateFormat('dd/MM/yyyy').format(expense.date)),
+                         child: Text(DateFormat('dd/MM/yyyy').format(DateTime.parse(expense.date))),
                        ),
                     
                       trailing: Padding(
@@ -135,42 +138,10 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
                     ),
                 ],
               ),
-            );
-          }).toList(),
+                );
+              }).toList(),
         );
       },
     );
-  }
-
-  // Get color for the category
-  Color _getCategoryColor(String category) {
-    final Map<String, Color> categoryColors = {
-      'Alimentación': Colors.orange,
-      'Transporte': Colors.blue,
-      'Entretenimiento': Colors.purple,
-      'Salud': Colors.red,
-      'Educación': Colors.green,
-      'Hogar': Colors.brown,
-      'Ropa': Colors.pink,
-      'Otros': Colors.grey,
-    };
-
-    return categoryColors[category] ?? Colors.grey;
-  }
-
-  // Get icon for the category
-  IconData _getCategoryIcon(String category) {
-    final Map<String, IconData> categoryIcons = {
-      'Alimentación': Icons.restaurant,
-      'Transporte': Icons.directions_car,
-      'Entretenimiento': Icons.movie,
-      'Salud': Icons.favorite,
-      'Educación': Icons.school,
-      'Hogar': Icons.home,
-      'Ropa': Icons.shopping_bag,
-      'Otros': Icons.category,
-    };
-
-    return categoryIcons[category] ?? Icons.category;
   }
 }

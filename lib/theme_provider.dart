@@ -22,22 +22,13 @@ class ThemeProvider with ChangeNotifier {
     await prefs.setBool('isDarkMode', _isDarkMode);
     notifyListeners();
   }
-  
-  ThemeData get currentTheme => themeData;
-
-
 
   ThemeData get themeData {
     return _isDarkMode ? _darkTheme : _lightTheme;
   }
 
-  LinearGradient get _appBarGradientLight => LinearGradient(
-    colors: [_lightTheme.colorScheme.primary, _lightTheme.colorScheme.primaryContainer], // Lighter, vibrant blues
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-  LinearGradient get _appBarGradientDark => LinearGradient(
-    colors: [_darkTheme.colorScheme.primary, _darkTheme.colorScheme.primaryContainer], // Deeper, richer blues
+  LinearGradient get appBarGradient => LinearGradient(
+    colors: isDarkMode ? [_darkTheme.colorScheme.primary, _darkTheme.colorScheme.primaryContainer] : [_lightTheme.colorScheme.primary, _lightTheme.colorScheme.primaryContainer],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -55,7 +46,6 @@ class ThemeProvider with ChangeNotifier {
         scaffoldBackgroundColor:
             const Color(0xFFE3F2FD), // Light blue background
         appBarTheme: const AppBarTheme(
-          // Make the transition in the appbar
           backgroundColor: Colors.transparent,
           elevation: 4,
           shadowColor: Colors.black,
@@ -97,10 +87,6 @@ class ThemeProvider with ChangeNotifier {
           shadowColor: Colors.black,
         ),
       );
-
-
-  LinearGradient get appBarGradient =>
-      isDarkMode ? _appBarGradientDark : _appBarGradientLight;
 
   Color get cardColor => isDarkMode
       ? _darkTheme.cardTheme.color!
