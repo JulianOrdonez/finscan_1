@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
             },
           ),
           debugShowCheckedModeBanner: false,
-        );
+        ); 
       },
     );
   }
@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                     end: Alignment.bottomRight,
                   ),
                 ),
-              ),
+              ),),
         body: PageTransitionSwitcher(
           duration: const Duration(milliseconds: 300),
           transitionBuilder: (Widget child, Animation<double> animation,
@@ -122,3 +122,5 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+
