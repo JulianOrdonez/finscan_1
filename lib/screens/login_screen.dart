@@ -25,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
 
         if (user == null) {
-          _showErrorSnackBar('Correo o contraseña incorrectos', context);
+          _showErrorSnackBar(context,'Correo o contraseña incorrectos');
           return;
         }
 
@@ -37,12 +37,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
       } catch (e) {
         print('Login error: $e');
-        _showErrorSnackBar('Correo o contraseña incorrectos', context);
+        _showErrorSnackBar(context, 'Correo o contraseña incorrectos');
       }
     }
   }
 
-  void _showErrorSnackBar(String message) {
+  void _showErrorSnackBar(BuildContext context,String message) {
     ScaffoldMessenger.of(this.context).showSnackBar(
       SnackBar(content: Text(message)),
     );
