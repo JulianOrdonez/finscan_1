@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/screens/categorized_expense_screen.dart';
 import 'package:flutter_application_2/screens/expense_list_screen.dart';
 import 'package:flutter_application_2/screens/expense_stats_screen.dart';
+import 'package:flutter_application_2/screens/settings_screen.dart';
 import 'package:flutter_application_2/theme_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -16,9 +17,10 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    ExpenseListScreen(),
-    CategorizedExpenseScreen(),
-    ExpenseStatsScreen(),
+    const ExpenseListScreen(),
+    const CategorizedExpenseScreen(),
+    const ExpenseStatsScreen(),
+    const SettingsScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -50,6 +52,10 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.pie_chart),
             label: 'Stats',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
           ),
         ],
         currentIndex: _selectedIndex,

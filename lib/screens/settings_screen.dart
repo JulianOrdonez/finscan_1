@@ -4,7 +4,10 @@ import '../services/auth_service.dart';
 import '../theme_provider.dart';
 import 'login_screen.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends StatelessWidget {
+  // Remove the StatefulWidget boilerplate
+  // Change to StatelessWidget as there's no state to manage initially
+
   const SettingsScreen({Key? key}) : super(key: key);
 
   @override
@@ -12,6 +15,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+// Remove the State class
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
