@@ -19,6 +19,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
+  late String _selectedCategory;
   late DateTime _selectedDate;
   late List<String> _categories;
 
@@ -38,11 +39,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
         .toList();
 
     if (widget.expense != null) {
-        .map((category) => languageProvider.getTranslation(category))
-        .toList();
-
-    if (widget.expense != null) {
-      _amountController.text = widget.expense!.amount.toString();
+     _amountController.text = widget.expense!.amount.toString();
       _selectedCategory = languageProvider.getTranslation(widget.expense!.category);
       _descriptionController.text = widget.expense!.description;
       _selectedDate = widget.expense!.date;
@@ -50,7 +47,6 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
  else {
  _selectedCategory = _categories.first;
  _selectedDate = DateTime.now();
-    }
 
   }
   @override
