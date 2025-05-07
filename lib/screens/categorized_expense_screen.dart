@@ -53,7 +53,7 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Categorized Expenses',
+ 'Gastos categorizados',
           style: TextStyle(color: themeProvider.currentTheme.textTheme.bodyMedium?.color),
         ),
         backgroundColor: themeProvider.currentTheme.appBarTheme.backgroundColor,
@@ -76,7 +76,7 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
     if (_categorizedExpenses.isEmpty) {
       return Center(
         child: Text(
-          'No expenses yet.',
+ 'Aún no hay gastos.',
           style: TextStyle(fontSize: 18),
         ),
       );

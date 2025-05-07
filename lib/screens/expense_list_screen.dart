@@ -28,7 +28,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     if (userId == null) {
       // Handle case where user is not logged in
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('User not logged in')),
+        const SnackBar(content: Text('Usuario no ha iniciado sesión')),
       );
       return [];
     }
@@ -43,14 +43,13 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Expense List'),
+        title: Text('Lista de Gastos'),
       ),
       body: FutureBuilder<List<Expense>>(
         future: _expensesFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+ if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text('No expenses found.'));

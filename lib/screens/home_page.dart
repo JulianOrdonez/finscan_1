@@ -17,10 +17,10 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    const ExpenseListScreen(),
-    const CategorizedExpenseScreen(),
-    const ExpenseStatsScreen(),
-    const SettingsScreen(),
+    ExpenseListScreen(),
+    CategorizedExpenseScreen(),
+    ExpenseStatsScreen(),
+    SettingsScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Expense Tracker'),
-        backgroundColor: themeProvider.currentTheme.primaryColor,
+ backgroundColor: themeProvider.currentTheme.colorScheme.primary,
       ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -44,19 +44,19 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.list),
             label: 'Expenses',
-          ),
+ ),
           BottomNavigationBarItem(
             icon: Icon(Icons.category),
             label: 'Categories',
-          ),
+ ),
           BottomNavigationBarItem(
             icon: Icon(Icons.pie_chart),
             label: 'Stats',
-          ),
+ ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.settings),
             label: 'Settings',
-          ),
+ ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: themeProvider.currentTheme.primaryColor,

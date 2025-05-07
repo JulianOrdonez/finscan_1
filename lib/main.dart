@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       builder: (context, themeProvider, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'Expense Tracker',
+          title: 'Seguimiento de Gastos',
           theme: themeProvider.currentTheme,
           initialRoute: '/',
           routes: {

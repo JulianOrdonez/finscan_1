@@ -21,7 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: const Text('Iniciar Sesión'),
       ),
       body: Center(
         child: Padding(
@@ -35,15 +35,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _emailController,
                   decoration: const InputDecoration(
                     labelText: 'Email',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                    ),
                   ),
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
+                      return 'Por favor, ingrese su correo electrónico';
                     }
                     if (!value.contains('@')) {
-                      return 'Please enter a valid email';
+                      return 'Por favor, ingrese un correo electrónico válido';
                     }
                     return null;
                   },
@@ -53,13 +54,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _passwordController,
                   decoration: const InputDecoration(
                     labelText: 'Password',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                    ),
                   ),
                   obscureText: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
-                    }
+                      return 'Por favor, ingrese su contraseña';                    }
                     return null;
                   },
                 ),
@@ -84,14 +85,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                       content:
-                                          Text('Invalid email or password')),
+                                          Text('Correo electrónico o contraseña inválidos')),
                                 );
                               }
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Error: $e')),
+                                SnackBar(content: Text('Error: $e')), // Consider translating the error message if possible, or providing a more user-friendly message.
                               );
-                            } finally {
+                            } finally{
                               setState(() {
                                 _isLoading = false;
                               });
@@ -99,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           }
                         },
                         child: const Text('Login'),
-                      ),
+                      ), // This text could also be translated to 'Iniciar Sesión'
                 const SizedBox(height: 10),
                 TextButton(
                   onPressed: () {

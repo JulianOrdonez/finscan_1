@@ -15,13 +15,13 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
-  String _selectedCategory = 'Food'; // Default category
+  String _selectedCategory = 'Comida'; // Default category
   DateTime _selectedDate = DateTime.now();
 
   List<String> _categories = [
-    'Food',
-    'Transportation',
-    'Entertainment',
+    'Comida',
+    'Transporte',
+    'Entretenimiento',
     'Utilities',
     'Shopping',
     'Other',
@@ -50,7 +50,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       if (userId == null) {
         // Handle case where user is not logged in
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('User not logged in')),
+          const SnackBar(content: Text('Usuario no ha iniciado sesión')),
         );
         return;
       }
@@ -69,7 +69,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
         Navigator.pop(context); // Go back to the expense list
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to save expense')),
+          const SnackBar(content: Text('Error al guardar el gasto')),
         );
       }
     }
@@ -80,7 +80,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
     final currencyProvider = Provider.of<CurrencyProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('New Expense'),
+        title: Text('Nuevo Gasto'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -93,14 +93,14 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 decoration: InputDecoration(
                   labelText: 'Amount (${currencyProvider.currency})',
-                  prefixText: '${currencyProvider.currency} ',
+                  prefixText: '${currencyProvider.currency}',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter an amount';
+                    return 'Por favor, introduce una cantidad';
                   }
                   if (double.tryParse(value) == null) {
-                    return 'Please enter a valid number';
+                    return 'Por favor, introduce un número válido';
                   }
                   return null;
                 },
@@ -108,7 +108,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
                 decoration: InputDecoration(labelText: 'Category'),
-                items: _categories.map((String category) {
+                items: _categories.map<DropdownMenuItem<String>>((String category) {
                   return DropdownMenuItem<String>(
                     value: category,
                     child: Text(category),
@@ -121,7 +121,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
                 },
               ),
               ListTile(
-                title: Text('Date: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}'),
+                title: Text('Fecha: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}'),
                 trailing: Icon(Icons.calendar_today),
                 onTap: () => _selectDate(context),
               ),
@@ -130,7 +130,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
                 maxLines: 3,
                 decoration: InputDecoration(labelText: 'Description'),
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+ if (value == null || value.isEmpty) {
                     return 'Please enter a description';
                   }
                   return null;
@@ -139,7 +139,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submitForm,
-                child: Text('Save Expense'),
+                child: Text('Guardar Gasto'),
               ),
             ],
           ),

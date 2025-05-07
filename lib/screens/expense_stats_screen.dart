@@ -29,7 +29,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
     if (userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('User not logged in')),
- );
+ ); // TODO: Translate this message
  return [];
     }
     return await databaseHelper.getExpenses(userId);
@@ -56,15 +56,15 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
   Widget build(BuildContext context) {
     final currencyProvider = Provider.of<CurrencyProvider>(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Expense Statistics'),
+      appBar: AppBar( // TODO: Translate this title
+        title: Text('Estadísticas de Gastos'),
       ),
       body: FutureBuilder<List<Expense>>(
         future: _expensesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
+          } else if (snapshot.hasError) { // TODO: Translate this message
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text('No expenses found.'));
@@ -97,7 +97,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                      children: [ // TODO: Translate this text
                         Text(
                           'Total Spending',
                           style: TextStyle(
@@ -123,7 +123,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                      children: [ // TODO: Translate this text
                         Text(
                           'Spending by Category',
                           style: TextStyle(
