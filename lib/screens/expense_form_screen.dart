@@ -78,7 +78,6 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       if (widget.expense == null) {
         await databaseHelper.insertExpense(expense);
       } else {
-        expense.id = widget.expense!.id;
         await databaseHelper.updateExpense(expense);
       }
 
