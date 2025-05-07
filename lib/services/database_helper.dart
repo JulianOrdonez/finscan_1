@@ -77,27 +77,36 @@ class DatabaseHelper {
   }
 
   /// Insert a user into the database.
-  Future<int> insertUser(User user) async {
+  Future<int?> insertUser(User user) async {
     Database db = await instance.database;
-    return await db.insert(tableUsers, {
-      columnUserEmail: user.email,
-      columnUserName: user.name,
-      columnUserPassword: user.password,
-    });
+    try {
+      return await db.insert(tableUsers, {
+        columnUserEmail: user.email,
+        columnUserName: user.name,
+        columnUserPassword: user.password,
+      });
+    } catch (e) {
+      print('Error inserting user: $e');
+      return null;
+    }
   }
-
 
   /// Get the current user's ID from the database.
   Future<int?> getCurrentUserId() async {
     Database db = await instance.database;
     try {
-      List<Map<String, dynamic>> result = await db.query(tableCurrentUser);
+      List<Map<String, dynamic>> result = await db.query(
+        tableCurrentUser,
+      );
       if (result.isNotEmpty) {
         return result.first[columnCurrentUserId] as int;
       }
-    } catch (e) {}
+    } catch (e) {
+      print('Error getting current user id: $e');
+    }
     return null;
   }
+
 
   /// Get a user by their ID from the database.
   Future<User?> getUserById(int id) async {
@@ -145,7 +154,7 @@ class DatabaseHelper {
   }
 
   /// Delete an expense from the database.
-  Future<int> deleteExpense(int id) async {
+  Future<int?> deleteExpense(int id) async {
     Database db = await instance.database;
     try {
       return await db.delete(
@@ -155,43 +164,48 @@ class DatabaseHelper {
       );
     } catch (e) {
       print('Error deleting expense: $e');
-      return -1;
+      return null;
     }
   }
 
-  Future<int> setCurrentUser(int userId) async {
-    Database db = await instance.database;
+  Future<int?> setCurrentUser(int userId) async {
     try {
+      Database db = await instance.database;
       await clearCurrentUser();
       return await db.insert(tableCurrentUser, {columnCurrentUserId: userId});
-    } catch (e) {
-      print('Error setting current user: $e');
-      return -1;
+    } catch (e) {      print('Error setting current user: $e');
+      return null;
     }
   }
 
-  Future<int> insertExpense(Expense expense) async {
+  Future<int?> insertExpense(Expense expense) async {
     Database db = await instance.database;
     try {
       Map<String, dynamic> expenseMap = expense.toMap();
       expenseMap.remove('id');
       return await db.insert(tableExpenses, expenseMap);
     } catch (e) {
-        print('Error inserting expense: $e');
-        return -1;
+      print('Error inserting expense: $e');
+      return null;
     }
   }
 
 
 
 
-  Future<int> updateExpense(Expense expense) async {
+  Future<int?> updateExpense(Expense expense) async {
     Database db = await instance.database;
     try {
-      return await db.update(tableExpenses, expense.toMap(), where: '$columnExpenseId = ?', whereArgs: [expense.id]);
+      return await db.update(
+ tableExpenses,
+ expense.toMap(),
+ where: '$columnExpenseId = ?',
+ whereArgs: [expense.id],
+ );
     } catch (e) {
       print('Error updating expense: $e');
-      return -1;
+ return null;
     }
   }
 }
+

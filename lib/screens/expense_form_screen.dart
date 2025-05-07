@@ -21,6 +21,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
   String _selectedCategory = 'Otros';
   DateTime _selectedDate = DateTime.now();
   String? _receiptPath;
@@ -43,6 +44,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
     if (!_isNewExpense) {
       _titleController.text = widget.expense!.title;
       _amountController.text = widget.expense!.amount.toString();
+      _descriptionController.text = widget.expense!.description;
       _selectedCategory = widget.expense!.category;
       _selectedDate = DateTime.parse(widget.expense!.date);
       _receiptPath = widget.expense!.receiptPath;
@@ -53,6 +55,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   void dispose() {
     _titleController.dispose();
     _amountController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
@@ -82,14 +85,15 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   Future<void> _saveExpense(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       setState(() {
-        _isLoading = true;
+        _isLoading = true; // Use a proper loading state
       });
+      final userId = await DatabaseHelper.instance.getCurrentUserId();
+      if (userId == null) {
+        // Handle the case where the user is not logged in
+        return;
+      }
       try {
-        final currencyProvider =
-            Provider.of<CurrencyProvider>(context, listen: false);
         double amount = double.parse(_amountController.text);
-        amount = currencyProvider.convertAmountToUSD(amount);
-
         final expense = Expense(
           id: widget.expense?.id,
           userId: 1,
@@ -99,7 +103,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
           category: _selectedCategory,
           date: _selectedDate.toIso8601String(),
           receiptPath: _receiptPath,
- );
+        );
 
         if (widget.expense?.id == null) {
           await DatabaseHelper.instance.insertExpense(expense);
@@ -178,6 +182,20 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
                         }
                         if (double.tryParse(value) == null) {
                           return 'Por favor, ingrese una cantidad válida';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _descriptionController,
+                      decoration: const InputDecoration(
+                        labelText: 'Descripción',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor, ingrese una descripción';
                         }
                         return null;
                       },
