@@ -9,6 +9,7 @@ class LanguageProvider with ChangeNotifier {
     'en': {
  'Expense Tracker': 'Expense Tracker',
  'Expenses': 'Expenses',
+ 'App Title': 'Expense Tracker',
  'Categories': 'Categories',
  'Stats': 'Stats',
  'Categorized Expenses': 'Categorized Expenses',
@@ -57,12 +58,14 @@ class LanguageProvider with ChangeNotifier {
  'Food': 'Food',
  'Transportation': 'Transportation',
  'Entertainment': 'Entertainment',
+ 'Settings': 'Settings',
  'Others': 'Others',
     },
     'es': {
       'Expense Tracker': 'Seguimiento de Gastos',
  'Expenses': 'Gastos',
  'Categories': 'Categorías',
+ 'App Title': 'Seguimiento de Gastos',
  'Stats': 'Estadísticas',
  'Categorized Expenses': 'Gastos categorizados',
  'No expenses yet.': 'Aún no hay gastos.',
@@ -110,6 +113,7 @@ class LanguageProvider with ChangeNotifier {
  'Food': 'Comida',
  'Transportation': 'Transporte',
  'Entertainment': 'Entretenimiento',
+ 'Settings': 'Configuración',
  'Others': 'Otros',
     },
   };

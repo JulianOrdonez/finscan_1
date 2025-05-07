@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/screens/categorized_expense_screen.dart';
 import 'package:flutter_application_2/screens/expense_list_screen.dart';
-import 'package:flutter_application_2/screens/expense_stats_screen.dart';
+import 'package:flutter_application_2/screens/placeholder_screen.dart';
 import 'package:flutter_application_2/screens/settings_screen.dart';
 import 'package:flutter_application_2/theme_provider.dart';
 import 'package:flutter_application_2/language_provider.dart';
@@ -19,8 +18,7 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _screens = [
     ExpenseListScreen(),
-    CategorizedExpenseScreen(),
-    ExpenseStatsScreen(),
+    PlaceholderScreen(), // Placeholder for the second tab
     SettingsScreen(),
   ];
 
@@ -37,16 +35,11 @@ class _HomePageState extends State<HomePage> {
     
     return Scaffold(
       appBar: AppBar(
-        title: Text(languageProvider.getTranslation('Expense Tracker')),
- backgroundColor: themeProvider.currentTheme.colorScheme.primary,
+        title: Text(languageProvider.getTranslation('App Title')), // Use a translatable key for the app title
       ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: languageProvider.getTranslation('Expenses'),
- ),
           BottomNavigationBarItem(
             icon: Icon(Icons.category),
             label: languageProvider.getTranslation('Categories'),
@@ -63,7 +56,7 @@ class _HomePageState extends State<HomePage> {
 
         currentIndex: _selectedIndex,
         selectedItemColor: themeProvider.currentTheme.primaryColor,
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: Colors.grey, // Consider using theme colors for unselected items as well
         onTap: _onItemTapped,
       ),
     );

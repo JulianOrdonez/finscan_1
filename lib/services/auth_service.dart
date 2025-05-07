@@ -1,5 +1,6 @@
 import 'package:flutter_application_2/models/user.dart';
 import 'package:flutter_application_2/services/database_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   final DatabaseHelper _databaseHelper;
@@ -34,7 +35,10 @@ class AuthService {
       final user = await _databaseHelper.getUserByEmail(email);
       if (user != null && user.password == password) {
         _currentUserId = user.id;
- return true; // Return true if login is successful
+        // Save login state
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
+        return true; // Return true if login is successful
       }
  return false; // Return false if login fails
     } catch (e) {
@@ -52,19 +56,17 @@ class AuthService {
   }
 
   Future<bool> isLoggedIn() async {
-    // In this simple example, we assume the user is logged in if a user exists in the database.
-    // In a real application, you would check for a valid token or session.
- return _currentUserId != null;
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('isLoggedIn') ?? false;
   }
 
   Future<int?> getCurrentUserId() async {
     // In a real application, you would fetch the user ID from a stored token or session
     return _currentUserId;
   }
-
   Future<bool> validatePassword(String email, String password) async {
     try {
-      final user = await _databaseHelper.getUserByEmail(email);
+     final user = await _databaseHelper.getUserByEmail(email);
       return user != null && user.password == password;
     } catch (e) {
       print("Error validating password: $e");
@@ -72,12 +74,11 @@ class AuthService {
     }
   }
   Future<bool> checkLoginStatus() async {
-    // This method can be used to check if the user is logged in on app start
     return isLoggedIn();
   }
 
   Future<void> logout() async {
-    // In a real application, you would clear the token or session
-    // For this example, we don't need to do anything
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('isLoggedIn');
   }
 }

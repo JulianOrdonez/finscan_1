@@ -33,22 +33,23 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   @override
   void initState() {
     super.initState();
-    final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
+    final languageProvider =
+        Provider.of<LanguageProvider>(context, listen: false);
     _categories = _defaultCategories
         .map((category) => languageProvider.getTranslation(category))
         .toList();
 
     if (widget.expense != null) {
-     _amountController.text = widget.expense!.amount.toString();
-      _selectedCategory = languageProvider.getTranslation(widget.expense!.category);
+      _amountController.text = widget.expense!.amount.toString();
       _descriptionController.text = widget.expense!.description;
       _selectedDate = widget.expense!.date;
+      _selectedCategory = languageProvider.getTranslation(widget.expense!.category);
+    } else {
+      _selectedCategory = _categories.first;
+      _selectedDate = DateTime.now();
     }
- else {
- _selectedCategory = _categories.first;
- _selectedDate = DateTime.now();
-
   }
+
   @override
   void dispose() {
     _amountController.dispose();
@@ -79,17 +80,16 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       if (userId == null) return;
 
       final expense = Expense(
-        id: widget.expense?.id, // Include the ID for updates
+        id: widget.expense?.id,
         amount: double.parse(_amountController.text),
-        category: _defaultCategories[
- _categories.indexOf(_selectedCategory)], // Save the English category
+        category: _defaultCategories[_categories.indexOf(_selectedCategory)],
         date: _selectedDate,
         description: _descriptionController.text,
         userId: userId,
       );
-        
+
       if (widget.expense == null) {
-        await databaseHelper.insertExpense(expense.copyWith(id: null)); // Ensure ID is null for insertion
+        await databaseHelper.insertExpense(expense.copyWith(id: null));
       } else {
         await databaseHelper.updateExpense(expense);
       }
@@ -134,7 +134,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
                     value: category,
                     child: Text(category),
                   );
-                }).toList().cast<DropdownMenuItem<String>>(),
+                }).toList(),
                 onChanged: (String? newValue) {
                   setState(() {
                     _selectedCategory = newValue!;
@@ -143,7 +143,8 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
                 decoration: const InputDecoration(labelText: 'Category'),
               ),
               ListTile(
-                title: Text('Date: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}'),
+                title: Text(
+                    'Date: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}'),
                 trailing: const Icon(Icons.calendar_today),
                 onTap: () => _selectDate(context),
               ),
@@ -154,7 +155,8 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _saveExpense, child: Text(isEditing ? 'Update Expense' : 'Save Expense'),
+                onPressed: _saveExpense,
+                child: Text(isEditing ? 'Update Expense' : 'Save Expense'),
               ),
             ],
           ),

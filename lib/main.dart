@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/screens/home_page.dart';
+import 'package:flutter_application_2/screens/expense_list_screen.dart';
 import 'package:flutter_application_2/screens/login_screen.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
-import 'package:flutter_application_2/services/database_helper.dart';
-import 'package:flutter_application_2/theme_provider.dart';
 import 'package:flutter_application_2/language_provider.dart';
 import 'package:flutter_application_2/currency_provider.dart';
 import 'package:provider/provider.dart';
@@ -11,18 +9,14 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        Provider<AuthService>(
-            create: (_) =>
-                AuthService(databaseHelper: DatabaseHelper.instance)),
-        Provider<DatabaseHelper>(create: (_) => DatabaseHelper.instance), // Add this line
+    MultiProvider(providers: [
+        Provider<DatabaseHelper>(create: (_) => DatabaseHelper.instance),
+        Provider<AuthService>(create: (context) => AuthService()),
         ChangeNotifierProvider(create: (_) => CurrencyProvider()),
         ChangeNotifierProvider(create: (_) => LanguageProvider()),
       ],
       child: const MyApp(),
-    ),
+    )
   );
 }
 
@@ -43,35 +37,20 @@ class MyApp extends StatelessWidget {
               localizationsDelegates: const [],
               theme: themeProvider.currentTheme,
               debugShowCheckedModeBanner: false,
-              initialRoute: '/',
-              routes: {
-                '/': (context) => FutureBuilder<bool>(
-                      future: Provider.of<AuthService>(context, listen: false)
-                          .checkLoginStatus(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Scaffold(
-                            body: Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
-                        } else {
-                          if (snapshot.hasData && snapshot.data!) {
-                            return HomePage();
-                          } else {
-                            return LoginScreen();
-                          }
+              home: FutureBuilder<bool>(
+                      future: Provider.of<AuthService>(context).isLoggedIn(),
+                      builder: (context, AsyncSnapshot<bool> snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
                         }
+                        return snapshot.data == true ? ExpenseListScreen() : LoginScreen();
                       },
                     ),
-                '/login': (context) => LoginScreen(),
-                '/home': (context) => const HomePage(),
               },
             );
           },
         );
       },
     );
-  }
+ }
 }
