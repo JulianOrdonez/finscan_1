@@ -5,6 +5,7 @@ import '../widgets/expense_item.dart';
 import '../services/database_helper.dart';
 import '../language_provider.dart';
 import '../services/auth_service.dart';
+import '../theme_provider.dart';
 import 'expense_form_screen.dart';
 
 class ExpenseListScreen extends StatefulWidget {
@@ -66,45 +67,52 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final languageProvider = Provider.of<LanguageProvider>(context);
+    final languageProvider = Provider.of<LanguageProvider>(context);    
+    final themeProvider = Provider.of<ThemeProvider>(context);
     final databaseHelper = Provider.of<DatabaseHelper>(context, listen: false);
 
-    Future<void> _deleteAndReload(Expense expense) async {
-      await databaseHelper.deleteExpense(expense.id!);
-      _loadExpenses();
-    }
-
-
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text(languageProvider.getTranslation('expenseList')),
-      ),
+      backgroundColor: themeProvider.currentTheme.colorScheme.background,
       body: _expenses.isEmpty
           ? Center(
               child: Text(languageProvider.getTranslation('No expenses found.')),
             )
           : ListView.builder(
               itemCount: _expenses.length,
-              itemBuilder: (context, index) {
-                final expense = _expenses[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ExpenseFormScreen(expense: expense),
-                      ),
-                    ).then((_) => _loadExpenses());
+              itemBuilder: (context, index) {                
+                final expense = _expenses[index];                
+                return Dismissible(
+                  key: Key(expense.id.toString()),
+                  direction: DismissDirection.endToStart,
+                  background: Container(
+                    color: Colors.red,
+                    alignment: Alignment.centerRight,
+                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Icon(Icons.delete, color: Colors.white),
+                  ),
+                  onDismissed: (direction) {
+                    _deleteExpense(expense);
                   },
-                  onLongPress: () => _confirmDeleteExpense(context, expense),
-                  child: ExpenseItem(
-                    expense: expense,
- onExpenseDeleted: (deletedExpense) => _confirmDeleteExpense(context, deletedExpense),
- )
-                );
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push( context, MaterialPageRoute( builder: (context) => ExpenseFormScreen(expense: expense), ), ).then((_) => _loadExpenses());
+                    },
+                    onLongPress: () => _confirmDeleteExpense(context, expense),
+                    child: ExpenseItem(expense: expense, onExpenseDeleted: (deletedExpense) => _confirmDeleteExpense(context, deletedExpense), ),
+                  ),                  
+                );                
               },
             ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ExpenseFormScreen()),
+          ).then((_) => _loadExpenses());
+        },
+        child: Icon(Icons.add),
+        backgroundColor: themeProvider.currentTheme.colorScheme.primary,
+      ),
     );
   }
 }
