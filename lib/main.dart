@@ -4,6 +4,7 @@ import 'package:flutter_application_2/screens/login_screen.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
 import 'package:flutter_application_2/services/database_helper.dart';
 import 'package:flutter_application_2/theme_provider.dart';
+import 'package:flutter_application_2/currency_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -14,6 +15,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         Provider<AuthService>(create: (_) => AuthService(databaseHelper: DatabaseHelper.instance)),
         Provider<DatabaseHelper>(create: (_) => DatabaseHelper.instance),
+        ChangeNotifierProvider(create: (_) => CurrencyProvider()),
       ],
       child: const MyApp(),
     ),

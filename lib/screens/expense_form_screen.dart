@@ -19,12 +19,12 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   DateTime _selectedDate = DateTime.now();
 
   List<String> _categories = [
-    'Food',
-    'Transportation',
-    'Entertainment',
-    'Utilities',
-    'Shopping',
-    'Other',
+    'Comida',
+    'Transporte',
+    'Entretenimiento',
+    'Servicios',
+    'Compras',
+    'Otros',
  ];
 
   Future<void> _selectDate(BuildContext context) async {
@@ -130,8 +130,8 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
                 maxLines: 3,
                 decoration: InputDecoration(labelText: 'Descripción'),
                 validator: (value) {
- if (value == null || value.isEmpty) {
-                    return 'Please enter a description';
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, introduce una descripción';
                   }
                   return null;
                 },
