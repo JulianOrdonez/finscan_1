@@ -81,8 +81,7 @@ class ExpenseItem extends StatelessWidget {
                   expense.category,
                   style: TextStyle(
                     fontSize: 16.0,
-                    color: themeProvider.isDarkMode
-                        ? themeProvider.currentTheme.brightness == Brightness.dark ? Colors.white70 : Colors.black54
+                    color: themeProvider.currentTheme.brightness == Brightness.dark
                         : Colors.black54,
                   ),
                 ),
@@ -100,7 +99,7 @@ class ExpenseItem extends StatelessWidget {
                   Helpers.formatDate(expense.date),
                   style: TextStyle(
                     fontSize: 16.0,
-                    color: themeProvider.isDarkMode
+                    color: themeProvider.currentTheme.brightness == Brightness.dark
                         ? Colors.white70
                         : Colors.black54,
                   ),
