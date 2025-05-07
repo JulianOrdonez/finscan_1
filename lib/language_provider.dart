@@ -54,6 +54,10 @@ class LanguageProvider with ChangeNotifier {
        'register':'Register',
        'login':'Login',
        'home':'Home',
+ 'Food': 'Food',
+ 'Transportation': 'Transportation',
+ 'Entertainment': 'Entertainment',
+ 'Others': 'Others',
     },
     'es': {
       'Expense Tracker': 'Seguimiento de Gastos',
@@ -103,6 +107,10 @@ class LanguageProvider with ChangeNotifier {
         'register':'Registrarse',
        'login':'Iniciar sesión',
        'home':'Inicio',
+ 'Food': 'Comida',
+ 'Transportation': 'Transporte',
+ 'Entertainment': 'Entretenimiento',
+ 'Others': 'Otros',
     },
   };
 

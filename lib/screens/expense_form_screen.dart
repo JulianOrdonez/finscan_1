@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../models/expense.dart';
 import '../services/database_helper.dart';
 import '../services/auth_service.dart';
+import '../language_provider.dart';
 import 'package:intl/intl.dart';
 
 class ExpenseFormScreen extends StatefulWidget {
@@ -18,9 +19,10 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
-  String _selectedCategory = 'Food';
-  DateTime _selectedDate = DateTime.now();
-  final List<String> _categories = [
+  late DateTime _selectedDate;
+  late List<String> _categories;
+
+  final List<String> _defaultCategories = [
     'Food',
     'Transportation',
     'Entertainment',
@@ -30,16 +32,27 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.expense != null) {
-      setState(() {
-        _amountController.text = widget.expense!.amount.toString();
-        _selectedCategory = widget.expense!.category;
-        _descriptionController.text = widget.expense!.description;
-        _selectedDate = widget.expense!.date;
-      });
-    }
-  }
+    final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
+    _categories = _defaultCategories
+        .map((category) => languageProvider.getTranslation(category))
+        .toList();
 
+    if (widget.expense != null) {
+        .map((category) => languageProvider.getTranslation(category))
+        .toList();
+
+    if (widget.expense != null) {
+      _amountController.text = widget.expense!.amount.toString();
+      _selectedCategory = languageProvider.getTranslation(widget.expense!.category);
+      _descriptionController.text = widget.expense!.description;
+      _selectedDate = widget.expense!.date;
+    }
+ else {
+ _selectedCategory = _categories.first;
+ _selectedDate = DateTime.now();
+    }
+
+  }
   @override
   void dispose() {
     _amountController.dispose();
@@ -72,7 +85,8 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       final expense = Expense(
         id: widget.expense?.id, // Include the ID for updates
         amount: double.parse(_amountController.text),
-        category: _selectedCategory,
+        category: _defaultCategories[
+ _categories.indexOf(_selectedCategory)], // Save the English category
         date: _selectedDate,
         description: _descriptionController.text,
         userId: userId,
@@ -90,6 +104,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final languageProvider = Provider.of<LanguageProvider>(context);
     final isEditing = widget.expense != null;
     return Scaffold(
       appBar: AppBar(
@@ -123,7 +138,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
                     value: category,
                     child: Text(category),
                   );
-                }).toList(),
+                }).toList().cast<DropdownMenuItem<String>>(),
                 onChanged: (String? newValue) {
                   setState(() {
                     _selectedCategory = newValue!;
