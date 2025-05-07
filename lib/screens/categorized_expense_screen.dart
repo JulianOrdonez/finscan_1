@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../models/expense.dart';
 import '../services/database_helper.dart';
 import '../widgets/expense_item.dart';
-import '../theme_provider.dart';
 import '../services/auth_service.dart';
 import 'expense_form_screen.dart';
 import '../language_provider.dart';
@@ -26,12 +25,11 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
 
   Future<void> _loadExpenses() async {
     final databaseHelper = Provider.of<DatabaseHelper>(context, listen: false);
- final authService = Provider.of<AuthService>(context, listen: false);
+    final authService = Provider.of<AuthService>(context, listen: false);
     final userId = await authService.getCurrentUserId();
     if (userId == null) return; // Handle case where user is not logged in
 
     List<Expense> expenses = await databaseHelper.getExpenses(userId);
-    _categorizedExpenses.clear(); // Clear the map before categorizing
     setState(() {
       _expenses = expenses;
       _categorizeExpenses();
@@ -48,18 +46,19 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
     }
   }
 
+  Future<void> _deleteExpense(Expense expense) async {
+    final databaseHelper = Provider.of<DatabaseHelper>(context, listen: false);
+    await databaseHelper.deleteExpense(expense.id!);
+    _loadExpenses();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     final languageProvider = Provider.of<LanguageProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          languageProvider.translate('Categorized Expenses'),
-          style: TextStyle(color: themeProvider.currentTheme.textTheme.bodyMedium?.color),
-        ),
- backgroundColor: themeProvider.currentTheme.appBarTheme.backgroundColor,
+        title: Text(languageProvider.getTranslation('Categorized Expenses')),
       ),
       body: _buildBody(),
       floatingActionButton: FloatingActionButton(
@@ -76,14 +75,10 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
   }
 
   Widget _buildBody() {
-    if (_categorizedExpenses.isEmpty) {
+    if (_expenses.isEmpty) {
       final languageProvider = Provider.of<LanguageProvider>(context);
-
       return Center(
-        child: Text(
-          languageProvider.get(languageProvider.currentLocale, 'No expenses yet.') ?? 'No expenses yet.',
- languageProvider.translate('No expenses yet.'),
- ),
+        child: Text(languageProvider.getTranslation('No expenses yet.')),
       );
     }
     return ListView.builder(
@@ -102,7 +97,14 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
         category,
         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
- children: expenses.map<Widget>((expense) => ExpenseItem(expense: expense, onExpenseDeleted: _loadExpenses)).toList(),
+      children: expenses
+          .map<Widget>(
+            (expense) => ExpenseItem(
+              expense: expense,
+              onExpenseDeleted: _deleteExpense,
+            ),
+          )
+          .toList(),
     );
   }
 }

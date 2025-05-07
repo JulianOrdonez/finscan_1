@@ -1,12 +1,9 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../services/database_helper.dart';
 import '../models/expense.dart';
-import 'package:fl_chart/fl_chart.dart';
+import '../services/database_helper.dart';
 import '../language_provider.dart';
 import '../services/auth_service.dart';
-import '../currency_provider.dart';
 
 class ExpenseStatsScreen extends StatefulWidget {
   @override
@@ -14,160 +11,86 @@ class ExpenseStatsScreen extends StatefulWidget {
 }
 
 class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
-  late Future<List<Expense>> _expensesFuture;
+  List<Expense> _expenses = [];
+  double _totalSpending = 0;
+  Map<String, double> _spendingByCategory = {};
 
   @override
   void initState() {
     super.initState();
-    _expensesFuture = _loadExpenses();
+    _loadExpenses();
   }
 
-  Future<List<Expense>> _loadExpenses() async {
+  Future<void> _loadExpenses() async {
     final databaseHelper = Provider.of<DatabaseHelper>(context, listen: false);
     final authService = Provider.of<AuthService>(context, listen: false);
     final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
     final userId = await authService.getCurrentUserId();
-
     if (userId == null) {
- ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Usuario no ha iniciado sesion')),
-      ); // TODO: Translate this message
- return [];
+      return;
     }
-    return await databaseHelper.getExpenses(userId);
-  }
 
-  Map<String, double> calculateCategoryTotals(List<Expense> expenses) {
-    Map<String, double> categoryTotals = {};
+    List<Expense> expenses = await databaseHelper.getExpenses(userId);
+
+    double totalSpending = 0;
+    Map<String, double> spendingByCategory = {};
+
     for (var expense in expenses) {
-      categoryTotals.update(expense.category, (value) => value + expense.amount,
+      totalSpending += expense.amount;
+      spendingByCategory.update(expense.category, (value) => value + expense.amount,
           ifAbsent: () => expense.amount);
     }
-    return categoryTotals;
-  }
-
-  double calculateTotalSpending(List<Expense> expenses) {
-    return expenses.fold(0, (sum, expense) => sum + expense.amount);
-  }
-
-  Color getRandomColor() {
-    return Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
+    
+    setState(() {
+      _expenses = expenses;
+      _totalSpending = totalSpending;
+      _spendingByCategory = spendingByCategory;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final languageProvider = Provider.of<LanguageProvider>(context);
-    final currencyProvider = Provider.of<CurrencyProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
- title: Text(languageProvider.translate('Expense Stats')),
+        title: Text(languageProvider.getTranslation('Stats')),
       ),
- body: FutureBuilder<List<Expense>>(
-        future: _expensesFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No se encontraron gastos.'));
-          } else if (snapshot.hasError) {
-            return Center(child: Text('${languageProvider.translate('Error')}: ${snapshot.error}'));
-          } else {
-            List<Expense> expenses = snapshot.data!;
-            Map<String, double> categoryTotals =
-                calculateCategoryTotals(expenses);
-            double totalSpending = calculateTotalSpending(expenses);
-            List<PieChartSectionData> pieChartSections =
-                categoryTotals.entries.map((entry) {
-              return PieChartSectionData(
-                color: getRandomColor(),
-                value: entry.value,
-                title:
-                    '${(entry.value / totalSpending * 100).toStringAsFixed(1)}%',
-                radius: 80,
-                titleStyle: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              );
-            }).toList();
-
-            return ListView(
+      body: _expenses.isEmpty
+          ? Center(
+              child: Text(languageProvider.getTranslation('No expenses found.')),
+            )
+          : Padding(
               padding: const EdgeInsets.all(16.0),
-              children: [
-                Card(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                  elevation: 4.0,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
- Text(
-                          'Total Spending',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          '${currencyProvider.currency}${totalSpending.toStringAsFixed(2)}',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${languageProvider.getTranslation('Total Spending')}: \$${_totalSpending.toStringAsFixed(2)}',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    languageProvider.getTranslation('Spending by Category'),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: _spendingByCategory.length,
+                      itemBuilder: (context, index) {
+                        String category = _spendingByCategory.keys.elementAt(index);
+                        double amount = _spendingByCategory[category]!;
+                        return ListTile(
+                          title: Text('$category'),
+                          trailing: Text('\$${amount.toStringAsFixed(2)}'),
+                        );
+                      },
                     ),
                   ),
-                ),
-                SizedBox(height: 20),
-                Card(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                  elevation: 4.0,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Spending by Category',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        SizedBox(
-                          height: 300,
-                          child: PieChart(
-                            PieChartData(
-                              sections: pieChartSections,
-                              centerSpaceRadius: 40,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Column(
-                          children: categoryTotals.entries.map((entry) {
-                            return ListTile(
-                              leading: const Icon(Icons.category),
-                              title: Text(languageProvider.translate(entry.key)),
-                              trailing: Text(
-                                  '${currencyProvider.currency}${entry.value.toStringAsFixed(2)}'),
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            );
-          }
-        },
-      ),
+                ],
+              ),
+            ),
     );
   }
 }

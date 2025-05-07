@@ -1,123 +1,109 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/services/auth_service.dart';
-import 'package:flutter_application_2/screens/home_page.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_application_2/screens/register_screen.dart';
-import 'package:flutter_application_2/language_provider.dart';
+import '../services/auth_service.dart';
+import '../language_provider.dart';
+import 'home_page.dart';
+import 'register_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
-
-  @override
-  _LoginScreenState createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
-  bool _isLoading = false;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     final languageProvider = Provider.of<LanguageProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(languageProvider.translate('Login')),
+        title: Text(languageProvider.getTranslation('login')),
       ),
-      body: Center( // You might want to add SingleChildScrollView here to prevent overflow on smaller screens or with longer translations
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                TextFormField(
-                  controller: _emailController,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(
-                    ),
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return languageProvider.translate('Please enter your email');
-                    }
-                    if (!value.contains('@')) {
-                      return languageProvider.translate('Please enter a valid email');
-                    }
-                    return null;
-                  }, // TODO: Add email validation regex for more robust validation
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextFormField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  labelText: languageProvider.getTranslation('Email'),
+                  border: const OutlineInputBorder(),
                 ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(
-                    labelText: 'Password',
-                    border: OutlineInputBorder(
-                    ),
-                  ),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return languageProvider.translate('Please enter your password');
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return languageProvider
+                        .getTranslation('Por favor, ingrese su correo electrónico');
+                  }
+                  if (!value.contains('@')) {
+                    return languageProvider.getTranslation(
+                        'Por favor, ingrese un correo electrónico válido');
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: languageProvider.getTranslation('Password'),
+                  border: const OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return languageProvider
+                        .getTranslation('Por favor, ingrese su contraseña');
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    try {
+                      await authService.signIn(
+                        _emailController.text,
+                        _passwordController.text,
+                      );
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/home',
+                        (route) => false,
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(languageProvider.getTranslation(
+                              'Correo electrónico o contraseña inválidos')),
+                          duration: const Duration(seconds: 3),
+                        ),
+                      );
                     }
-                    return null;
-                  },
+                  }
+                },
+                child: Text(languageProvider.getTranslation('Login')),
+              ),
+              const SizedBox(height: 10),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegisterScreen()),
+                  );
+                },
+                child: Text(
+                  languageProvider
+                      .getTranslation('Don\'t have an account? Register here'),
                 ),
-                const SizedBox(height: 20),
-                _isLoading
-                    ? const CircularProgressIndicator()
-                    : ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            setState(() {
-                              _isLoading = true;
-                            });
-                            try {
- final authService = Provider.of<AuthService>(context, listen: false);
- bool loggedIn = await authService.login(
- _emailController.text,
- _passwordController.text);
- if (loggedIn) {
- Navigator.pushReplacementNamed(context, '/home',
- );
- } else {
- ScaffoldMessenger.of(context).showSnackBar(
- SnackBar(
- content:
- Text(languageProvider.translate('Invalid email or password'))),
- );
-                              }
-                            } catch (e) { // Removed catch as an identifier, now it's the keyword
- ScaffoldMessenger.of(context).showSnackBar(
- SnackBar(content: Text('${languageProvider.translate('Error')}: $e')),
- );
-                            } finally{
-                              setState(() {
-                                _isLoading = false;
-                              });
-                            }
-                          }
-                        },
-                        child: Text(languageProvider.translate('Login')),
-                      ), // This text could also be translated to 'Iniciar Sesión'
-                const SizedBox(height: 10),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const RegisterScreen()),
-                    );
-                  },
-                  child: Text(languageProvider.translate("Don't have an account? Register here")),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
