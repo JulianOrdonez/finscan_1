@@ -70,8 +70,8 @@ class LoginScreen extends StatelessWidget {
                     try {
                       print('Logging in with email: ${_emailController.text}');
                       bool success = await authService.login(
-                        _emailController.text,
-                        _passwordController.text,
+ _emailController.text,
+ _passwordController.text,
                       );
                       if (success) {
                         print('Login successful!');
@@ -79,8 +79,17 @@ class LoginScreen extends StatelessWidget {
                           context,
                           '/home',
                           (route) => false,
-                      );
-                    } catch (e) {
+ );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+ SnackBar(
+ content: Text(languageProvider.getTranslation(
+ 'Correo electrónico o contraseña inválidos')),
+ duration: const Duration(seconds: 3),
+ ),
+ );
+                      }
+                    } on Exception catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(languageProvider.getTranslation(
@@ -92,8 +101,7 @@ class LoginScreen extends StatelessWidget {
                   }
                 },
                 child: Text(languageProvider.getTranslation('Login')),
-              ),
-              const SizedBox(height: 10),
+ ),
               TextButton(
                 onPressed: () {
                   Navigator.push(
