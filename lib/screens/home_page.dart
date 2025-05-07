@@ -16,9 +16,9 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    const ExpenseListScreen(),
-    const CategorizedExpenseScreen(),
-    const ExpenseStatsScreen(),
+    ExpenseListScreen(),
+    CategorizedExpenseScreen(),
+    ExpenseStatsScreen(),
   ];
 
   void _onItemTapped(int index) {

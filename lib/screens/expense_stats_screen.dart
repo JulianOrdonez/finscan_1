@@ -24,7 +24,15 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
   Future<List<Expense>> _loadExpenses() async {
     final databaseHelper = Provider.of<DatabaseHelper>(context, listen: false);
  final authService = Provider.of<AuthService>(context, listen: false);
-    return await databaseHelper.getExpenses(authService.currentUserId!);
+    final userId = await authService.getCurrentUserId();
+
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User not logged in')),
+ );
+ return [];
+    }
+    return await databaseHelper.getExpenses(userId);
   }
 
   Map<String, double> calculateCategoryTotals(List<Expense> expenses) {

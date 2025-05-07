@@ -8,12 +8,11 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await DatabaseHelper.instance.initDatabase();
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => AuthService(databaseHelper: DatabaseHelper.instance)),
+        Provider<AuthService>(create: (_) => AuthService(databaseHelper: DatabaseHelper.instance)),
         Provider<DatabaseHelper>(create: (_) => DatabaseHelper.instance),
       ],
       child: const MyApp(),

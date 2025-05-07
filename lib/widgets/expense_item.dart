@@ -23,7 +23,7 @@ class ExpenseItem extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
       ),
-      color: themeProvider.isDarkMode
+      color: themeProvider.currentTheme.brightness == Brightness.dark
           ? Colors.grey[800]
           : Colors.grey[200],
       child: Padding(
@@ -39,7 +39,7 @@ class ExpenseItem extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,
-                    color: themeProvider.isDarkMode
+                    color: themeProvider.currentTheme.brightness == Brightness.dark
                         ? Colors.white
                         : Colors.black,
                   ),
@@ -73,7 +73,7 @@ class ExpenseItem extends StatelessWidget {
             Row(
               children: [
                 Icon(Icons.category,
-                    color: themeProvider.isDarkMode
+                    color: themeProvider.currentTheme.brightness == Brightness.dark
                         ? Colors.white70
                         : Colors.black54),
                 const SizedBox(width: 4),
@@ -82,7 +82,7 @@ class ExpenseItem extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16.0,
                     color: themeProvider.isDarkMode
-                        ? Colors.white70
+                        ? themeProvider.currentTheme.brightness == Brightness.dark ? Colors.white70 : Colors.black54
                         : Colors.black54,
                   ),
                 ),
@@ -92,12 +92,12 @@ class ExpenseItem extends StatelessWidget {
             Row(
               children: [
                 Icon(Icons.calendar_today,
-                    color: themeProvider.isDarkMode
+                    color: themeProvider.currentTheme.brightness == Brightness.dark
                         ? Colors.white70
                         : Colors.black54),
                 const SizedBox(width: 4),
                 Text(
-                  formatDate(expense.date),
+                  Helpers.formatDate(expense.date),
                   style: TextStyle(
                     fontSize: 16.0,
                     color: themeProvider.isDarkMode
@@ -112,7 +112,7 @@ class ExpenseItem extends StatelessWidget {
               expense.description,
               style: TextStyle(
                 fontSize: 14.0,
-                color: themeProvider.isDarkMode
+                color: themeProvider.currentTheme.brightness == Brightness.dark
                     ? Colors.white70
                     : Colors.black54,
               ),
