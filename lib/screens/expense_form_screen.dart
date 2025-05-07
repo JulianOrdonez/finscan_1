@@ -19,13 +19,13 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   DateTime _selectedDate = DateTime.now();
 
   List<String> _categories = [
-    'Comida',
-    'Transporte',
-    'Entretenimiento',
+    'Food',
+    'Transportation',
+    'Entertainment',
     'Utilities',
     'Shopping',
     'Other',
-  ];
+ ];
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -93,7 +93,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 decoration: InputDecoration(
                   labelText: 'Amount (${currencyProvider.currency})',
-                  prefixText: '${currencyProvider.currency}',
+                  prefixText: '${currencyProvider.currency} ',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -107,7 +107,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
               ),
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
-                decoration: InputDecoration(labelText: 'Category'),
+                decoration: InputDecoration(labelText: 'Categoría'),
                 items: _categories.map<DropdownMenuItem<String>>((String category) {
                   return DropdownMenuItem<String>(
                     value: category,
@@ -128,7 +128,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
               TextFormField(
                 controller: _descriptionController,
                 maxLines: 3,
-                decoration: InputDecoration(labelText: 'Description'),
+                decoration: InputDecoration(labelText: 'Descripción'),
                 validator: (value) {
  if (value == null || value.isEmpty) {
                     return 'Please enter a description';

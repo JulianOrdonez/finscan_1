@@ -28,8 +28,8 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
 
     if (userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('User not logged in')),
- ); // TODO: Translate this message
+        const SnackBar(content: Text('Usuario no ha iniciado sesion')),
+      ); // TODO: Translate this message
  return [];
     }
     return await databaseHelper.getExpenses(userId);
@@ -55,19 +55,19 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
   @override
   Widget build(BuildContext context) {
     final currencyProvider = Provider.of<CurrencyProvider>(context);
-    return Scaffold(
-      appBar: AppBar( // TODO: Translate this title
-        title: Text('Estadísticas de Gastos'),
+ return Scaffold(
+      appBar: AppBar(
+        title: const Text('Estadísticas de Gastos'),
       ),
       body: FutureBuilder<List<Expense>>(
         future: _expensesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) { // TODO: Translate this message
-            return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No expenses found.'));
+            return const Center(child: Text('No se encontraron gastos.'));
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
           } else {
             List<Expense> expenses = snapshot.data!;
             Map<String, double> categoryTotals =
@@ -84,7 +84,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                 titleStyle: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xffffffff),
+                  color: Colors.white,
                 ),
               );
             }).toList();
@@ -93,12 +93,14 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
               padding: const EdgeInsets.all(16.0),
               children: [
                 Card(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                  elevation: 4.0,
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [ // TODO: Translate this text
-                        Text(
+                      children: [
+                        const Text(
                           'Total Spending',
                           style: TextStyle(
                             fontSize: 20,
@@ -119,12 +121,14 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                 ),
                 SizedBox(height: 20),
                 Card(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                  elevation: 4.0,
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [ // TODO: Translate this text
-                        Text(
+                      children: [
+ const Text(
                           'Spending by Category',
                           style: TextStyle(
                             fontSize: 20,
@@ -145,7 +149,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                         Column(
                           children: categoryTotals.entries.map((entry) {
                             return ListTile(
-                              leading: Icon(Icons.category),
+                              leading: const Icon(Icons.category),
                               title: Text(entry.key),
                               trailing: Text(
                                   '${currencyProvider.currency}${entry.value.toStringAsFixed(2)}'),
