@@ -31,10 +31,12 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   void initState() {
     super.initState();
     if (widget.expense != null) {
-      _amountController.text = widget.expense!.amount.toString();
-      _selectedCategory = widget.expense!.category;
-      _descriptionController.text = widget.expense!.description;
-      _selectedDate = widget.expense!.date;
+      setState(() {
+        _amountController.text = widget.expense!.amount.toString();
+        _selectedCategory = widget.expense!.category;
+        _descriptionController.text = widget.expense!.description;
+        _selectedDate = widget.expense!.date;
+      });
     }
   }
 
