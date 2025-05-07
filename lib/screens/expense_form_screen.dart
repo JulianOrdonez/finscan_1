@@ -17,7 +17,6 @@ class ExpenseFormScreen extends StatefulWidget {
 
 class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
   String _selectedCategory = 'Comida'; // Default category
   DateTime _selectedDate = DateTime.now();
@@ -34,7 +33,6 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.expense != null) {
       _amountController.text = widget.expense!.amount.toString();
       _descriptionController.text = widget.expense!.description;
       _selectedCategory = widget.expense!.category;
@@ -84,7 +82,6 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       } else {
         expense.id = widget.expense!.id; // Ensure the ID is set for update
         success = await databaseHelper.updateExpense(expense);
-
       if (success) {
         Navigator.pop(context); // Go back to the expense list
       } else {
@@ -95,6 +92,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
     }
   }
 
+  final _amountController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final currencyProvider = Provider.of<CurrencyProvider>(context);
