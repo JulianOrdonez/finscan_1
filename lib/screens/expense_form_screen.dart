@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import '../models/expense.dart';
 import '../services/database_helper.dart';
 import '../services/auth_service.dart';
-import '../models/expense.dart';
-import '../currency_provider.dart';
+import 'package:intl/intl.dart';
 
 class ExpenseFormScreen extends StatefulWidget {
   final Expense? expense;
 
-  const ExpenseFormScreen({Key? key, this.expense}) : super(key: key);
+  ExpenseFormScreen({Key? key, this.expense}) : super(key: key);
 
   @override
   _ExpenseFormScreenState createState() => _ExpenseFormScreenState();
@@ -17,27 +16,33 @@ class ExpenseFormScreen extends StatefulWidget {
 
 class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
-  String _selectedCategory = 'Comida'; // Default category
+  String _selectedCategory = 'Food';
   DateTime _selectedDate = DateTime.now();
-
-  List<String> _categories = [
-    'Comida',
-    'Transporte',
-    'Entretenimiento',
-    'Servicios',
-    'Compras',
-    'Otros',
+  final List<String> _categories = [
+    'Food',
+    'Transportation',
+    'Entertainment',
+    'Others'
   ];
 
   @override
   void initState() {
     super.initState();
+    if (widget.expense != null) {
       _amountController.text = widget.expense!.amount.toString();
-      _descriptionController.text = widget.expense!.description;
       _selectedCategory = widget.expense!.category;
       _selectedDate = widget.expense!.date;
+      _descriptionController.text = widget.expense!.description;
     }
+  }
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -45,7 +50,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime(2000),
-      lastDate: DateTime(2025),
+      lastDate: DateTime(2100),
     );
     if (picked != null && picked != _selectedDate) {
       setState(() {
@@ -54,19 +59,13 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
     }
   }
 
-  void _submitForm() async {
+  Future<void> _saveExpense() async {
     if (_formKey.currentState!.validate()) {
-      final databaseHelper = Provider.of<DatabaseHelper>(context, listen: false);
+      final databaseHelper =
+          Provider.of<DatabaseHelper>(context, listen: false);
       final authService = Provider.of<AuthService>(context, listen: false);
       final userId = await authService.getCurrentUserId();
-
-      if (userId == null) {
-        // Handle case where user is not logged in
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Usuario no ha iniciado sesión')),
-        );
-        return;
-      }
+      if (userId == null) return;
 
       final expense = Expense(
         amount: double.parse(_amountController.text),
@@ -75,58 +74,49 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
         description: _descriptionController.text,
         userId: userId,
       );
-
-      bool success;
+        
       if (widget.expense == null) {
-        success = await databaseHelper.insertExpense(expense);
+        await databaseHelper.insertExpense(expense);
       } else {
-        expense.id = widget.expense!.id; // Ensure the ID is set for update
-        success = await databaseHelper.updateExpense(expense);
-      if (success) {
-        Navigator.pop(context); // Go back to the expense list
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al ${widget.expense == null ? 'guardar' : 'actualizar'} el gasto')),
-        );
+        expense.id = widget.expense!.id;
+        await databaseHelper.updateExpense(expense);
       }
+
+      Navigator.pop(context);
     }
   }
 
-  final _amountController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final currencyProvider = Provider.of<CurrencyProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.expense == null ? 'Nuevo Gasto' : 'Editar Gasto'),
+        title: Text(
+            widget.expense == null ? 'New Expense' : 'Edit Expense'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: ListView(
-            children: [
+            children: <Widget>[
               TextFormField(
                 controller: _amountController,
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                decoration: InputDecoration(
-                  labelText: 'Amount (${currencyProvider.currency})',
-                  prefixText: '${currencyProvider.currency} ',
-                ),
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Amount'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, introduce una cantidad';
+                    return 'Please enter an amount';
                   }
                   if (double.tryParse(value) == null) {
-                    return 'Por favor, introduce un número válido';
+                    return 'Please enter a valid number';
                   }
                   return null;
                 },
               ),
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
-                decoration: InputDecoration(labelText: 'Categoría'),
-                items: _categories.map<DropdownMenuItem<String>>((String category) {
+                items: _categories
+                    .map<DropdownMenuItem<String>>((String category) {
                   return DropdownMenuItem<String>(
                     value: category,
                     child: Text(category),
@@ -137,27 +127,24 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
                     _selectedCategory = newValue!;
                   });
                 },
+                decoration: const InputDecoration(labelText: 'Category'),
               ),
               ListTile(
-                title: Text('Fecha: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}'),
-                trailing: Icon(Icons.calendar_today),
+                title: Text(
+                    'Date: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}'),
+                trailing: const Icon(Icons.calendar_today),
                 onTap: () => _selectDate(context),
               ),
               TextFormField(
                 controller: _descriptionController,
+                decoration: const InputDecoration(labelText: 'Description'),
                 maxLines: 3,
-                decoration: InputDecoration(labelText: 'Descripción'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, introduce una descripción';
-                  }
-                  return null;
-                },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _submitForm,
-                child: Text(widget.expense == null ? 'Guardar Gasto' : 'Actualizar Gasto'),
+                onPressed: _saveExpense,
+                child: Text(
+                    widget.expense == null ? 'Save Expense' : 'Update Expense'),
               ),
             ],
           ),
