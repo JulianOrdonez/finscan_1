@@ -1,13 +1,15 @@
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Helpers {
-  static String formatDate(DateTime date) {
-    final formatter = DateFormat('dd/MM/yyyy');
+ static String formatDate(DateTime date) {
+ final formatter = DateFormat('dd/MM/yyyy');
     return formatter.format(date);
   }
 
-  static String formatDateTime(DateTime dateTime) {
-    final formatter = DateFormat('dd/MM/yyyy HH:mm');
+ static String formatDateTime(DateTime dateTime) {
+ final formatter = DateFormat('dd/MM/yyyy HH:mm');
     return formatter.format(dateTime);
   }
 
@@ -16,8 +18,3 @@ class Helpers {
     return formatter.format(amount);
   }
   
-  static String formatCurrencyWithSymbol(double amount, String symbol) {
-    final formatter = NumberFormat.currency(symbol: symbol);
-    return formatter.format(amount);
-  }
-}
