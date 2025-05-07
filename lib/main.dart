@@ -58,14 +58,14 @@ class MyApp extends StatelessWidget {
                           );
                         } else {
                           if (snapshot.hasData && snapshot.data!) {
-                            return const HomePage();
+                            return HomePage();
                           } else {
-                            return const LoginScreen();
+                            return LoginScreen();
                           }
                         }
                       },
                     ),
-                '/login': (context) => const LoginScreen(),
+                '/login': (context) => LoginScreen(),
                 '/home': (context) => const HomePage(),
               },
             );

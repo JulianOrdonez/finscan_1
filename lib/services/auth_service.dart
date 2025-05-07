@@ -42,6 +42,14 @@ class AuthService {
     }
   }
 
+  Future<String> signIn(String email, String password) async {
+    if (email.isEmpty || password.isEmpty) {
+      throw Exception('Please fill all the fields');
+    } else {
+      return email;
+    }
+  }
+
   Future<bool> isLoggedIn() async {
     // In this simple example, we assume the user is logged in if a user exists in the database.
     // In a real application, you would check for a valid token or session.

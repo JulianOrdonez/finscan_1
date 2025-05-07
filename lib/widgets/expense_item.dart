@@ -6,12 +6,12 @@ import '../services/database_helper.dart';
 
 class ExpenseItem extends StatelessWidget {
   final Expense expense;
-  final VoidCallback onExpenseDeleted;
+  final void Function(Expense) onExpenseDeleted;
 
   const ExpenseItem({
     Key? key,
     required this.expense,
-    required this.onExpenseDeleted,
+    required this.onExpenseDeleted, 
   }) : super(key: key);
 
   @override
@@ -31,7 +31,7 @@ class ExpenseItem extends StatelessWidget {
             final databaseHelper =
                 Provider.of<DatabaseHelper>(context, listen: false);
             bool isDeleted = await databaseHelper.deleteExpense(expense.id!);
-            if (isDeleted) {
+            if (isDeleted) { 
               onExpenseDeleted();
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
