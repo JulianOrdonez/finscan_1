@@ -28,8 +28,8 @@ class AuthService {
   Future<bool> createUser(User user) async {
     try {
       final id = await DatabaseHelper.instance.insertUser(user);
-      if (id > 0) {
-        user.id = id;
+      if (id != null && id > 0) {
+        user.id = id; // Assign non-null int to non-null int
         await DatabaseHelper.instance.setCurrentUser(user.id);
         return true;
       }
