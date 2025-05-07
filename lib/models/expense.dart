@@ -1,7 +1,6 @@
 class Expense {
   final int? id;
   final double amount;
-  final int id;
   final String category;
   final DateTime date;
   final String description;
@@ -14,7 +13,7 @@ class Expense {
     required this.date,
     required this.description,
     required this.userId,
-  });
+  }); 
 
   Map<String, dynamic> toJson() {
     return {
@@ -36,5 +35,17 @@ class Expense {
       description: json['description'] as String,
       userId: json['user_id'] as int,
     );
+  }
+
+  Expense copyWith({
+    int? id,
+    double? amount,
+    String? category,
+    DateTime? date,
+    String? description,
+    int? userId,
+  }) {
+    return Expense(
+      id: id ?? this.id, amount: amount ?? this.amount, category: category ?? this.category, date: date ?? this.date, description: description ?? this.description, userId: userId ?? this.userId, );
   }
 }

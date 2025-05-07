@@ -34,6 +34,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       _amountController.text = widget.expense!.amount.toString();
       _selectedCategory = widget.expense!.category;
       _descriptionController.text = widget.expense!.description;
+      _selectedDate = widget.expense!.date;
     }
   }
 
@@ -67,7 +68,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       if (userId == null) return;
 
       final expense = Expense(
- id: widget.expense?.id, // Include the ID for updates
+        id: widget.expense?.id, // Include the ID for updates
         amount: double.parse(_amountController.text),
         category: _selectedCategory,
         date: _selectedDate,
@@ -76,7 +77,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       );
         
       if (widget.expense == null) {
-        await databaseHelper.insertExpense(expense);
+        await databaseHelper.insertExpense(expense.copyWith(id: null)); // Ensure ID is null for insertion
       } else {
         await databaseHelper.updateExpense(expense);
       }
@@ -87,10 +88,10 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isEditing = widget.expense != null;
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-            widget.expense == null ? 'New Expense' : 'Edit Expense'),
+        title: Text(isEditing ? 'Edit Expense' : 'New Expense'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -129,8 +130,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
                 decoration: const InputDecoration(labelText: 'Category'),
               ),
               ListTile(
-                title: Text(
-                    'Date: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}'),
+                title: Text('Date: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}'),
                 trailing: const Icon(Icons.calendar_today),
                 onTap: () => _selectDate(context),
               ),
@@ -141,9 +141,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _saveExpense,
-                child: Text(
-                    widget.expense == null ? 'Save Expense' : 'Update Expense'),
+                onPressed: _saveExpense, child: Text(isEditing ? 'Update Expense' : 'Save Expense'),
               ),
             ],
           ),
