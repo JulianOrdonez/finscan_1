@@ -68,14 +68,17 @@ class LoginScreen extends StatelessWidget {
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     try {
-                      await authService.signIn(
+                      print('Logging in with email: ${_emailController.text}');
+                      bool success = await authService.login(
                         _emailController.text,
                         _passwordController.text,
                       );
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        '/home',
-                        (route) => false,
+                      if (success) {
+                        print('Login successful!');
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          '/home',
+                          (route) => false,
                       );
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(

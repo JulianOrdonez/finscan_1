@@ -30,6 +30,7 @@ class AuthService {
 
   Future<bool> login(String email, String password) async {
     try {
+      print('Attempting login for email: $email');
       final user = await _databaseHelper.getUserByEmail(email);
       if (user != null && user.password == password) {
         _currentUserId = user.id;
