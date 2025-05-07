@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(
-                    labelText: 'Email', // This can be translated if desired
+                    labelText: 'Email',
                     border: OutlineInputBorder(
                     ),
                   ),
@@ -78,23 +78,24 @@ class _LoginScreenState extends State<LoginScreen> {
                               _isLoading = true;
                             });
                             try {
-                              final authService = Provider.of<AuthService>(context, listen: false);
-                              bool loggedIn = await authService.login(
-                                  _emailController.text,
-                                  _passwordController.text);
-                              if (loggedIn) {
-                                Navigator.pushReplacementNamed(context, '/home',
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content:
-                                          Text(languageProvider.translate('Invalid email or password'))),
-                                );
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Error: $e')), // Consider translating the error message if possible, or providing a more user-friendly message.
-                              );
+ final authService = Provider.of<AuthService>(context, listen: false);
+ bool loggedIn = await authService.login(
+ _emailController.text,
+ _passwordController.text);
+ if (loggedIn) {
+ Navigator.pushReplacementNamed(context, '/home',
+ );
+ } else {
+ ScaffoldMessenger.of(context).showSnackBar(
+ SnackBar(
+ content:
+ Text(languageProvider.translate('Invalid email or password'))),
+ );
+                              }
+                            } catch (e) { // Removed catch as an identifier, now it's the keyword
+ ScaffoldMessenger.of(context).showSnackBar(
+ SnackBar(content: Text('${languageProvider.translate('Error')}: $e')),
+ );
                             } finally{
                               setState(() {
                                 _isLoading = false;

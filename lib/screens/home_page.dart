@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(languageProvider.getTranslation('Expense Tracker')),
-        backgroundColor: themeProvider.currentTheme.colorScheme.primary,
+ backgroundColor: themeProvider.currentTheme.colorScheme.primary, 
       ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
