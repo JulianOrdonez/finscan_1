@@ -3,8 +3,11 @@ import 'package:flutter/foundation.dart';
 
 class ThemeProvider with ChangeNotifier {
   ThemeData _currentTheme = ThemeData.light();
+  bool _isDarkMode = false;
 
   ThemeData get currentTheme => _currentTheme;
+
+  bool get isDarkMode => _isDarkMode;
 
   void toggleTheme() {
     _currentTheme = _currentTheme == lightTheme ? darkTheme : lightTheme;

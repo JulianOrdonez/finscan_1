@@ -118,13 +118,35 @@ class LanguageProvider with ChangeNotifier {
     },
   };
 
-  void setLocale(Locale newLocale) {
+  // Add the getter supportedLocales
+  List<Locale> get supportedLocales => const [
+    Locale('en', ''),
+    Locale('es', ''),
+  ];
+
+  // Change the changeLanguage method to not receive the index but the locale
+  void changeLanguage(Locale newLocale) {
+    // Check if the new locale is supported
+    if (supportedLocales.contains(newLocale)) {
     _currentLocale = newLocale;
     notifyListeners();
+  }
   }
 
   String getTranslation(String key) {
     final languageCode = _currentLocale.languageCode;
     return _translations[languageCode]?[key] ?? _translations['en']?[key] ?? '';
+  }
+
+  // Add the method getLanguageName that will receive a Locale and return the name of the language
+  String getLanguageName(Locale locale) {
+    switch (locale.languageCode) {
+      case 'en':
+        return 'English';
+      case 'es':
+        return 'Español';
+      default:
+        return '';
+    }
   }
 }

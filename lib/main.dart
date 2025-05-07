@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/screens/expense_list_screen.dart';
 import 'package:flutter_application_2/screens/login_screen.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
+import 'package:flutter_application_2/services/database_helper.dart';
 import 'package:flutter_application_2/language_provider.dart';
 import 'package:flutter_application_2/currency_provider.dart';
+import 'package:flutter_application_2/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -45,8 +47,7 @@ class MyApp extends StatelessWidget {
                         }
                         return snapshot.data == true ? ExpenseListScreen() : LoginScreen();
                       },
-                    ),
-              },
+                    ), // home
             );
           },
         );

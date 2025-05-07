@@ -7,7 +7,7 @@ class AuthService {
 
   int? _currentUserId;
 
-  AuthService({required DatabaseHelper databaseHelper}) : _databaseHelper = databaseHelper;
+  AuthService() : _databaseHelper = DatabaseHelper.instance;
   
   Future<bool> register(
       String name, String email, String password) async {
