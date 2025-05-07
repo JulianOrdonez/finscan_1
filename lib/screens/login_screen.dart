@@ -64,6 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return languageProvider.translate('Please enter your password');
+                    }
                     return null;
                   },
                 ),

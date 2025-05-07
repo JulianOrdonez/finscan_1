@@ -45,7 +45,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text(languageProvider.translate('Registration failed. Please try again.')),
+              content: Text('Registration failed. Please try again.'),
             ),
           );
         }
@@ -53,7 +53,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${languageProvider.translate('An error occurred:')} $e'),
-          ),
+),
         );
       } finally {
         setState(() {
@@ -67,8 +67,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
- Provider.of<LanguageProvider>(context).translate('Register')),
+        title: Text(Provider.of<LanguageProvider>(context)
+            .translate('Register')),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -81,11 +81,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _nameController,
                   decoration: const InputDecoration(
-                    labelText: Provider.of<LanguageProvider>(context).translate('Name'),
+                    labelText: 'Name',
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
+
                       return Provider.of<LanguageProvider>(context, listen: false).translate('Please enter your name');
                     }
                     return null;
@@ -101,6 +102,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return Provider.of<LanguageProvider>(context, listen: false).translate('Please enter your email');
+
                     }
                     if (!value.contains('@')) {
                       return Provider.of<LanguageProvider>(context, listen: false).translate('Please enter a valid email');
@@ -112,7 +114,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _passwordController,
                   decoration: const InputDecoration(
-                    labelText: Provider.of<LanguageProvider>(context).translate('Password'),
+                    labelText: 'Password',
                     border: OutlineInputBorder(),
                   ),
                   obscureText: true,
@@ -130,7 +132,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _confirmPasswordController,
                   decoration: const InputDecoration(
-                    labelText: Provider.of<LanguageProvider>(context).translate('Confirm Password'),
+                    labelText: 'Confirm Password',
                     border: OutlineInputBorder(),
                   ),
                   obscureText: true,
@@ -149,7 +151,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
                         onPressed: _register,
-                        child: Text(Provider.of<LanguageProvider>(context).translate('Register')),
+                        child: Text(Provider.of<LanguageProvider>(context)
+                            .translate('Register')),
+
                       ),
                 const SizedBox(height: 16),
                 TextButton(

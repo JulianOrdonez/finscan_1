@@ -56,7 +56,7 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          languageProvider.get(languageProvider.currentLocale, 'Categorized Expenses') ?? 'Categorized Expenses',
+          languageProvider.translate('Categorized Expenses'),
           style: TextStyle(color: themeProvider.currentTheme.textTheme.bodyMedium?.color),
         ),
  backgroundColor: themeProvider.currentTheme.appBarTheme.backgroundColor,
@@ -82,7 +82,7 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
       return Center(
         child: Text(
           languageProvider.get(languageProvider.currentLocale, 'No expenses yet.') ?? 'No expenses yet.',
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
  ),
       );
     }

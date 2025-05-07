@@ -25,13 +25,14 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     final authService = Provider.of<AuthService>(context, listen: false);
     final databaseHelper = Provider.of<DatabaseHelper>(context, listen: false);
     final userId = await authService.getCurrentUserId();
- final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
+    final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
+
     if (userId == null) {
       // Handle case where user is not logged in
- return ScaffoldMessenger.of(context).showSnackBar(
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Usuario no ha iniciado sesión')),
+ SnackBar(content: Text(languageProvider.translate('Usuario no ha iniciado sesión'))),
       );
+
       return [];
     }
 
@@ -43,10 +44,10 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
   @override
   Widget build(BuildContext context) {
- final languageProvider = Provider.of<LanguageProvider>(context);
+    final languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
       appBar: AppBar(
- title: Text(languageProvider.translate('Expense List')),
+        title: Text(languageProvider.translate('Expense List')),
       ),
       body: FutureBuilder<List<Expense>>(
         future: _expensesFuture,
@@ -54,11 +55,11 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
+            return Center(child: Text('${languageProvider.translate('Error')}: ${snapshot.error}'));
+          } else if (snapshot.hasError) {
             return Center(child: Text(\'${languageProvider.translate('Error')}: ${snapshot.error}\'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text(languageProvider.translate('No expenses found.')));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
- return Center(child: Text(languageProvider.translate(\'No expenses found.\')));
           } else {
             return ListView.builder(
               itemCount: snapshot.data!.length,
@@ -82,7 +83,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => ExpenseFormScreen()),
- ).then((_) => setState(() {
+          ).then((_) => setState(() {
  _expensesFuture = _loadExpenses();
                     }));
         },
