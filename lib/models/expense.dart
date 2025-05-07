@@ -1,47 +1,39 @@
 class Expense {
-  int? id;
-  int userId;
-  String title;
-  String description;
-  double amount;
-  String category;
-  String date;
-  String? receiptPath;
+  final int? id;
+  final double amount;
+  final String category;
+  final DateTime date;
+  final String description;
+  final int userId;
 
   Expense({
-    required this.id,
-    required this.userId,
-    required this.title,
-    required this.description,
+    this.id,
     required this.amount,
     required this.category,
     required this.date,
-    required this.receiptPath,
+    required this.description,
+    required this.userId,
   });
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'user_id': userId!,
-      'title': title,
-      'description': description,
       'amount': amount,
       'category': category,
-      'date': date,
-      'receiptPath': receiptPath,
+      'date': date.toIso8601String(),
+      'description': description,
+      'user_id': userId,
     };
   }
 
-  factory Expense.fromMap(Map<String, dynamic> map) {
+  factory Expense.fromJson(Map<String, dynamic> json) {
     return Expense(
-      id: map['id'],
-      userId: map['user_id'] as int,
-      title: map['title'],
-      description: map['description'],
-      amount: map['amount'],
-      category: map['category'],
-      date: map['date'],
-      receiptPath: map['receiptPath'],
+      id: json['id'],
+      amount: json['amount'] as double,
+      category: json['category'] as String,
+      date: DateTime.parse(json['date'] as String),
+      description: json['description'] as String,
+      userId: json['user_id'] as int,
     );
   }
 }

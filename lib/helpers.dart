@@ -1,33 +1,23 @@
-import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Helpers {
-  static Color getCategoryColor(String category) {
-    final Map<String, Color> categoryColors = {
-      'Alimentación': Colors.orange,
-      'Transporte': Colors.blue,
-      'Entretenimiento': Colors.purple,
-      'Salud': Colors.red,
-      'Educación': Colors.green,
-      'Hogar': Colors.brown,
-      'Ropa': Colors.pink,
-      'Otros': Colors.grey,
-    };
-
-    return categoryColors[category] ?? Colors.grey;
+  static String formatDate(DateTime date) {
+    final formatter = DateFormat('dd/MM/yyyy');
+    return formatter.format(date);
   }
 
-  static IconData getCategoryIcon(String category) {
-    final Map<String, IconData> categoryIcons = {
-      'Alimentación': Icons.restaurant,
-      'Transporte': Icons.directions_car,
-      'Entretenimiento': Icons.movie,
-      'Salud': Icons.favorite,
-      'Educación': Icons.school,
-      'Hogar': Icons.home,
-      'Ropa': Icons.shopping_bag,
-      'Otros': Icons.category,
-    };
+  static String formatDateTime(DateTime dateTime) {
+    final formatter = DateFormat('dd/MM/yyyy HH:mm');
+    return formatter.format(dateTime);
+  }
 
-    return categoryIcons[category] ?? Icons.category;
+  static String formatCurrency(double amount) {
+    final formatter = NumberFormat.currency(symbol: '\$');
+    return formatter.format(amount);
+  }
+  
+  static String formatCurrencyWithSymbol(double amount, String symbol) {
+    final formatter = NumberFormat.currency(symbol: symbol);
+    return formatter.format(amount);
   }
 }

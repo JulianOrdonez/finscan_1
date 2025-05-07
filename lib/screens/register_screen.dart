@@ -1,69 +1,62 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/screens/home_page.dart';
-import 'package:flutter_application_2/screens/login_screen.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
-import '../models/user.dart';
 
 class RegisterScreen extends StatefulWidget {
-  RegisterScreen({super.key});
+  const RegisterScreen({Key? key}) : super(key: key);
 
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   final AuthService _authService = AuthService();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
 
-  Future<void> _createUser(BuildContext context) async {
-    
+  bool _isLoading = false;
+
+  Future<void> _register() async {
     if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
       try {
-        final name = _nameController.text;
-        final email = _emailController.text;
-        final password = _passwordController.text;
-        User newUser = User(id: 0, name: name, email: email, password: password);
-
-        bool isCreated = await _authService.createUser(newUser);
-
-        if (isCreated) {
-          bool logged = await _authService.login(
-              _emailController.text, _passwordController.text);
-          if (logged) { Navigator.pushReplacement( context, MaterialPageRoute(builder: (context) => HomePage()),
-            );
-          }
+        final success = await _authService.register(
+          _nameController.text,
+          _emailController.text,
+          _passwordController.text,
+        );
+        if (success) {
+          Navigator.pushReplacementNamed(context, '/login');
         } else {
-          _showErrorSnackBar('Error al registrarse, usuario ya existe.', context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Registration failed. Please try again.'),
+            ),
+          );
         }
-      } catch (error) {
-        print('Firebase Error: $error');
-        _showErrorSnackBar('Error al registrarse', context);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('An error occurred: $e'),
+          ),
+        );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
-
-  void _showErrorSnackBar(String message, context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
-  }
-
-  void _navigateToLogin() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
-    );
-  } 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Registro'),
+        title: const Text('Register'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -76,74 +69,82 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _nameController,
                   decoration: const InputDecoration(
-                    labelText: 'Nombre',
-                    prefixIcon: Icon(Icons.person),
+                    labelText: 'Name',
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Por favor, ingrese su nombre';
+                      return 'Please enter your name';
                     }
                     return null;
                   },
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(
                     labelText: 'Email',
-                    prefixIcon: Icon(Icons.email),
                     border: OutlineInputBorder(),
                   ),
-                  keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Por favor, ingrese su correo';
+                      return 'Please enter your email';
+                    }
+                    if (!value.contains('@')) {
+                      return 'Please enter a valid email';
                     }
                     return null;
                   },
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _passwordController,
                   decoration: const InputDecoration(
-                    labelText: 'Contraseña',
-                    prefixIcon: Icon(Icons.lock),
+                    labelText: 'Password',
                     border: OutlineInputBorder(),
                   ),
                   obscureText: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Por favor, ingrese su contraseña';
+                      return 'Please enter a password';
+                    }
+                    if (value.length < 6) {
+                      return 'Password must be at least 6 characters';
                     }
                     return null;
                   },
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _confirmPasswordController,
                   decoration: const InputDecoration(
-                    labelText: 'Confirmar Contraseña',
-                    prefixIcon: Icon(Icons.lock_open),
+                    labelText: 'Confirm Password',
                     border: OutlineInputBorder(),
                   ),
                   obscureText: true,
                   validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please confirm your password';
+                    }
                     if (value != _passwordController.text) {
-                      return 'Las contraseñas no coinciden';
+                      return 'Passwords do not match';
                     }
                     return null;
                   },
                 ),
-                const SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: () => _createUser(context),
-                  child: const Text('Registrarse'),
-                ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
+                _isLoading
+                    ? const CircularProgressIndicator()
+                    : ElevatedButton(
+                        onPressed: _register,
+                        child: const Text('Register'),
+                      ),
+                const SizedBox(height: 16),
                 TextButton(
-                  onPressed: _navigateToLogin,
-                  child: const Text('¿Ya tienes una cuenta? Inicia Sesión'),
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/login');
+                  },
+                  child: const Text('Already have an account? Login'),
                 ),
               ],
             ),

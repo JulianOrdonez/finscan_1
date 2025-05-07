@@ -1,32 +1,30 @@
-import 'dart:async';
-import 'package:path/path.dart';
-import 'package:flutter_application_2/models/expense.dart';
-import '../models/user.dart';
 import 'package:sqflite/sqflite.dart';
-import '../currency_provider.dart';
+import 'package:path/path.dart';
+import '../models/user.dart';
+import '../models/expense.dart';
+
 class DatabaseHelper {
-  static const _databaseName = "expenses_app.db";
+  static const _databaseName = "ExpenseTracker.db";
   static const _databaseVersion = 1;
 
   static const tableUsers = 'users';
+  static const tableExpenses = 'expenses';
+
+  // User table columns
   static const columnUserId = 'id';
-  static const columnUserEmail = 'email';
   static const columnUserName = 'name';
+  static const columnUserEmail = 'email';
   static const columnUserPassword = 'password';
 
-  static const tableExpenses = 'expenses';
+  // Expense table columns
   static const columnExpenseId = 'id';
-  static const columnExpenseUserId = 'user_id';
-  static const columnExpenseTitle = 'title';
-  static const columnExpenseDescription = 'description';
   static const columnExpenseAmount = 'amount';
   static const columnExpenseCategory = 'category';
   static const columnExpenseDate = 'date';
-  static const columnExpenseReceiptPath = 'receiptPath';
+  static const columnExpenseDescription = 'description';
+  static const columnExpenseUserId = 'user_id';
 
-  static const tableCurrentUser = 'current_user';
-  static const columnCurrentUserId = 'id';
-
+  // Make this a singleton class
   DatabaseHelper._privateConstructor();
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
 
@@ -37,175 +35,113 @@ class DatabaseHelper {
     return _database!;
   }
 
-  /// Initialize the database.
   Future<Database> _initDatabase() async {
     String path = join(await getDatabasesPath(), _databaseName);
-    return await openDatabase(
-      path,
-      version: _databaseVersion,
-      onCreate: _onCreate,
-    );
+    return await openDatabase(path,
+        version: _databaseVersion, onCreate: _onCreate);
   }
 
-  /// Create tables.
   Future _onCreate(Database db, int version) async {
     await db.execute('''
-          CREATE TABLE $tableUsers (
-            $columnUserId INTEGER PRIMARY KEY AUTOINCREMENT,
-            $columnUserName TEXT,
-            $columnUserEmail TEXT,
-            $columnUserPassword TEXT
-          )
-          ''');
+      CREATE TABLE $tableUsers (
+        $columnUserId INTEGER PRIMARY KEY AUTOINCREMENT,
+        $columnUserName TEXT NOT NULL,
+        $columnUserEmail TEXT NOT NULL UNIQUE,
+        $columnUserPassword TEXT NOT NULL
+      )
+    ''');
     await db.execute('''
-          CREATE TABLE $tableExpenses (
-            $columnExpenseId INTEGER PRIMARY KEY AUTOINCREMENT,
-            $columnExpenseUserId INTEGER,
-            $columnExpenseTitle TEXT,
-            $columnExpenseDescription TEXT,
-            $columnExpenseAmount REAL,
-            $columnExpenseCategory TEXT,
-            $columnExpenseDate TEXT,
-            $columnExpenseReceiptPath TEXT
-          )
-          ''');
-    await db.execute('''
-          CREATE TABLE $tableCurrentUser (
-            $columnCurrentUserId INTEGER PRIMARY KEY
-          )
-          ''');
+      CREATE TABLE $tableExpenses (
+        $columnExpenseId INTEGER PRIMARY KEY AUTOINCREMENT,
+        $columnExpenseAmount REAL NOT NULL,
+        $columnExpenseCategory TEXT NOT NULL,
+        $columnExpenseDate TEXT NOT NULL,
+        $columnExpenseDescription TEXT,
+        $columnExpenseUserId INTEGER NOT NULL,
+        FOREIGN KEY ($columnExpenseUserId) REFERENCES $tableUsers($columnUserId) ON DELETE CASCADE
+      )
+    ''');
   }
 
-  /// Insert a user into the database.
-  Future<int?> insertUser(User user) async {
+  // User Methods
+  Future<bool> insertUser(User user) async {
     Database db = await instance.database;
     try {
-      return await db.insert(tableUsers, {
-        columnUserEmail: user.email,
-        columnUserName: user.name,
-        columnUserPassword: user.password,
-      });
+      await db.insert(tableUsers, user.toJson());
+      return true;
     } catch (e) {
-      print('Error inserting user: $e');
-      return null;
+      return false;
     }
   }
 
-  /// Get the current user's ID from the database.
-  Future<int?> getCurrentUserId() async {
+  Future<User?> getUser(String email) async {
     Database db = await instance.database;
-    try {
-      List<Map<String, dynamic>> result = await db.query(
-        tableCurrentUser,
-      );
-      if (result.isNotEmpty) {
-        return result.first[columnCurrentUserId] as int;
-      }
-    } catch (e) {
-      print('Error getting current user id: $e');
+    List<Map<String, dynamic>> maps = await db.query(
+      tableUsers,
+      where: '$columnUserEmail = ?',
+      whereArgs: [email],
+    );
+    if (maps.isNotEmpty) {
+      return User.fromJson(maps.first);
     }
     return null;
   }
 
-
-  /// Get a user by their ID from the database.
-  Future<User?> getUserById(int id) async {
+  Future<bool> updateUser(User user) async {
     Database db = await instance.database;
-    try {
-      List<Map<String, dynamic>> result = await db.query(
-        tableUsers,
-        where: '$columnUserId = ?',
-        whereArgs: [id],
-      );
-      if (result.isNotEmpty) {
-        return User.fromMap(result.first,);
-      }
-    } catch (e) {}
-    return null;
+    int result = await db.update(tableUsers, user.toJson(),
+        where: '$columnUserId = ?', whereArgs: [user.id]);
+    return result > 0;
   }
 
-   /// Clear the current user from the database.
-   Future<void> clearCurrentUser() async {
+  Future<bool> deleteUser(int id) async {
+    Database db = await instance.database;
+    int result =
+        await db.delete(tableUsers, where: '$columnUserId = ?', whereArgs: [id]);
+    return result > 0;
+  }
+
+  // Expense Methods
+  Future<bool> insertExpense(Expense expense) async {
     Database db = await instance.database;
     try {
-      await db.delete(tableCurrentUser);
+      await db.insert(tableExpenses, expense.toJson());
+      return true;
     } catch (e) {
-      print('Error clearing current user: $e');
+      return false;
     }
   }
 
-  /// Get all expenses for a given user ID from the database.
-  Future<List<Expense>> getAllExpenses(int userId) async {
+  Future<List<Expense>> getExpenses(int userId) async {
     Database db = await instance.database;
-    try {
-      List<Map<String, dynamic>> result = await db.query(
-        tableExpenses,
-        where: '$columnExpenseUserId = ?',
-        whereArgs: [userId],
-      );
-      final currencyProvider = CurrencyProvider();
-      List<Expense> expenses = result.map((map) => Expense.fromMap(map)).toList();
-      for (var expense in expenses) {
-        expense.amount = currencyProvider.convertAmountToSelectedCurrency(expense.amount);
-      }
-      return expenses;
-    } catch (e) {}
-    return [];
+    List<Map<String, dynamic>> maps = await db.query(
+      tableExpenses,
+      where: '$columnExpenseUserId = ?',
+      whereArgs: [userId],
+    );
+    return List.generate(maps.length, (i) {
+      return Expense.fromJson(maps[i]);
+    });
   }
 
-  /// Delete an expense from the database.
-  Future<int?> deleteExpense(int id) async {
+  Future<bool> updateExpense(Expense expense) async {
     Database db = await instance.database;
-    try {
-      return await db.delete(
-        tableExpenses,
-        where: '$columnExpenseId = ?',
-        whereArgs: [id],
-      );
-    } catch (e) {
-      print('Error deleting expense: $e');
-      return null;
-    }
+    int result = await db.update(tableExpenses, expense.toJson(),
+        where: '$columnExpenseId = ?', whereArgs: [expense.id]);
+    return result > 0;
   }
 
-  Future<int?> setCurrentUser(int userId) async {
-    try {
-      Database db = await instance.database;
-      await clearCurrentUser();
-      return await db.insert(tableCurrentUser, {columnCurrentUserId: userId});
-    } catch (e) {      print('Error setting current user: $e');
-      return null;
-    }
-  }
-
-  Future<int?> insertExpense(Expense expense) async {
+  Future<bool> deleteExpense(int id) async {
     Database db = await instance.database;
-    try {
-      Map<String, dynamic> expenseMap = expense.toMap();
-      expenseMap.remove('id');
-      return await db.insert(tableExpenses, expenseMap);
-    } catch (e) {
-      print('Error inserting expense: $e');
-      return null;
-    }
+    int result = await db
+        .delete(tableExpenses, where: '$columnExpenseId = ?', whereArgs: [id]);
+    return result > 0;
   }
-
-
-
-
-  Future<int?> updateExpense(Expense expense) async {
+  Future<List<Expense>> getAllExpenses() async {
     Database db = await instance.database;
-    try {
-      return await db.update(
- tableExpenses,
- expense.toMap(),
- where: '$columnExpenseId = ?',
- whereArgs: [expense.id],
- );
-    } catch (e) {
-      print('Error updating expense: $e');
- return null;
-    }
+    final List<Map<String, dynamic>> maps = await db.query(tableExpenses);
+    return List.generate(maps.length, (i) {
+      return Expense.fromJson(maps[i]);
+    });
   }
 }
-

@@ -1,108 +1,62 @@
-// theme_provider.dart
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
 
 class ThemeProvider with ChangeNotifier {
-  bool _isDarkMode = false;
-  bool get isDarkMode => _isDarkMode;
+  ThemeData _currentTheme = ThemeData.light();
 
-  ThemeProvider() {
-    _loadThemeFromPrefs();
-  }
+  ThemeData get currentTheme => _currentTheme;
 
-  Future<void> _loadThemeFromPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    _isDarkMode = prefs.getBool('isDarkMode') ?? false;
+  void toggleTheme() {
+    _currentTheme = _currentTheme == lightTheme ? darkTheme : lightTheme;
     notifyListeners();
   }
 
-  Future<void> toggleTheme() async {
-    _isDarkMode = !_isDarkMode;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isDarkMode', _isDarkMode);
-    notifyListeners();
-  }
+  static const Color primaryColorLight = Color(0xFF4CAF50);
+  static const Color primaryColorDark = Color(0xFF81C784);
+  static const Color accentColorLight = Color(0xFFFFC107);
+  static const Color accentColorDark = Color(0xFFFFE082);
+  static const Color backgroundColorLight = Color(0xFFFAFAFA);
+  static const Color backgroundColorDark = Color(0xFF303030);
+  static const Color textColorLight = Color(0xFF212121);
+  static const Color textColorDark = Color(0xFFFAFAFA);
 
-  ThemeData get themeData {
-    return _isDarkMode ? _darkTheme : _lightTheme;
-  }
-
-  LinearGradient get appBarGradient => LinearGradient(
-        colors: isDarkMode
-            ? [
-                const Color(0xFF1976D2),
-                const Color(0xFF0D47A1)
-              ]
-            : [const Color(0xFF64B5F6), const Color(0xFF0D47A1)],
-        begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-  ThemeData get _lightTheme => ThemeData(
-        colorScheme: ColorScheme.light(
-          primary: const Color(0xFF4FC3F7),
-          // Vibrant blue
-          primaryContainer: const Color(0xFF29B6F6),
-          // Lighter, vibrant blue
-          secondary: const Color(0xFF29B6F6),
-          // Vibrant blue
-          tertiary: const Color(0xFF4FC3F7), // Light Blue
-          background: const Color(0xFFE3F2FD),
-        ),
-        scaffoldBackgroundColor:
-            const Color(0xFFE3F2FD), // Light blue background
-        appBarTheme: const AppBarTheme(
-            backgroundColor: Colors.transparent,
-            elevation: 4,
-            shadowColor: Colors.black,
-            foregroundColor: Colors.white,
-            titleTextStyle: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold)),
-        fontFamily: 'Roboto',
-        textTheme: const TextTheme(
-          bodyMedium: TextStyle(fontFamily: 'Roboto'),
-          bodyLarge: TextStyle(fontFamily: 'Roboto')),
-        brightness: Brightness.light,
-        cardTheme: const CardTheme(
-          color: Colors.white, // White cards
-          elevation: 3,
-          shadowColor: Colors.grey,
-        ),
+  static ThemeData lightTheme = ThemeData(
+    primaryColor: primaryColorLight,
+    hintColor: accentColorLight,
+    scaffoldBackgroundColor: backgroundColorLight,
+    textTheme: const TextTheme(
+      bodyMedium: TextStyle(color: textColorLight),
+      titleLarge: TextStyle(color: textColorLight, fontWeight: FontWeight.bold),
+      labelLarge: TextStyle(color: textColorLight),
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: primaryColorLight,
+      foregroundColor: textColorLight,
+    ),
+    colorScheme: const ColorScheme.light(
+      primary: primaryColorLight,
+      secondary: accentColorLight,
+      background: backgroundColorLight,
+    ),
   );
 
-  ThemeData get _darkTheme => ThemeData(
-        colorScheme: const ColorScheme.dark(
-          primary: Color(0xFF1565C0), // Richer, deeper blue
-          primaryContainer:
-              Color(0xFF0D47A1), // Even deeper, richer blue
-          secondary: Color(0xFF1E88E5), // Richer, deeper blue
-          tertiary:
-              Color(0xFF1E88E5), // Richer, deeper blue
-          background: Color(0xFF121212),
-        ),
-        scaffoldBackgroundColor: const Color(0xFF121212),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
-          foregroundColor: Colors.white,
-          elevation: 4,
-          shadowColor: Colors.black,
-          titleTextStyle: TextStyle(
-              color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        brightness: Brightness.dark,
-        cardTheme: const CardTheme(
-          color: Color(0xFF2C2C2C), // Dark gray cards
-          elevation: 3,
-          shadowColor: Colors.black,
-        ),
-      );
-
-  Color get cardColor => isDarkMode
-      ? _darkTheme.cardTheme.color!
-      : _lightTheme.cardTheme.color!;
-
-  Color get scaffoldBackgroundColor => isDarkMode
-      ? _darkTheme.scaffoldBackgroundColor
-      : _lightTheme.scaffoldBackgroundColor;
+  static ThemeData darkTheme = ThemeData(
+    primaryColor: primaryColorDark,
+    hintColor: accentColorDark,
+    scaffoldBackgroundColor: backgroundColorDark,
+    textTheme: const TextTheme(
+      bodyMedium: TextStyle(color: textColorDark),
+      titleLarge: TextStyle(color: textColorDark, fontWeight: FontWeight.bold),
+      labelLarge: TextStyle(color: textColorDark),
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: primaryColorDark,
+      foregroundColor: textColorDark,
+    ),
+    colorScheme: const ColorScheme.dark(
+      primary: primaryColorDark,
+      secondary: accentColorDark,
+      background: backgroundColorDark,
+    ),
+  );
 }
