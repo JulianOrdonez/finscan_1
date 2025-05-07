@@ -29,7 +29,11 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     });
   }
 
-  Future<void> _deleteExpense(int id) async {
+  Future<void> _deleteExpense(int? id) async {
+    if (id == null) {
+      return; // Cannot delete expense without an ID
+    }
+
     final confirmDelete = await showDialog(
       context: context,
       builder: (context) => AlertDialog(
