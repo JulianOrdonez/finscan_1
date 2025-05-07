@@ -31,7 +31,7 @@ class ExpenseItem extends StatelessWidget {
             final databaseHelper =
                 Provider.of<DatabaseHelper>(context, listen: false);
             bool isDeleted = await databaseHelper.deleteExpense(expense.id!);
-            if (isDeleted) { 
+            if (isDeleted) {
               onExpenseDeleted();
             } else {
               ScaffoldMessenger.of(context).showSnackBar(

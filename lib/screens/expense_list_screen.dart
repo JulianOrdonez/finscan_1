@@ -36,7 +36,11 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   Future<void> _deleteExpense(Expense expense) async {
     final databaseHelper = Provider.of<DatabaseHelper>(context, listen: false);
     await databaseHelper.deleteExpense(expense.id!);
-    _loadExpenses();
+    await _loadExpenses();
+  }
+
+  void _confirmDeleteExpense(Expense expense) {
+    showDialog(
   }
 
   @override
@@ -64,30 +68,29 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                       ),
                     ).then((_) => _loadExpenses());
                   },
-                  onLongPress: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text(languageProvider.getTranslation('Confirm')),
-                        content: Text(languageProvider.getTranslation(
-                            'Are you sure you want to delete this expense?')),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text(languageProvider.getTranslation('Cancel')),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              _deleteExpense(expense);
-                              Navigator.pop(context);
-                            },
-                            child: Text(languageProvider.getTranslation('Delete')),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                  child: ExpenseItem(expense: expense, onExpenseDeleted: _loadExpenses),
+                  onLongPress: () => _confirmDeleteExpense(expense),
+                  child: ExpenseItem(
+                    expense: expense,
+                    onExpenseDeleted: () => _confirmDeleteExpense(expense),
+                  ),
+                );
+              },
+            ),
+    );
+  }
+}
+
+void _confirmDeleteExpense(BuildContext context, Expense expense) {
+  final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(languageProvider.getTranslation('Confirm')),
+      content: Text(languageProvider.getTranslation('Are you sure you want to delete this expense?')),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(languageProvider.getTranslation('Cancel')),
                 );
               },
             ),

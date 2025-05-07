@@ -7,6 +7,10 @@ import '../models/expense.dart';
 import '../currency_provider.dart';
 
 class ExpenseFormScreen extends StatefulWidget {
+  final Expense? expense;
+
+  const ExpenseFormScreen({Key? key, this.expense}) : super(key: key);
+
   @override
   _ExpenseFormScreenState createState() => _ExpenseFormScreenState();
 }
@@ -25,6 +29,16 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
     'Servicios',
     'Compras',
     'Otros',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.expense != null) {
+      _amountController.text = widget.expense!.amount.toString();
+      _descriptionController.text = widget.expense!.description;
+      _selectedCategory = widget.expense!.category;
+      _selectedDate = widget.expense!.date;
  ];
 
   Future<void> _selectDate(BuildContext context) async {
@@ -63,13 +77,19 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
         userId: userId,
       );
 
-      final success = await databaseHelper.insertExpense(expense);
+      bool success;
+      if (widget.expense == null) {
+        success = await databaseHelper.insertExpense(expense);
+      } else {
+        expense.id = widget.expense!.id; // Ensure the ID is set for update
+        success = await databaseHelper.updateExpense(expense);
+      }
 
       if (success) {
         Navigator.pop(context); // Go back to the expense list
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al guardar el gasto')),
+          SnackBar(content: Text('Error al ${widget.expense == null ? 'guardar' : 'actualizar'} el gasto')),
         );
       }
     }
@@ -80,7 +100,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
     final currencyProvider = Provider.of<CurrencyProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Nuevo Gasto'),
+        title: Text(widget.expense == null ? 'Nuevo Gasto' : 'Editar Gasto'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -139,7 +159,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submitForm,
-                child: Text('Guardar Gasto'),
+                child: Text(widget.expense == null ? 'Guardar Gasto' : 'Actualizar Gasto'),
               ),
             ],
           ),
