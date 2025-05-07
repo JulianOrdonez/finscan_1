@@ -113,6 +113,6 @@ class LanguageProvider with ChangeNotifier {
 
   String getTranslation(String key) {
     final languageCode = _currentLocale.languageCode;
-    return _translations[languageCode]?[key] ?? _translations['en']![key]!;
+    return _translations[languageCode]?[key] ?? _translations['en']?[key] ?? '';
   }
 }

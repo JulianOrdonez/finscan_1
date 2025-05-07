@@ -17,7 +17,7 @@ void main() async {
         Provider<AuthService>(
             create: (_) =>
                 AuthService(databaseHelper: DatabaseHelper.instance)),
-        Provider<DatabaseHelper>(create: (_) => DatabaseHelper.instance),
+        Provider<DatabaseHelper>(create: (_) => DatabaseHelper.instance), // Add this line
         ChangeNotifierProvider(create: (_) => CurrencyProvider()),
         ChangeNotifierProvider(create: (_) => LanguageProvider()),
       ],
