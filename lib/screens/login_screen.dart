@@ -78,10 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   _emailController.text,
                                   _passwordController.text);
                               if (loggedIn) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const HomePage()),
+                                Navigator.pushReplacementNamed(context, '/home',
                                 );
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(

@@ -58,11 +58,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _updateProfile() async {
     if (_formKey.currentState!.validate()) {
+ if (_user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User data not loaded')),
+ );
+ return;
+ }
       final dbHelper = Provider.of<DatabaseHelper>(context, listen: false);
       final success = await dbHelper.updateUser(User(
-        id: _user!.id,
+        id: _user?.id ?? 0, // Use optional chaining and null coalescing
         name: _nameController.text,
-        email: _emailController.text,
+ email: _emailController.text, // Email is a required field in User model
         password: _user!.password,
       ));
       if (success) {
@@ -86,8 +92,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (_formKey.currentState!.validate()) {
       final authService = Provider.of<AuthService>(context, listen: false);
       final dbHelper = Provider.of<DatabaseHelper>(context, listen: false);
+      if (_user != null) {
       if (await authService.validatePassword(
-          _user!.email, _passwordController.text)) {
+ _user!.email, _passwordController.text)) { // Email is a required field, so it should not be null
         final success = await dbHelper.updateUser(User(
           id: _user!.id,
           name: _user!.name,
@@ -114,6 +121,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Incorrect current password')),
         );
+      }
+
       }
     }
   }
@@ -175,8 +184,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         onPressed: () {
                           setState(() {
                             _isEditing = false;
-                            _nameController.text = _user!.name;
-                            _emailController.text = _user!.email;
+                            if (_user != null) {
+                              _nameController.text = _user!.name;
+                              _emailController.text = _user!.email;
+                            }
                           });
                         },
                         child: const Text("Cancel"),

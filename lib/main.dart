@@ -31,24 +31,28 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Expense Tracker',
           theme: themeProvider.currentTheme,
-          home: FutureBuilder<bool>(
+          initialRoute: '/',
+          routes: {
+            '/': (context) => FutureBuilder<bool>(
             future: Provider.of<AuthService>(context, listen: false).checkLoginStatus(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Scaffold(
+ return const Scaffold(
                   body: Center(
                     child: CircularProgressIndicator(),
                   ),
                 );
               } else {
                 if (snapshot.hasData && snapshot.data!) {
-                  return const HomePage();
+ return const HomePage();
                 } else {
-                  return const LoginScreen();
+ return const LoginScreen();
                 }
               }
-            },
-          ),
+            }),
+            '/login': (context) => const LoginScreen(),
+            '/home': (context) => const HomePage(),
+          },
         );
       },
     );
