@@ -14,11 +14,39 @@ class ExpenseItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(expense.category),
-      subtitle: Text(Helpers.formatDate(expense.date)),
-      trailing: Text('\$${expense.amount.toStringAsFixed(2)}'),
-      onLongPress: () => onExpenseDeleted(expense),
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              expense.category,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 4.0),
+            Text(
+              expense.description ?? 'No description',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 8.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  Helpers.formatDate(expense.date),
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                Text(
+                  '\$${expense.amount.toStringAsFixed(2)}',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
