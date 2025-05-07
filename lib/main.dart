@@ -28,31 +28,34 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<ThemeProvider, LanguageProvider>(
-      builder: (context, themeProvider, languageProvider, child) {
-        return MaterialApp(
-          title: languageProvider.translate('app_title'),
-          locale: languageProvider.locale,
-          supportedLocales: languageProvider.supportedLocales,
-          localizationsDelegates: const [], // Add delegates if you need them for other purposes, but not for your custom translations
-          theme: themeProvider.currentTheme,
-          debugShowCheckedModeBanner: false, // Keep this line
-          initialRoute: '/', // Keep this line
-          routes: {
-            '/': (context) => FutureBuilder<bool>(
-            future: Provider.of<AuthService>(context, listen: false).checkLoginStatus(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return Consumer<LanguageProvider>(
+          builder: (context, languageProvider, child) {
+            return MaterialApp(
+              title: languageProvider.currentLocale.languageCode == 'en' ? 'Expense Tracker' : 'Seguimiento de Gastos',
+              locale: languageProvider.currentLocale,
+              localizationsDelegates: const [], // Add delegates if you need them for other purposes, but not for your custom translations
+              theme: themeProvider.currentTheme,
+              debugShowCheckedModeBanner: false, // Keep this line
+              initialRoute: '/', // Keep this line
+              routes: {
+                '/': (context) => FutureBuilder<bool>(
+                future: Provider.of<AuthService>(context, listen: false).checkLoginStatus(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
  return const Scaffold(
-                  body: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              } else {
-                if (snapshot.hasData && snapshot.data!) {
+                      body: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  } else {
+                    if (snapshot.hasData && snapshot.data!) {
  return const HomePage();
                 } else {
  return const LoginScreen();
+                    }
+                  }
                 }
               }
             }),
@@ -60,7 +63,7 @@ class MyApp extends StatelessWidget {
             '/home': (context) => const HomePage(),
           },
         );
-      },
+      });
     );
   }
 }
