@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
 import 'package:flutter_application_2/screens/home_page.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_application_2/screens/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -72,7 +73,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               _isLoading = true;
                             });
                             try {
-                              bool loggedIn = await AuthService().login(
+                              final authService = Provider.of<AuthService>(context, listen: false);
+                              bool loggedIn = await authService.login(
                                   _emailController.text,
                                   _passwordController.text);
                               if (loggedIn) {

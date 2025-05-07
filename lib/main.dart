@@ -8,14 +8,13 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final databaseHelper = DatabaseHelper();
-  await databaseHelper.initDatabase();
+  await DatabaseHelper.instance.initDatabase();
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => AuthService(databaseHelper: databaseHelper)),
-        Provider<DatabaseHelper>(create: (_) => databaseHelper),
+        ChangeNotifierProvider(create: (_) => AuthService(databaseHelper: DatabaseHelper.instance)),
+        Provider<DatabaseHelper>(create: (_) => DatabaseHelper.instance),
       ],
       child: const MyApp(),
     ),
@@ -32,9 +31,9 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Expense Tracker',
-          theme: themeProvider.getTheme,
+          theme: themeProvider.currentTheme,
           home: FutureBuilder<bool>(
-            future: Provider.of<AuthService>(context, listen: false).isLoggedIn(),
+            future: Provider.of<AuthService>(context, listen: false).checkLoginStatus(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Scaffold(

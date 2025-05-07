@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -14,11 +15,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final AuthService _authService = AuthService();
+  late AuthService _authService;
 
   bool _isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _authService = Provider.of<AuthService>(context, listen: false);
+  }
+
   Future<void> _register() async {
+
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
@@ -26,7 +34,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       try {
         final success = await _authService.register(
           _nameController.text,
-          _emailController.text,
+ _emailController.text.trim(),
           _passwordController.text,
         );
         if (success) {

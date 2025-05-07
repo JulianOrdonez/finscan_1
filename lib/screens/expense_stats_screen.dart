@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../services/database_helper.dart';
 import '../models/expense.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../services/auth_service.dart';
 import '../currency_provider.dart';
 
 class ExpenseStatsScreen extends StatefulWidget {
@@ -22,7 +23,8 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
 
   Future<List<Expense>> _loadExpenses() async {
     final databaseHelper = Provider.of<DatabaseHelper>(context, listen: false);
-    return await databaseHelper.getExpenses();
+ final authService = Provider.of<AuthService>(context, listen: false);
+    return await databaseHelper.getExpenses(authService.currentUserId!);
   }
 
   Map<String, double> calculateCategoryTotals(List<Expense> expenses) {

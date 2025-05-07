@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Expense Tracker'),
-        backgroundColor: themeProvider.getTheme.primaryColor,
+        backgroundColor: themeProvider.currentTheme.primaryColor,
       ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -53,7 +53,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: themeProvider.getTheme.primaryColor,
+        selectedItemColor: themeProvider.currentTheme.primaryColor,
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
       ),

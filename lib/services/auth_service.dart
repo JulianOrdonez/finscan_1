@@ -2,9 +2,13 @@ import 'package:flutter_application_2/models/user.dart';
 import 'package:flutter_application_2/services/database_helper.dart';
 
 class AuthService {
-  final DatabaseHelper _databaseHelper = DatabaseHelper();
+  final DatabaseHelper _databaseHelper;
 
-  Future<bool> registerUser(
+  int? _currentUserId;
+
+  AuthService({required DatabaseHelper databaseHelper}) : _databaseHelper = databaseHelper;
+  
+  Future<bool> register(
       String name, String email, String password) async {
     try {
       // Check if a user with the same email already exists
@@ -24,32 +28,47 @@ class AuthService {
     }
   }
 
-  Future<User?> loginUser(String email, String password) async {
+  Future<bool> login(String email, String password) async {
     try {
       final user = await _databaseHelper.getUserByEmail(email);
       if (user != null && user.password == password) {
-        return user; // Return the user object if login is successful
+        _currentUserId = user.id;
+ return true; // Return true if login is successful
       }
-      return null; // Return null if login fails
+ return false; // Return false if login fails
     } catch (e) {
       print("Error logging in user: $e");
-      return null;
+ return false;
     }
   }
 
-  Future<bool> logoutUser() async {
-    // No specific action needed for local logout, just clear session data if applicable
-    // Here you could clear user preferences, tokens, etc.
-    return true; // Assuming logout is always successful in this context
+  Future<bool> isLoggedIn() async {
+    // In this simple example, we assume the user is logged in if a user exists in the database.
+    // In a real application, you would check for a valid token or session.
+ return _currentUserId != null;
   }
 
-  Future<bool> validateUser(String email, String password) async {
+  Future<int?> getCurrentUserId() async {
+    // In a real application, you would fetch the user ID from a stored token or session
+    return _currentUserId;
+  }
+
+  Future<bool> validatePassword(String email, String password) async {
     try {
       final user = await _databaseHelper.getUserByEmail(email);
       return user != null && user.password == password;
     } catch (e) {
-      print("Error validating user: $e");
-      return false;
+      print("Error validating password: $e");
+ return false;
     }
+  }
+  Future<bool> checkLoginStatus() async {
+    // This method can be used to check if the user is logged in on app start
+    return isLoggedIn();
+  }
+
+  Future<void> logout() async {
+    // In a real application, you would clear the token or session
+    // For this example, we don't need to do anything
   }
 }

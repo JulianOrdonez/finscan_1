@@ -64,18 +64,21 @@ class DatabaseHelper {
   }
 
   // User Methods
-  Future<bool> insertUser(User user) async {
-    Database db = await instance.database;
-    try {
-      await db.insert(tableUsers, user.toJson());
-      return true;
-    } catch (e) {
-      return false;
+  Future<User?> getUser(int id) async {
+    Database db = await database;
+    List<Map<String, dynamic>> maps = await db.query(
+      tableUsers,
+      where: '$columnUserId = ?',
+      whereArgs: [id],
+    );
+    if (maps.isNotEmpty) {
+      return User.fromJson(maps.first);
     }
+    return null;
   }
 
-  Future<User?> getUser(String email) async {
-    Database db = await instance.database;
+  Future<User?> getUserByEmail(String email) async {
+    Database db = await database;
     List<Map<String, dynamic>> maps = await db.query(
       tableUsers,
       where: '$columnUserEmail = ?',
@@ -86,9 +89,8 @@ class DatabaseHelper {
     }
     return null;
   }
-
   Future<bool> updateUser(User user) async {
-    Database db = await instance.database;
+    Database db = await database;
     int result = await db.update(tableUsers, user.toJson(),
         where: '$columnUserId = ?', whereArgs: [user.id]);
     return result > 0;
@@ -96,8 +98,13 @@ class DatabaseHelper {
 
   Future<bool> deleteUser(int id) async {
     Database db = await instance.database;
-    int result =
-        await db.delete(tableUsers, where: '$columnUserId = ?', whereArgs: [id]);
+    int result = await db.delete(tableUsers, where: '$columnUserId = ?', whereArgs: [id]);
+    return result > 0;
+  }
+
+  Future<bool> createUser(User user) async {
+    Database db = await database;
+    int result = await db.insert(tableUsers, user.toJson());
     return result > 0;
   }
 
@@ -113,7 +120,7 @@ class DatabaseHelper {
   }
 
   Future<List<Expense>> getExpenses(int userId) async {
-    Database db = await instance.database;
+    Database db = await database;
     List<Map<String, dynamic>> maps = await db.query(
       tableExpenses,
       where: '$columnExpenseUserId = ?',

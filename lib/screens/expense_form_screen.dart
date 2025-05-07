@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../services/database_helper.dart';
+import '../services/auth_service.dart';
 import '../models/expense.dart';
 import '../currency_provider.dart';
 
@@ -43,18 +44,34 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       final databaseHelper = Provider.of<DatabaseHelper>(context, listen: false);
-      final currencyProvider = Provider.of<CurrencyProvider>(context, listen: false);
+      final authService = Provider.of<AuthService>(context, listen: false);
+      final userId = await authService.getCurrentUserId();
+
+      if (userId == null) {
+        // Handle case where user is not logged in
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User not logged in')),
+        );
+        return;
+      }
+
       final expense = Expense(
         amount: double.parse(_amountController.text),
         category: _selectedCategory,
         date: _selectedDate,
         description: _descriptionController.text,
-        userId: 1, // Replace with actual user ID
+        userId: userId,
       );
 
-      await databaseHelper.insertExpense(expense);
+      final success = await databaseHelper.insertExpense(expense);
 
-      Navigator.pop(context); // Go back to the expense list
+      if (success) {
+        Navigator.pop(context); // Go back to the expense list
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to save expense')),
+        );
+      }
     }
   }
 

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../models/expense.dart';
 import '../services/database_helper.dart';
 import '../widgets/expense_item.dart';
+import '../services/auth_service.dart';
 import 'expense_form_screen.dart';
 
 class ExpenseListScreen extends StatefulWidget {
@@ -11,24 +12,31 @@ class ExpenseListScreen extends StatefulWidget {
 }
 
 class _ExpenseListScreenState extends State<ExpenseListScreen> {
-  late DatabaseHelper _databaseHelper;
   late Future<List<Expense>> _expensesFuture;
-
+  
   @override
   void initState() {
     super.initState();
-    _databaseHelper = Provider.of<DatabaseHelper>(context, listen: false);
     _expensesFuture = _loadExpenses();
   }
 
   Future<List<Expense>> _loadExpenses() async {
-    return await _databaseHelper.getExpenses();
-  }
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final databaseHelper = Provider.of<DatabaseHelper>(context, listen: false);
+    final userId = await authService.getCurrentUserId();
 
-  void _refreshExpenses() {
-    setState(() {
-      _expensesFuture = _loadExpenses();
-    });
+    if (userId == null) {
+      // Handle case where user is not logged in
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User not logged in')),
+      );
+      return [];
+    }
+
+    // Fetch expenses for the current user
+    return await databaseHelper.getExpenses(userId);
+
+
   }
 
   @override
@@ -41,7 +49,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         future: _expensesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -53,7 +61,11 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                 Expense expense = snapshot.data![index];
                 return ExpenseItem(
                   expense: expense,
-                  onExpenseDeleted: _refreshExpenses,
+                  onExpenseDeleted: (){setState(() {
+ _expensesFuture = _loadExpenses();
+                    });},
+
+        
                 );
               },
             );
@@ -65,9 +77,11 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => ExpenseFormScreen()),
-          ).then((_) => _refreshExpenses());
+ ).then((_) => setState(() {
+ _expensesFuture = _loadExpenses();
+                    }));
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

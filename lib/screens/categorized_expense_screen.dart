@@ -4,6 +4,7 @@ import '../models/expense.dart';
 import '../services/database_helper.dart';
 import '../widgets/expense_item.dart';
 import '../theme_provider.dart';
+import '../services/auth_service.dart';
 import 'expense_form_screen.dart';
 
 class CategorizedExpenseScreen extends StatefulWidget {
@@ -24,7 +25,12 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
 
   Future<void> _loadExpenses() async {
     final databaseHelper = Provider.of<DatabaseHelper>(context, listen: false);
-    List<Expense> expenses = await databaseHelper.getExpenses();
+ final authService = Provider.of<AuthService>(context, listen: false);
+    final userId = await authService.getCurrentUserId();
+    if (userId == null) return; // Handle case where user is not logged in
+
+    List<Expense> expenses = await databaseHelper.getExpenses(userId);
+    _categorizedExpenses.clear(); // Clear the map before categorizing
     setState(() {
       _expenses = expenses;
       _categorizeExpenses();
@@ -91,7 +97,7 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
         category,
         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
-      children: expenses.map((expense) => ExpenseItem(expense: expense, onExpenseDeleted: _loadExpenses)).toList(),
+ children: expenses.map<Widget>((expense) => ExpenseItem(expense: expense, onExpenseDeleted: _loadExpenses)).toList(),
     );
   }
 }

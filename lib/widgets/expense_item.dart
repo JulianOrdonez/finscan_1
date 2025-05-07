@@ -7,13 +7,15 @@ import '../helpers.dart';
 
 class ExpenseItem extends StatelessWidget {
   final Expense expense;
+  final VoidCallback onExpenseDeleted;
 
-  const ExpenseItem({Key? key, required this.expense}) : super(key: key);
+  const ExpenseItem({Key? key, required this.expense, required this.onExpenseDeleted})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final dbHelper = DatabaseHelper();
+    final dbHelper = Provider.of<DatabaseHelper>(context, listen: false);
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -55,6 +57,7 @@ class ExpenseItem extends StatelessWidget {
                           content: Text('Expense deleted successfully'),
                         ),
                       );
+                      onExpenseDeleted();
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
