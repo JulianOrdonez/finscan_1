@@ -41,27 +41,26 @@ class MyApp extends StatelessWidget {
               initialRoute: '/', // Keep this line
               routes: {
                 '/': (context) => FutureBuilder<bool>(
-                future: Provider.of<AuthService>(context, listen: false).checkLoginStatus(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
- return const Scaffold(
+                  future: Provider.of<AuthService>(context, listen: false).checkLoginStatus(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Scaffold(
                       body: Center(
                         child: CircularProgressIndicator(),
                       ),
                     );
-                  } else {
-                    if (snapshot.hasData && snapshot.data!) {
- return const HomePage();
-                } else {
- return const LoginScreen();
+                    } else {
+                      if (snapshot.hasData && snapshot.data!) {
+                        return const HomePage();
+                      } else {
+                        return const LoginScreen();
+                      }
                     }
-                  }
-                }
-              }
-            }),
-            '/login': (context) => const LoginScreen(),
-            '/home': (context) => const HomePage(),
-          },
+                  },
+                ),
+                '/login': (context) => const LoginScreen(),
+                '/home': (context) => const HomePage(),
+              },
         );
       });
     );
