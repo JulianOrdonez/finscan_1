@@ -55,10 +55,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('${languageProvider.translate('Error')}: ${snapshot.error}'));
-          } else if (snapshot.hasError) {
-            return Center(child: Text(\'${languageProvider.translate('Error')}: ${snapshot.error}\'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+ return Center(child: Text('${snapshot.error}'));
+          }  else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text(languageProvider.translate('No expenses found.')));
           } else {
             return ListView.builder(

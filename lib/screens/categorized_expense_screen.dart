@@ -82,7 +82,7 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
       return Center(
         child: Text(
           languageProvider.get(languageProvider.currentLocale, 'No expenses yet.') ?? 'No expenses yet.',
-          style: const TextStyle(fontSize: 18),
+ languageProvider.translate('No expenses yet.'),
  ),
       );
     }
