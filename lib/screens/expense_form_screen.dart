@@ -108,19 +108,8 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
 
       try {
         final currencyProvider = Provider.of<CurrencyProvider>(context, listen: false);
-        final currentCurrency = currencyProvider.getSelectedCurrency();
         double amount = double.parse(_amountController.text);
-        if (currentCurrency != 'EUR') {
-          // Convert to EUR using the conversion rate
-          // Example: Assume 1 EUR = 4500 COP
-          if (currentCurrency == 'COP') {
-            amount = amount / 4500;
-          }else{
-            amount = amount / 1;
-          }
-
-        }
-
+ amount = currencyProvider.convertAmountToUSD(amount);
         final userId = await AuthService.getCurrentUserId();
         final expense = Expense(
           id: widget.expense?.id ?? -1,
@@ -132,18 +121,11 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
           date: DateFormat('yyyy-MM-dd').format(_selectedDate),
           receiptPath: _receiptPath ?? "",
         );
-        if (_isNewExpense) {
+ if (widget.expense?.id == null) {
           await DatabaseHelper.instance.insertExpense(expense);
-          // ignore: use_build_context_synchronously
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Expense saved successfully')),
-          );
         } else {
           await DatabaseHelper.instance.updateExpense(expense);
-          // ignore: use_build_context_synchronously
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Expense updated successfully')),
-          );
+ }
         }
       } catch (e) {
         ScaffoldMessenger.of(

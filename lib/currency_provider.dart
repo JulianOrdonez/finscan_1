@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Exchange rates relative to USD
-const Map<String, double> _exchangeRates = { // As of 2024-03-04
+const Map<String, double> _exchangeRates = {
   'USD': 1.0,
-  'EUR': 0.93,
   'MXN': 17.0, // As of 2024-03-04
   'COP': 3950.0, // As of 2024-03-04
 };
@@ -62,7 +61,9 @@ class CurrencyProvider extends ChangeNotifier {List<String> get supportedCurrenc
   }
 
   double convertAmountToUSD(double amountInSelectedCurrency) {
-    // Assuming the input amount is in the currently selected currency
-     return amountInSelectedCurrency / _exchangeRates[_selectedCurrency]!;
+ if (_exchangeRates.containsKey(_selectedCurrency)) {
+      return amountInSelectedCurrency / _exchangeRates[_selectedCurrency]!;
+    }
+ return amountInSelectedCurrency;
   }
 }
