@@ -1,12 +1,12 @@
 class Expense {
-  int id;
+  int? id;
   int userId;
   String title;
   String description;
   double amount;
   String category;
   String date;
-  String receiptPath;
+  String? receiptPath;
 
   Expense({
     required this.id,
@@ -22,7 +22,7 @@ class Expense {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'user_id': userId,
+      'user_id': userId!,
       'title': title,
       'description': description,
       'amount': amount,
@@ -35,7 +35,7 @@ class Expense {
   factory Expense.fromMap(Map<String, dynamic> map) {
     return Expense(
       id: map['id'],
-      userId: map['user_id'],
+      userId: map['user_id'] as int,
       title: map['title'],
       description: map['description'],
       amount: map['amount'],

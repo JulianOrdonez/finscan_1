@@ -99,7 +99,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
           category: _selectedCategory,
           date: _selectedDate.toIso8601String(),
           receiptPath: _receiptPath,
-        );
+ );
 
         if (widget.expense?.id == null) {
           await DatabaseHelper.instance.insertExpense(expense);
