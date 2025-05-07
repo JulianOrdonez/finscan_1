@@ -39,7 +39,8 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       _descriptionController.text = widget.expense!.description;
       _selectedCategory = widget.expense!.category;
       _selectedDate = widget.expense!.date;
- ];
+    }
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -83,7 +84,6 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       } else {
         expense.id = widget.expense!.id; // Ensure the ID is set for update
         success = await databaseHelper.updateExpense(expense);
-      }
 
       if (success) {
         Navigator.pop(context); // Go back to the expense list
