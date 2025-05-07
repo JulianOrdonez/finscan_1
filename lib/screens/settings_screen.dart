@@ -28,7 +28,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             leading: const Icon(Icons.brightness_6),
             title: const Text('Theme'),
             trailing: Switch(
-              value: themeProvider.isDarkMode,
+              value: themeProvider.currentTheme.brightness == Brightness.dark,
               onChanged: (value) {
                 themeProvider.toggleTheme();
               },
