@@ -1,6 +1,7 @@
 class Expense {
   final int? id;
   final double amount;
+  final int id;
   final String category;
   final DateTime date;
   final String description;

@@ -67,6 +67,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       if (userId == null) return;
 
       final expense = Expense(
+ id: widget.expense?.id, // Include the ID for updates
         amount: double.parse(_amountController.text),
         category: _selectedCategory,
         date: _selectedDate,
