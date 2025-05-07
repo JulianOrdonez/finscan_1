@@ -4,6 +4,7 @@ import '../models/expense.dart';
 import '../services/database_helper.dart';
 import '../widgets/expense_item.dart';
 import '../services/auth_service.dart';
+import '../language_provider.dart';
 import 'expense_form_screen.dart';
 
 class ExpenseListScreen extends StatefulWidget {
@@ -24,9 +25,10 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     final authService = Provider.of<AuthService>(context, listen: false);
     final databaseHelper = Provider.of<DatabaseHelper>(context, listen: false);
     final userId = await authService.getCurrentUserId();
-
+ final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
     if (userId == null) {
       // Handle case where user is not logged in
+ return ScaffoldMessenger.of(context).showSnackBar(
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Usuario no ha iniciado sesión')),
       );
@@ -41,18 +43,22 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
   @override
   Widget build(BuildContext context) {
+ final languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Lista de Gastos'),
+ title: Text(languageProvider.translate('Expense List')),
       ),
       body: FutureBuilder<List<Expense>>(
         future: _expensesFuture,
         builder: (context, snapshot) {
- if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasError) {
+            return Center(child: Text(\'${languageProvider.translate('Error')}: ${snapshot.error}\'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No expenses found.'));
+            return Center(child: Text(languageProvider.translate('No expenses found.')));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+ return Center(child: Text(languageProvider.translate(\'No expenses found.\')));
           } else {
             return ListView.builder(
               itemCount: snapshot.data!.length,

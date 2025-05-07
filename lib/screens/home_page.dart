@@ -4,6 +4,7 @@ import 'package:flutter_application_2/screens/expense_list_screen.dart';
 import 'package:flutter_application_2/screens/expense_stats_screen.dart';
 import 'package:flutter_application_2/screens/settings_screen.dart';
 import 'package:flutter_application_2/theme_provider.dart';
+import 'package:flutter_application_2/language_provider.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -31,33 +32,35 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-
+    final themeProvider = Provider.of<ThemeProvider>(context);    
+    final languageProvider = Provider.of<LanguageProvider>(context);
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Expense Tracker'),
- backgroundColor: themeProvider.currentTheme.colorScheme.primary,
+        title: Text(languageProvider.getTranslation('Expense Tracker')),
+        backgroundColor: themeProvider.currentTheme.colorScheme.primary,
       ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.list),
-            label: 'Expenses',
+            label: languageProvider.getTranslation('Expenses'),
  ),
           BottomNavigationBarItem(
             icon: Icon(Icons.category),
-            label: 'Categories',
+            label: languageProvider.getTranslation('Categories'),
  ),
           BottomNavigationBarItem(
             icon: Icon(Icons.pie_chart),
-            label: 'Stats',
+            label: languageProvider.getTranslation('Stats'),
  ),
-          const BottomNavigationBarItem(
+          BottomNavigationBarItem(
             icon: Icon(Icons.settings),
-            label: 'Settings',
+            label: languageProvider.getTranslation('Settings'),
  ),
         ],
+
         currentIndex: _selectedIndex,
         selectedItemColor: themeProvider.currentTheme.primaryColor,
         unselectedItemColor: Colors.grey,

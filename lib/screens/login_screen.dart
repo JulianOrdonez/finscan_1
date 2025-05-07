@@ -3,6 +3,7 @@ import 'package:flutter_application_2/services/auth_service.dart';
 import 'package:flutter_application_2/screens/home_page.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_application_2/screens/register_screen.dart';
+import 'package:flutter_application_2/language_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -19,11 +20,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final languageProvider = Provider.of<LanguageProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Iniciar Sesión'),
+        title: Text(languageProvider.translate('Login')),
       ),
-      body: Center(
+      body: Center( // You might want to add SingleChildScrollView here to prevent overflow on smaller screens or with longer translations
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
@@ -34,20 +37,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(
-                    labelText: 'Email',
+                    labelText: 'Email', // This can be translated if desired
                     border: OutlineInputBorder(
                     ),
                   ),
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Por favor, ingrese su correo electrónico';
+                      return languageProvider.translate('Please enter your email');
                     }
                     if (!value.contains('@')) {
-                      return 'Por favor, ingrese un correo electrónico válido';
+                      return languageProvider.translate('Please enter a valid email');
                     }
                     return null;
-                  },
+                  }, // TODO: Add email validation regex for more robust validation
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
@@ -60,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Por favor, ingrese su contraseña';                    }
+                      return languageProvider.translate('Please enter your password');
                     return null;
                   },
                 ),
@@ -83,11 +86,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 );
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
+                                  SnackBar(
                                       content:
-                                          Text('Correo electrónico o contraseña inválidos')),
+                                          Text(languageProvider.translate('Invalid email or password'))),
                                 );
-                              }
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text('Error: $e')), // Consider translating the error message if possible, or providing a more user-friendly message.
@@ -99,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             }
                           }
                         },
-                        child: const Text('Login'),
+                        child: Text(languageProvider.translate('Login')),
                       ), // This text could also be translated to 'Iniciar Sesión'
                 const SizedBox(height: 10),
                 TextButton(
@@ -110,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           builder: (context) => const RegisterScreen()),
                     );
                   },
-                  child: const Text("Don't have an account? Register here"),
+                  child: Text(languageProvider.translate("Don't have an account? Register here")),
                 ),
               ],
             ),

@@ -6,6 +6,7 @@ import '../widgets/expense_item.dart';
 import '../theme_provider.dart';
 import '../services/auth_service.dart';
 import 'expense_form_screen.dart';
+import '../language_provider.dart';
 
 class CategorizedExpenseScreen extends StatefulWidget {
   @override
@@ -50,13 +51,15 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final languageProvider = Provider.of<LanguageProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
- 'Gastos categorizados',
+          languageProvider.get(languageProvider.currentLocale, 'Categorized Expenses') ?? 'Categorized Expenses',
           style: TextStyle(color: themeProvider.currentTheme.textTheme.bodyMedium?.color),
         ),
-        backgroundColor: themeProvider.currentTheme.appBarTheme.backgroundColor,
+ backgroundColor: themeProvider.currentTheme.appBarTheme.backgroundColor,
       ),
       body: _buildBody(),
       floatingActionButton: FloatingActionButton(
@@ -74,11 +77,13 @@ class _CategorizedExpenseScreenState extends State<CategorizedExpenseScreen> {
 
   Widget _buildBody() {
     if (_categorizedExpenses.isEmpty) {
+      final languageProvider = Provider.of<LanguageProvider>(context);
+
       return Center(
         child: Text(
- 'Aún no hay gastos.',
+          languageProvider.get(languageProvider.currentLocale, 'No expenses yet.') ?? 'No expenses yet.',
           style: TextStyle(fontSize: 18),
-        ),
+ ),
       );
     }
     return ListView.builder(

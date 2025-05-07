@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../services/database_helper.dart';
 import '../models/expense.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../language_provider.dart';
 import '../services/auth_service.dart';
 import '../currency_provider.dart';
 
@@ -23,11 +24,12 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
 
   Future<List<Expense>> _loadExpenses() async {
     final databaseHelper = Provider.of<DatabaseHelper>(context, listen: false);
- final authService = Provider.of<AuthService>(context, listen: false);
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
     final userId = await authService.getCurrentUserId();
 
     if (userId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
+ ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Usuario no ha iniciado sesion')),
       ); // TODO: Translate this message
  return [];
@@ -54,12 +56,13 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final languageProvider = Provider.of<LanguageProvider>(context);
     final currencyProvider = Provider.of<CurrencyProvider>(context);
- return Scaffold(
+    return Scaffold(
       appBar: AppBar(
-        title: const Text('Estadísticas de Gastos'),
+ title: Text(languageProvider.translate('Expense Stats')),
       ),
-      body: FutureBuilder<List<Expense>>(
+ body: FutureBuilder<List<Expense>>(
         future: _expensesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -67,7 +70,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('No se encontraron gastos.'));
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text('${languageProvider.translate('Error')}: ${snapshot.error}'));
           } else {
             List<Expense> expenses = snapshot.data!;
             Map<String, double> categoryTotals =
@@ -100,7 +103,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+ Text(
                           'Total Spending',
                           style: TextStyle(
                             fontSize: 20,
@@ -128,7 +131,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
- const Text(
+                        Text(
                           'Spending by Category',
                           style: TextStyle(
                             fontSize: 20,
@@ -150,7 +153,7 @@ class _ExpenseStatsScreenState extends State<ExpenseStatsScreen> {
                           children: categoryTotals.entries.map((entry) {
                             return ListTile(
                               leading: const Icon(Icons.category),
-                              title: Text(entry.key),
+                              title: Text(languageProvider.translate(entry.key)),
                               trailing: Text(
                                   '${currencyProvider.currency}${entry.value.toStringAsFixed(2)}'),
                             );

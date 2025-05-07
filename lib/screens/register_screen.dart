@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
 import 'package:provider/provider.dart';
+import '../language_provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -17,6 +18,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _confirmPasswordController = TextEditingController();
   late AuthService _authService;
 
+
   bool _isLoading = false;
 
   @override
@@ -25,8 +27,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _authService = Provider.of<AuthService>(context, listen: false);
   }
 
-  Future<void> _register() async {
 
+  Future<void> _register() async {
+    final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
@@ -42,14 +45,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Registration failed. Please try again.'),
+              content: Text(languageProvider.translate('Registration failed. Please try again.')),
             ),
           );
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('An error occurred: $e'),
+            content: Text('${languageProvider.translate('An error occurred:')} $e'),
           ),
         );
       } finally {
@@ -64,7 +67,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Register'),
+        title: Text(
+ Provider.of<LanguageProvider>(context).translate('Register')),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -77,12 +81,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _nameController,
                   decoration: const InputDecoration(
-                    labelText: 'Name',
+                    labelText: Provider.of<LanguageProvider>(context).translate('Name'),
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your name';
+                      return Provider.of<LanguageProvider>(context, listen: false).translate('Please enter your name');
                     }
                     return null;
                   },
@@ -96,10 +100,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
+                      return Provider.of<LanguageProvider>(context, listen: false).translate('Please enter your email');
                     }
                     if (!value.contains('@')) {
-                      return 'Please enter a valid email';
+                      return Provider.of<LanguageProvider>(context, listen: false).translate('Please enter a valid email');
                     }
                     return null;
                   },
@@ -108,16 +112,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _passwordController,
                   decoration: const InputDecoration(
-                    labelText: 'Password',
+                    labelText: Provider.of<LanguageProvider>(context).translate('Password'),
                     border: OutlineInputBorder(),
                   ),
                   obscureText: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a password';
+                      return Provider.of<LanguageProvider>(context, listen: false).translate('Please enter a password');
                     }
                     if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
+                      return Provider.of<LanguageProvider>(context, listen: false).translate('Password must be at least 6 characters');
                     }
                     return null;
                   },
@@ -126,16 +130,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _confirmPasswordController,
                   decoration: const InputDecoration(
-                    labelText: 'Confirm Password',
+                    labelText: Provider.of<LanguageProvider>(context).translate('Confirm Password'),
                     border: OutlineInputBorder(),
                   ),
                   obscureText: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please confirm your password';
+                      return Provider.of<LanguageProvider>(context, listen: false).translate('Please confirm your password');
                     }
                     if (value != _passwordController.text) {
-                      return 'Passwords do not match';
+                      return Provider.of<LanguageProvider>(context, listen: false).translate('Passwords do not match');
                     }
                     return null;
                   },
@@ -145,7 +149,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
                         onPressed: _register,
-                        child: const Text('Register'),
+                        child: Text(Provider.of<LanguageProvider>(context).translate('Register')),
                       ),
                 const SizedBox(height: 16),
                 TextButton(
